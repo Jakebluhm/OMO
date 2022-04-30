@@ -1,11 +1,12 @@
-import React from "react";
+import React, {  useState } from "react";
 import { v1 as uuid } from "uuid";
 
 const CreateRoom = (props) => {
-    
+    const [name, setname] = useState("");
     function create() {
         const id = uuid();
-        props.history.push(`/room/${id}`);
+        console.log(name)
+        props.history.push(`/room/${id}`, {playerName: name});
     }
 
     const style = { display: 'flex', paddingTop:50, flexDirection:'column', justifyContent: 'center', alignItems: 'center', width: '..', height: '..'}
@@ -20,6 +21,12 @@ const CreateRoom = (props) => {
 // <button onClick={create}>{dummyPrompts[0]}</button>
     return (
         <div  style={style}>  
+            
+            <div style={{paddingBottom:50, display: 'flex', flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
+                <label style={{padding:5}}> Enter name</label>
+                <input type="text" placeholder="name" value={name} onChange={e => setname(e.target.value)}></input>
+            </div>    
+                <label style={{padding:5}}>Click to join game</label>
                 {dummyPrompts.map(prompt => 
                  <div  style={listItemStyle}> 
                     <button  onClick={create} key={prompt}> {prompt} </button> 

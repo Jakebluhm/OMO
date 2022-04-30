@@ -38,6 +38,13 @@ const videoConstraints = {
 };
 
 const Room = (props) => {
+
+  console.log("inside Room ------------------");
+  const name = props.history.location.state;
+  console.log('name?')
+  console.log(name)
+
+
     // ------------------- STATE VARIABLES ----------------
     const [peers, setPeers] = useState([]);
     const socketRef = useRef();
@@ -124,13 +131,24 @@ const Room = (props) => {
     }
 
     return (
-        <Container>
-            <StyledVideo muted ref={userVideo} autoPlay playsInline />
+
+        <Container style={{border: '5px solid rgba(0, 255, 255, 1)'}}> 
+             
+            
+            <div style={{display: 'flex', flexWrap: 'wrap',  flexDirection:'row', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(0, 255, 0, 1)' }}>
+                <div style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 0, 0, 1)',}}>
+                    <StyledVideo style={{border: '1px solid rgba(0, 0, 0, 1.0)',}} muted ref={userVideo} autoPlay playsInline />
+                    <label style={{padding:5}}>{(typeof(name) !== 'undefined' && name != null)? name.playerName : 'empty' }</label>
+                </div>    
             {peers.map((peer, index) => {
                 return (
+                    <div style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 255, 0, 1)',}}>
                     <Video key={index} peer={peer} />
+                    <label style={{padding:5}}>Other Players name</label>
+                    </div>
                 );
             })}
+            </div>
         </Container>
     );
 };
