@@ -47,6 +47,7 @@ const Room = (props) => {
 
     // ------------------- STATE VARIABLES ----------------
     const [peers, setPeers] = useState([]);
+    const [peerNames, setPeerNames]  = useState([]);
     const socketRef = useRef();
     const userVideo = useRef();
     const peersRef = useRef([]);  //JAKEB Array of peers, Could expand this to class other user info, along with peer info
@@ -56,6 +57,7 @@ const Room = (props) => {
     // of function change value. In this case no variables are specified so it runs when this
     // Component mounts aka displays to screen
     useEffect(() => {
+         
         socketRef.current = io.connect("/");
         navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             userVideo.current.srcObject = stream; //JAKEB this is video data
@@ -66,6 +68,7 @@ const Room = (props) => {
                     const peer = createPeer(userID, socketRef.current.id, stream); //JAKEB Create peer object
                     peersRef.current.push({  //JAKEB Important - Pushing a new player into array of players - will need to remove?
                         peerID: userID,     //JAKEB Important I think you can send data btw peers here, name would be important
+                        
                         peer,
                     })
                     peers.push(peer);
@@ -77,14 +80,21 @@ const Room = (props) => {
 
             //------------------ Callbacks--------------------
 
-
             // JAKEB Callback for when someone joined the room?
             socketRef.current.on("user joined", payload => {
                 const peer = addPeer(payload.signal, payload.callerID, stream);
                 peersRef.current.push({
                     peerID: payload.callerID,
+                    userName: payload.userName,
                     peer,
                 })
+                console.log('Possuble unique IDS')
+                console.log('peer._id')
+                console.log(peer._id)
+                console.log('peer.channelName')
+                console.log(peer.channelName)
+                console.log(peer)
+                peerNames.push({ [peer._id] : payload.userName.playerName})
 
                 setPeers(users => [...users, peer]); // JAKEB update state variable, append to peersRef
             });
@@ -105,9 +115,9 @@ const Room = (props) => {
             trickle: false,
             stream,
         });
-
+ 
         peer.on("signal", signal => {
-            socketRef.current.emit("sending signal", { userToSignal, callerID, signal })
+            socketRef.current.emit("sending signal", { userToSignal, callerID, signal, name })
         })
 
         return peer;
@@ -130,11 +140,42 @@ const Room = (props) => {
         return peer;
     }
 
-    return (
+    function getUserName(peer){
+
+        peerNames.forEach(element => {
+            if(peer._id in element){
+                console.log('peer id is in peerNames')
+                console.log('element')
+                console.log(element)
+                console.log('peer._id')
+                console.log(peer._id)
+                console.log('element[peer._id]')
+                console.log(element[peer._id])
+                return <label style={{padding:5}}>{element[peer._id]}</label>
+            }
+        })
+        console.log('did not find name in list!!!!!')
+        //return <label style={{padding:5}}>{'na'}</label>
+
+    }
+
+    console.log('peers.channelName')
+    peers.forEach(element => {
+        console.log(element.channelName)
+    });
+    console.log('peerNames')
+    peerNames.forEach(element => {
+        console.log(element)
+    });
+    console.log('peers.channelName')
+    peers.forEach(element => { 
+        console.log(element._id)
+        console.log(peerNames)
+    });
+
+    return ( 
 
         <Container style={{border: '5px solid rgba(0, 255, 255, 1)'}}> 
-             
-            
             <div style={{display: 'flex', flexWrap: 'wrap',  flexDirection:'row', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(0, 255, 0, 1)' }}>
                 <div style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 0, 0, 1)',}}>
                     <StyledVideo style={{border: '1px solid rgba(0, 0, 0, 1.0)',}} muted ref={userVideo} autoPlay playsInline />
@@ -144,7 +185,7 @@ const Room = (props) => {
                 return (
                     <div style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 255, 0, 1)',}}>
                     <Video key={index} peer={peer} />
-                    <label style={{padding:5}}>Other Players name</label>
+                    {getUserName(peer)}
                     </div>
                 );
             })}

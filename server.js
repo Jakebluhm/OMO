@@ -29,7 +29,7 @@ io.on('connection', socket => {
     });
 
     socket.on("sending signal", payload => {
-        io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
+        io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID, userName: payload.name });
     });
 
     socket.on("returning signal", payload => {
