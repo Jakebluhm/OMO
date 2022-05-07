@@ -6,20 +6,20 @@ const CreateRoom = (props) => {
     const [uuidNum, setuuid] = useState("");
     function create() {
         const id = uuid();
-        console.log(name)
+        // console.log(name)
         props.history.push(`/room/${id}`, {playerName: name});
     }
     function join() { 
-        console.log('uuidNum.length')
-        console.log(uuidNum.length)
+        // console.log('uuidNum.length')
+        // console.log(uuidNum.length)
         if(uuidNum.length > 20){
-            console.log('uuid is 128 in length')
+            // console.log('uuid is 128 in length')
         }
         else{ 
-            console.log('uuid is NOT 128 in length')
+            // console.log('uuid is NOT 128 in length')
             return
         }
-        console.log(uuid + ' < Joining ')
+        // console.log(uuid + ' < Joining ')
         props.history.push(`/room/${uuidNum}`, {playerName: name});
     }
     const style = { display: 'flex', paddingTop:50, flexDirection:'column', justifyContent: 'center', alignItems: 'center', width: '..', height: '..'}

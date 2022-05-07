@@ -11,20 +11,25 @@ const users = {};
 const socketToRoom = {};
 
 io.on('connection', socket => {
-    socket.on("join room", roomID => {
-        if (users[roomID]) {
-            const length = users[roomID].length;
+    socket.on("join room", payload => {
+        console.log('payload')
+        console.log(payload)
+        if (users[payload.roomID]) {
+            const length = users[payload.roomID].length;
             if (length === 4) {
                 socket.emit("room full");
                 return;
             }
-            users[roomID].push(socket.id);
+            users[payload.roomID].push({'socketID':socket.id, name:payload.name.playerName});
         } else {
-            users[roomID] = [socket.id];
+            users[payload.roomID] = [{'socketID':socket.id, name:payload.name.playerName}];
         }
-        socketToRoom[socket.id] = roomID;
-        const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
-
+        socketToRoom[socket.id] = payload.roomID;
+        console.log('users')
+        console.log(users)
+        const usersInThisRoom = users[payload.roomID].filter(userData => userData.socketID !== socket.id);
+        console.log('usersInThisRoom')
+        console.log(usersInThisRoom)
         socket.emit("all users", usersInThisRoom);
     });
 
@@ -33,7 +38,7 @@ io.on('connection', socket => {
     });
 
     socket.on("returning signal", payload => {
-        io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id });
+        io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id, userName:payload.name });
     });
 
     socket.on('disconnect', () => {
@@ -47,6 +52,5 @@ io.on('connection', socket => {
 
 });
 
-server.listen(process.env.PORT || 8000, () => console.log('server is running on port 8000'));
-
+server.listen(process.env.PORT || 8000, () =>  console.log('server is running on port 8000'));
 
