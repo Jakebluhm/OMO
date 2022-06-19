@@ -39,10 +39,19 @@ const videoConstraints = {
 localStorage.debug = ''
 const Room = (props) => {
 
-  // console.log("inside Room ------------------");
-  const name = props.history.location.state;
-  // console.log('name?')
-  // console.log(name)
+   console.log("inside Room ------------------");
+  const playerInfo = props.history.location.state;
+  console.log('playerInfo?')
+  console.log(playerInfo) 
+  const name = {playerName: playerInfo.playerName}
+  console.log('name?')
+  console.log(name) 
+  const oddOneOut = {oddOneOut: playerInfo.oddOneOut}
+  console.log('oddOneOut?')
+  console.log(oddOneOut) 
+  const uid = {uid: playerInfo.uid}
+  console.log('uid?')
+  console.log(uid) 
 
 
     // ------------------- STATE VARIABLES ----------------
@@ -53,10 +62,27 @@ const Room = (props) => {
     const peersRef = useRef([]);  //JAKEB Array of peers, Could expand this to class other user info, along with peer info
     const roomID = props.match.params.roomID;
 
+    useEffect(() => {
+        console.log("--------------useEffect 1---------------")
+        const unloadCallback = (event) => {
+          event.preventDefault();
+          event.returnValue = "";
+          return "";
+        };
+      
+        window.addEventListener("beforeunload", unloadCallback);
+        return () => window.removeEventListener("beforeunload", unloadCallback);
+      }, []);
+
     // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
     // of function change value. In this case no variables are specified so it runs when this
     // Component mounts aka displays to screen
     useEffect(() => {
+
+ 
+        console.log("--------------useEffect 2---------------")
+
+
         console.log('Begining of useEffect in Room.js');
  
         
@@ -80,20 +106,26 @@ const Room = (props) => {
         navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             console.log('inside then----getUserMedia')
             userVideo.current.srcObject = stream; //JAKEB this is video data
-            socketRef.current.emit("join room", {'roomID':roomID, 'name':name}); //JAKEB emits join room to server?
+            socketRef.current.emit("join room", {'roomID':roomID, 'name':name, 'OMO':oddOneOut, 'uid':uid}); //JAKEB emits join room to server?
             socketRef.current.on("all users", users => {  // JAKEB Return all users currently in the group video chat
                 const initPeers = []; // JAKEB Create empty peers to add all existing peers
                 users.forEach(userID => { //JAKEB Get each peer in the chat
                     const peer = createPeer(userID.socketID, socketRef.current.id, stream); //JAKEB Create peer object
+                    console.log('userID')
+                    console.log(userID)  
+                    console.log('userID.name')
+                    console.log(userID.name)
                     peersRef.current.push({  //JAKEB Important - Pushing a new player into array of players - will need to remove?
                         peerID: userID.socketID,  
-                        peerName: userID.name.playerName,    
+                        peerName: userID.name,    
+                        uid: userID.uid,    
                         peer,
                     })
                     initPeers.push({
                         'peerID': userID.socketID,
-                        'peer': peer,
-                        'peerName':userID.name});
+                        'peerName':userID.name,
+                        'uid':userID.uid,
+                        'peer': peer});
                 })
                 //console.log('----------------peers')
                 //console.log(peers)
@@ -110,9 +142,14 @@ const Room = (props) => {
             socketRef.current.on("user joined", payload => {
                 console.log("--------------user joined---------------")
                 const peer = addPeer(payload.signal, payload.callerID, stream);
+                console.log('payload.userName.playerName')
+                console.log(payload.userName.playerName)
+                console.log('payload')
+                console.log(payload)
                 peersRef.current.push({
                     peerID: payload.callerID,
                     peerName: payload.userName.playerName,    
+                    uid: payload.uid,
                     peer,
                 })
                 // console.log('Possuble unique IDS')
@@ -125,7 +162,7 @@ const Room = (props) => {
                 //setPeerNames(oldArray => [...oldArray,{ [peer._id] : payload.userName.playerName}] );
                 console.log('before adding peer to peers list:')
                 console.log(peers)
-                const tempPeer = {'peerID': payload.callerID, 'peer': peer, 'peerName':payload.userName.playerName} 
+                const tempPeer = {'peerID': payload.callerID, 'peerName':payload.userName.playerName, 'peer': peer} 
                 console.log('Adding peer to peers list:')
                 console.log(tempPeer)
                 setPeers(peers => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
@@ -134,6 +171,8 @@ const Room = (props) => {
  
             socketRef.current.on("user left", id => {
                 console.log('--------------user left handler---------------')
+                console.log('peersRef before user left handler')
+                console.log(peersRef)
                 const peerObj = peersRef.current.find(p => p.peerID === id);
                 if(peerObj){
                     peerObj.peer.destroy();
@@ -151,8 +190,10 @@ const Room = (props) => {
 
                 
                 
+                console.log('peersRef after user left handler')
+                console.log(peersRef) 
                 
-                setPeers(peers)  // TODO: Need to find a way to add peerNames
+                setPeers(peers)  
                 
 
             });
@@ -160,9 +201,13 @@ const Room = (props) => {
 
             socketRef.current.on("receiving returned signal", payload => {
                 console.log("--------------receiving returned signal---------------")
+                console.log('peersRef before receiving returned signal')
+                console.log(peersRef)
                 const item = peersRef.current.find(p => p.peerID === payload.id);
                 item.peer.signal(payload.signal); 
 
+                console.log('peersRef after receiving returned signal')
+                console.log(peersRef)
                 //console.log("receiving returned signal  " + [item.peer._id] + "   " + "   " + payload.userName.playerName)
                 //setPeerNames(oldArray => [...oldArray, { [item.peer._id] : payload.userName.playerName} ]);
 
@@ -208,7 +253,13 @@ const Room = (props) => {
  
         peer.on("signal", signal => {
             console.log("--------------signal createPeer---------------")
-            socketRef.current.emit("sending signal", { userToSignal, callerID, signal, name })
+            console.log('peersRef before signal createPeer')
+            console.log(peersRef)
+            console.log('name?')
+            console.log(name)
+            socketRef.current.emit("sending signal", { userToSignal, callerID, signal, name, uid })
+            console.log('peersRef after signal createPeer')
+            console.log(peersRef)
         })
 
         return peer;
@@ -278,6 +329,26 @@ const Room = (props) => {
     // const connectedPeers = peers.filter( p => p.peer._connected)
     // console.log('connectedPeers')
     // console.log(connectedPeers)
+    
+    const uniqueIds = [];
+    const filteredPeers = peers.filter(element => {
+        const isDuplicate = uniqueIds.includes(element.uid);
+        console.log('uniqueIds')
+        console.log(uniqueIds)
+        console.log('element.uid')
+        console.log(element.uid)
+        console.log('isDuplicate')
+        console.log(isDuplicate)
+
+        if (!isDuplicate) {
+            uniqueIds.push(element.uid);
+            console.log("not a duplicate")
+
+            return true;
+        }
+        console.log("Removing duplicate !!!")
+        return false;
+        })
     return ( 
 
         <Container style={{border: '5px solid rgba(0, 255, 255, 1)'}}> 
@@ -286,10 +357,10 @@ const Room = (props) => {
                     <StyledVideo style={{border: '1px solid rgba(0, 0, 0, 1.0)',}} muted ref={userVideo} autoPlay playsInline />
                     <label style={{padding:5}}>{(typeof(name) !== 'undefined' && name != null)? name.playerName : 'empty' }</label>
                 </div>    
-             {(peers.length > 0) && peers.map((peer) => {
+             {(peers.length > 0) && filteredPeers.map((peer) => {
                  console.log('is peer connected - rendering peer')
                  console.log(peer.peerName + '  ' + peer.peer._connected + ' ' + peer.peer._connecting)
-                return (
+                return(
                     <div key={peer.peer._id} style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 255, 0, 1)',}}>
                         <Video key={peer.peerID} peer={peer.peer} />
                         <label style={{padding:5}}>{peer.peerName}</label>
