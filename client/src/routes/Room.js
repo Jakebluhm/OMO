@@ -13,8 +13,7 @@ const Container = styled.div`
 `;
 
 const StyledVideo = styled.video`
-    height: 40%;
-    width: 50%;
+    height: 250px; width: 400px;
 `;
 
 const Video = (props) => {
@@ -162,7 +161,7 @@ const Room = (props) => {
                 //setPeerNames(oldArray => [...oldArray,{ [peer._id] : payload.userName.playerName}] );
                 console.log('before adding peer to peers list:')
                 console.log(peers)
-                const tempPeer = {'peerID': payload.callerID, 'peerName':payload.userName.playerName, 'peer': peer} 
+                const tempPeer = {'peerID': payload.callerID, 'peerName':payload.userName.playerName, uid: payload.uid, 'peer': peer} 
                 console.log('Adding peer to peers list:')
                 console.log(tempPeer)
                 setPeers(peers => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
@@ -353,8 +352,8 @@ const Room = (props) => {
 
         <Container style={{border: '5px solid rgba(0, 255, 255, 1)'}}> 
             <div style={{display: 'flex', flexWrap: 'wrap',  flexDirection:'row', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(0, 255, 0, 1)' }}>
-                <div style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 0, 0, 1)',}}>
-                    <StyledVideo style={{border: '1px solid rgba(0, 0, 0, 1.0)',}} muted ref={userVideo} autoPlay playsInline />
+                <div style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', height: "250px", width: "400px", border: '5px solid rgba(255, 0, 0, 1)',}}>
+                    <StyledVideo style={{border: '1px solid rgba(0, 0, 0, 1.0)', width:"100%"}} muted ref={userVideo} autoPlay playsInline />
                     <label style={{padding:5}}>{(typeof(name) !== 'undefined' && name != null)? name.playerName : 'empty' }</label>
                 </div>    
              {(peers.length > 0) && filteredPeers.map((peer) => {
@@ -362,7 +361,7 @@ const Room = (props) => {
                  console.log(peer.peerName + '  ' + peer.peer._connected + ' ' + peer.peer._connecting)
                 return(
                     <div key={peer.peer._id} style={{display: 'flex',  flexDirection:'column', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(255, 255, 0, 1)',}}>
-                        <Video key={peer.peerID} peer={peer.peer} />
+                        <Video style={{height: "250px", width: "400px", border: '1px solid rgba(0, 0, 0, 1.0)', }} key={peer.peerID} peer={peer.peer} />
                         <label style={{padding:5}}>{peer.peerName}</label>
                     </div>
                 );
