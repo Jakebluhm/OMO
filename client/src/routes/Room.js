@@ -32,7 +32,8 @@ const Video = (props) => {
 
 const videoConstraints = {  
     width: { min: 100, ideal: 200, max: 480 },
-    height: { min: 100, ideal: 200, max: 480 } 
+    height: { min: 100, ideal: 200, max: 480 },
+    frameRate: { ideal: 10, max: 15 } 
     //height: 10,//window.innerHeight / 2,
     //width: 20//window.innerWidth / 2
 }; 
@@ -58,6 +59,7 @@ const Room = (props) => {
     // ------------------- STATE VARIABLES ----------------
     const [peers, setPeers] = useState([]);
     //const [peerNames, setPeerNames]  = useState([]);
+    const [isRoomFull, setIsRoomFull] = useState(false);
     const socketRef = useRef();
     const userVideo = useRef();
     const peersRef = useRef([]);  //JAKEB Array of peers, Could expand this to class other user info, along with peer info
@@ -134,7 +136,11 @@ const Room = (props) => {
                 }
             })
 
-
+            socketRef.current.on("room full", users => {  // Return all users currently in the group video chat
+                console.log("---------ROOM FULL---------");
+ 
+                setIsRoomFull(true);
+            })
 
             //------------------ Callbacks--------------------
 
@@ -208,13 +214,13 @@ const Room = (props) => {
  
 
     window.onunload = function(){ 
-        //console.log('Closing page --sending Disconnect--- Clearing Local Storage!!!!!!')
-        socketRef.current.emit("disconnect")
+        console.log(' onunload Closing page --sending Disconnect--- Clearing Local Storage!!!!!!')
+      //  socketRef.current.emit("disconnect")
     }
 
     window.onbeforeunload = function(){
-        //console.log('Closing page --sending Disconnect--- Clearing Local Storage!!!!!!')
-        socketRef.current.emit("disconnect")
+        console.log('onbeforeunload Closing page --sending Disconnect--- Clearing Local Storage!!!!!!')
+       // socketRef.current.emit("disconnect")
  
         //localStorage.clear();
     }
@@ -223,7 +229,7 @@ const Room = (props) => {
     function createPeer(userToSignal, callerID, stream) {
         const peer = new Peer({  // Peer is from third party NPM module called simple-peer
             initiator: true,
-            trickle: false,
+            trickle: false, //false,
             stream,
         });
  
@@ -294,6 +300,38 @@ const Room = (props) => {
     return ( 
 
         <Container style={{border: '5px solid rgba(0, 255, 255, 1)'}}> 
+
+
+
+        {isRoomFull && (
+                <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+                }}>
+                <div style={{
+                    backgroundColor: 'white',
+                    padding: 20,
+                    borderRadius: 10,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <h2>Room is Full</h2>
+                    <p>Please try again later</p>
+                </div>
+                </div>
+            )}
+
+
+
             <div style={{display: 'flex',  flexWrap: 'wrap',  flexDirection:'row', justifyContent: 'center', alignItems: 'center', border: '5px solid rgba(0, 255, 0, 1)' }}>
                
                 <div>

@@ -12,11 +12,14 @@ const socketToRoom = {}; //collection of key (socket.id) value(RoomID)
 
 io.on('connection', socket => {
     socket.on("join room", payload => {
+
+        
+
         console.log('payload')
         console.log(payload)
         if (users[payload.roomID]) {
             const length = users[payload.roomID].length;
-            if (length === 5) {
+            if (length === 3) {
                 socket.emit("room full");
                 return;
             }
@@ -30,8 +33,19 @@ io.on('connection', socket => {
                                       'omo': payload.OMO.oddOneOut,
                                       'uid': payload.uid.uid}];
         }
+
+        console.log('--------USERS---------');
+        console.log('users:', users);
+
+        io.emit("update users", {
+            [payload.roomID]: users[payload.roomID]
+          });
+        console.log(`Emitted update users event to room ${payload.roomID}`); // For server UI??
+ 
+
+
         socketToRoom[socket.id] = payload.roomID;
-        console.log('users')
+        console.log('users') 
         console.log(users)
         const usersInThisRoom = users[payload.roomID].filter(userData => userData.socketID !== socket.id);
         console.log('usersInThisRoom')
@@ -70,6 +84,13 @@ io.on('connection', socket => {
     });
 
 });
+
+
+// app.use(express.static(__dirname + '/server-public'));
+
+app.get('/', (req, res) => { 
+    res.sendFile(__dirname + '/server-public/index.html');
+  });
 
 server.listen(process.env.PORT || 8000, () =>  console.log('server is running on port 8000'));
 

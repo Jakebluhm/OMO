@@ -4,7 +4,17 @@ import Modal from "react-modal";
 
 import "../ModalStyles/ModalStyle.css";
 
+
+import AWS from 'aws-sdk';
+import {putData} from '../awsLib/awsFunctions.js';
+
+
 const CreateRoom = (props) => {
+
+    const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+    const [items, setItems] = useState([]);
+
     const [name, setname] = useState("");
     const [uuidNum, setuuid] = useState("");
 
@@ -17,6 +27,25 @@ const CreateRoom = (props) => {
         console.log('selectedAnswer was updated')
         console.log('selectAnswer')
         console.log(selectAnswer)
+
+
+
+        
+    
+        const params = {
+          TableName: "OMOUserQueue"
+        };
+        
+        dynamoDb.scan(params, (err, data) => {
+            if (err) {
+              console.error(err);
+            } else {
+                console.error('data.Items');
+                console.error(data.Items);
+              setItems(data.Items);
+            }
+          }); 
+
 
         if(selectedAnswer !== -1){
             console.log("dummyPrompts.find(element => element.id === modalIndex).uuid  --- Calling create" )
@@ -54,6 +83,8 @@ const CreateRoom = (props) => {
         // console.log(name)
         props.history.push(`/room/${id}`, {playerName: name, oddOneOut: selectedAnswer, uid:uid});
     }
+
+    // Callback for joining with a specific UUID
     function join() { 
         console.log("join()")
         // console.log('uuidNum.length')
@@ -64,10 +95,36 @@ const CreateRoom = (props) => {
         else{ 
             // console.log('uuid is NOT 128 in length')
             return
-        }
+        } 
         // console.log(uuid + ' < Joining ')
         props.history.push(`/room/${uuidNum}`, {playerName: name});
     }
+
+    // Callback for confirm under Name entry
+    async function confirmName() { 
+        console.log("confirmName()")
+
+        console.log("'name': " + name) 
+
+        const params = {
+            TableName: 'OMOUserQueue',
+            Item: {
+                'user': uuid(),
+                'name': name
+            }
+        };
+    
+        try{
+            const data = await dynamoDb.put(params).promise();
+            console.log('Success', data);
+        } 
+        catch (err) {
+            console.log('Error', err);
+        }
+        
+    }
+
+
     const style = { display: 'flex', paddingTop:50, flexDirection:'column', justifyContent: 'center', alignItems: 'center', width: '..', height: '..'}
     const listItemStyle = {padding:10}
 
@@ -81,9 +138,22 @@ const CreateRoom = (props) => {
 // <button onClick={create}>{dummyPrompts[0]}</button>
     return (
         <div  style={style}>   
+
+
+            <div>
+            <h2>AWS DynamoDB Document Client</h2>
+            {items.map(item => (
+                <div key={item.id}>
+                <p>{item.user + " - " + item.name}</p>  
+                </div>
+            ))}
+            </div>
+
+
             <div style={{paddingBottom:50, display: 'flex', flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
                 <label style={{padding:5}}> Enter name</label>
                 <input type="text" placeholder="name" value={name} onChange={e => setname(e.target.value)}></input>
+                <button  onClick={confirmName} key={'confirmNameButton'}>Confirm</button> 
             </div>  
             <div style={{paddingBottom:50, display: 'flex', flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
                 <label style={{padding:5}}> Enter uuid</label>
