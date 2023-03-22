@@ -12,6 +12,6 @@
   },
   "scripts": {
     "start": "node server.js",
-    "postinstall": "cd ./client && yarn"
+    "postinstall": "cd ./client && yarn && npm run build"
   }
 }
