@@ -38,7 +38,7 @@ io.on('connection', socket => {
         console.log('users:', users);
 
         io.emit("update users", {
-            [payload.roomID]: users[payload.roomID]
+            'allUsers': users
           });
         console.log(`Emitted update users event to room ${payload.roomID}`); // For server UI??
  

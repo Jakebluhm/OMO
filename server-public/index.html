@@ -18,21 +18,49 @@
       console.log("after const usersDiv = document.querySelector('#users');")
 
       socket.on('update users', data => {
-      console.log("-------------RECIEVED update users--------------")
-      console.log('----data---')
-      console.log(data)
-      const roomID = Object.keys(data)[0];
-      
-      console.log('----roomID---')
-      console.log(roomID)
+        console.log("-------------RECIEVED update users--------------")
+        console.log('----data---')
+        console.log(data)
+ 
+        
+        console.log('----data[allUsers]---')
+        console.log(data['allUsers'])
+        usersDiv.innerHTML = '';
+        for (let key in data.allUsers) {
+            console.log(key); // prints abc123, then xyz789
+            console.log(data.allUsers[key]); // prints the array of objects for each key
+            //if(count == 0){
+              const t = document.createElement('t');
+              t.textContent = `Room Key ${key}`;
+              usersDiv.appendChild(t);
+            //}
 
-      const roomUsers = data[roomID];
-      usersDiv.innerHTML = '';
-      for (let user of roomUsers) {
-        const p = document.createElement('p');
-        p.textContent = `User ${user.socketID}, Name: ${user.name}, OMO: ${user.omo}, UID: ${user.uid}`;
-        usersDiv.appendChild(p);
-      }
+            // const p = document.createElement('p');
+            // p.textContent = `User ${data.allUsers[key].socketID}, Name: ${data.allUsers[key].name}, OMO: ${data.allUsers[key].omo}, UID: ${data.allUsers[key].uid}`;
+            // usersDiv.appendChild(p);
+
+            for (let user of data.allUsers[key]) 
+            {
+              const p = document.createElement('p');
+              p.textContent = `User ${user.socketID}, Name: ${user.name}, OMO: ${user.omo}, UID: ${user.uid}`;
+              usersDiv.appendChild(p);
+            }
+
+            //count++;
+        }
+        // data['allUsers'].forEach(roomData => console.log(roomData));
+        // const roomID = Object.keys(data)[0];
+        
+        // console.log('----roomID---')
+        // console.log(roomID)
+
+        // const roomUsers = data[roomID];
+        // usersDiv.innerHTML = '';
+        // for (let user of roomUsers) {
+        //   const p = document.createElement('p');
+        //   p.textContent = `User ${user.socketID}, Name: ${user.name}, OMO: ${user.omo}, UID: ${user.uid}`;
+        //   usersDiv.appendChild(p);
+        // }
     });
 
 
