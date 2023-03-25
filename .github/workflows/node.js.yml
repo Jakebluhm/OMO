@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: ["master", "CICD"]
+    branches: ["master", "StyleCICD"]
   pull_request:
     branches: ["master"]
 
@@ -28,4 +28,4 @@ jobs:
       - run: export NODE_OPTIONS="--max_old_space_size=4096"
       - run: npm ci
       - run: npm run build --if-present
-    #- run: npm test
+      - run: npm run style:all
