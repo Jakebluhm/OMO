@@ -30,4 +30,5 @@ OMOServer
 Detach
 512 MB RAM, 1 vCPU, 20 GB SSD
 
-Node.js
+to build in lightsail
+NODE_OPTIONS="--max-old-space-size=4096" npm run build
