@@ -66,7 +66,7 @@ const CreateRoom = (props) => {
   // That tells the client the url of the Room this user has been matched to.
   useEffect(() => {
     const ws = new WebSocket(
-      "wss://<YOUR-API-ID>.execute-api.<YOUR-REGION>.amazonaws.com/<YOUR-STAGE>"
+      "wss://86sw6hpi28.execute-api.us-east-1.amazonaws.com/production/"
     );
 
     ws.onmessage = (event) => {
