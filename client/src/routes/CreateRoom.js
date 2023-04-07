@@ -62,6 +62,30 @@ const CreateRoom = (props) => {
 
   // }, [selectedAnswer]);
 
+  // This runs on mount and establishes a listener for a websocket signal from aws lambda
+  // That tells the client the url of the Room this user has been matched to.
+  useEffect(() => {
+    const ws = new WebSocket(
+      "wss://<YOUR-API-ID>.execute-api.<YOUR-REGION>.amazonaws.com/<YOUR-STAGE>"
+    );
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+
+      if (message.action === "sendURL") {
+        const url = message.url;
+        // Redirect the user to the URL received from the Lambda function
+        window.location.href = url;
+      }
+    };
+
+    return () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, []);
+
   useEffect(() => {
     console.log("userData:", userData);
   }, [userData]);
