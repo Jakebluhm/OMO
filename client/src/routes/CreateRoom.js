@@ -112,9 +112,9 @@ const CreateRoom = (props) => {
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log("---INSIDE ws.onmessage !!!!!!!!")
-      console.log('message')
-      console.log(message) 
+      console.log("---INSIDE ws.onmessage !!!!!!!!");
+      console.log("message");
+      console.log(message);
 
       if (message.action === "sendURL") {
         const url = message.url;
@@ -122,6 +122,7 @@ const CreateRoom = (props) => {
         window.location.href = url;
       }
     };
+  }
 
   useEffect(() => {
     console.log("userData:", userData);
@@ -239,8 +240,6 @@ const CreateRoom = (props) => {
   //   console.log("startSearch()");
 
   //   console.log("'name': " + name);
-
-
 
   //   try {
   //     const data = await dynamoDb.put(userData).promise();
