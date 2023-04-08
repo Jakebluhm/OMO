@@ -105,9 +105,9 @@ const CreateRoom = (props) => {
 
     // Establish WebSocket connection when the user clicks confirm
     const ws = new WebSocket(
-      `wss://86sw6hpi28.execute-api.us-east-1.amazonaws.com/production/?userId=${
+      `wss://1myegfct68.execute-api.us-east-1.amazonaws.com/production/?userId=${
         userData.Item.user
-      }&prompts=${JSON.stringify(userData.Item.prompts)}`
+      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}`
     );
 
     ws.onmessage = (event) => {
