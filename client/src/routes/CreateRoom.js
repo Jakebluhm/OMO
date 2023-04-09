@@ -117,9 +117,11 @@ const CreateRoom = (props) => {
       console.log(message);
 
       if (message.action === "sendURL") {
-        const url = message.url;
+        const uuid = message.uuid;
         // Redirect the user to the URL received from the Lambda function
-        window.location.href = url;
+        //window.location.href = url;
+
+        props.history.push(`/room/${uuid}`, { playerName: name });
       }
     };
   }
