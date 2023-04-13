@@ -121,7 +121,11 @@ const CreateRoom = (props) => {
         // Redirect the user to the URL received from the Lambda function
         //window.location.href = url;
 
-        props.history.push(`/room/${uuid}`, { playerName: name });
+        props.history.push(`/room/${uuid}`, {
+          playerName: name,
+          oddOneOut: true, //CHANGE THIS, NEED TO FIGURE OUT WHICH PROMPT ID WAS SELECTED AND THEN APPEND BOOLEAN THIS USER SELECTED
+          uid: userData.Item.user,
+        });
       }
     };
   }
