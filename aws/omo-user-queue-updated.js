@@ -72,7 +72,7 @@ exports.handler = async (event, context) => {
             console.log("matchedUsers");
             console.log(matchedUsers);
 
-            const uniqueURL = `http://3.136.49.106:8000/${uuid()}`;
+            const uniqueURL = `http://3.136.49.106:80/${uuid()}`;
 
             for (const matchedUser of matchedUsers) {
               // Remove user from the OMOUserQueue table
