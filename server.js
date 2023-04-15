@@ -114,6 +114,6 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
-server.listen(process.env.PORT || 443, () =>
-  console.log("server is running on port 443")
+server.listen(process.env.PORT || 3000, () =>
+  console.log("server is running on port 3000")
 );
