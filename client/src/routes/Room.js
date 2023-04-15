@@ -127,12 +127,14 @@ const Room = (props) => {
               peerID: userID.socketID,
               peerName: userID.name,
               uid: userID.uid,
+              omo: userID.omo,
               peer,
             });
             initPeers.push({
               peerID: userID.socketID,
               peerName: userID.name,
               uid: userID.uid,
+              omo: userID.omo,
               peer: peer,
             });
           });
@@ -163,6 +165,7 @@ const Room = (props) => {
             peerID: payload.callerID,
             peerName: payload.userName.playerName,
             uid: payload.uid,
+            omo: payload.omo,
             peer,
           });
           console.log("before adding peer to peers list:");
@@ -171,6 +174,7 @@ const Room = (props) => {
             peerID: payload.callerID,
             peerName: payload.userName.playerName,
             uid: payload.uid,
+            omo: payload.omo,
             peer: peer,
           };
           console.log("Adding peer to peers list:");
@@ -255,6 +259,7 @@ const Room = (props) => {
         signal,
         name,
         uid,
+        oddOneOut,
       });
       console.log("peersRef after signal createPeer");
       console.log(peersRef);
@@ -309,7 +314,7 @@ const Room = (props) => {
     return false;
   });
   return (
-    <Container style={{ border: "5px solid rgba(0, 255, 255, 1)" }}>
+    <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
       {isRoomFull && (
         <div
           style={{
@@ -348,7 +353,7 @@ const Room = (props) => {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          border: "5px solid rgba(0, 255, 0, 1)",
+          border: "0px solid rgba(0, 255, 0, 1)",
         }}
       >
         <div>
@@ -360,7 +365,7 @@ const Room = (props) => {
               alignItems: "center",
               height: "400px",
               width: "400px",
-              border: "5px solid rgba(255, 0, 0, 1)",
+              border: "0px solid rgba(255, 0, 0, 1)",
             }}
           >
             <StyledVideo
@@ -400,7 +405,7 @@ const Room = (props) => {
                     alignItems: "center",
                     height: "400px",
                     width: "400px",
-                    border: "5px solid rgba(0, 255, 0, 1)",
+                    border: "0px solid rgba(0, 255, 0, 1)",
                   }}
                 >
                   <Video
@@ -410,7 +415,9 @@ const Room = (props) => {
                   />
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <label style={{ padding: 5 }}>{peer.peerName}</label>
+                  <label style={{ padding: 5 }}>
+                    {peer.peerName + ": " + peer.omo}
+                  </label>
                 </div>
               </div>
             );
