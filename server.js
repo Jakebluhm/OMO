@@ -114,5 +114,6 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
-const port = process.env.NODE_ENV === "production" ? 80 : 8000;
-server.listen(port, () => console.log(`server is running on port ${port}`));
+server.listen(process.env.PORT || 443, () =>
+  console.log("server is running on port 443")
+);
