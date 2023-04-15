@@ -62,6 +62,74 @@ const CreateRoom = (props) => {
 
   // }, [selectedAnswer]);
 
+  // This runs on mount and establishes a listener for a websocket signal from aws lambda
+  // That tells the client the url of the Room this user has been matched to.
+  // useEffect(() => {
+  //   const userData = {
+  //     TableName: "OMOUserQueue",
+  //     Item: {
+  //       user: uuid(),
+  //       prompts: [],
+  //     },
+  //   };
+
+  //   const ws = new WebSocket(
+  //     `wss://86sw6hpi28.execute-api.us-east-1.amazonaws.com/production/?userId=${
+  //       userData.Item.user
+  //     }&prompts=${JSON.stringify(userData.Item.prompts)}`
+  //   );
+
+  //   // const ws = new WebSocket(
+  //   //   "wss://86sw6hpi28.execute-api.us-east-1.amazonaws.com/production/"
+  //   // );
+
+  //   ws.onmessage = (event) => {
+  //     const message = JSON.parse(event.data);
+
+  //     if (message.action === "sendURL") {
+  //       const url = message.url;
+  //       // Redirect the user to the URL received from the Lambda function
+  //       window.location.href = url;
+  //     }
+  //   };
+
+  //   return () => {
+  //     if (ws && ws.readyState === WebSocket.OPEN) {
+  //       ws.close();
+  //     }
+  //   };
+  // }, []);
+  // Callback for confirm under Name entry
+  async function startSearch() {
+    console.log("startSearch() Establishing WebSocket Connection");
+
+    // Establish WebSocket connection when the user clicks confirm
+    const ws = new WebSocket(
+      `wss://1myegfct68.execute-api.us-east-1.amazonaws.com/production/?userId=${
+        userData.Item.user
+      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}`
+    );
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("---INSIDE ws.onmessage !!!!!!!!");
+      console.log("message");
+      console.log(message);
+
+      if (message.action === "sendURL") {
+        const uuid = message.uuid;
+        // Redirect the user to the URL received from the Lambda function
+        //window.location.href = url;
+
+        props.history.push(`/room/${uuid}`, {
+          playerName: name,
+          oddOneOut: true, //CHANGE THIS, NEED TO FIGURE OUT WHICH PROMPT ID WAS SELECTED AND THEN APPEND BOOLEAN THIS USER SELECTED
+          uid: userData.Item.user,
+        });
+      }
+    };
+  }
+
   useEffect(() => {
     console.log("userData:", userData);
   }, [userData]);
@@ -174,20 +242,20 @@ const CreateRoom = (props) => {
   }
 
   // Callback for confirm under Name entry
-  async function startSearch() {
-    console.log("startSearch()");
+  // async function startSearch() {
+  //   console.log("startSearch()");
 
-    console.log("'name': " + name);
+  //   console.log("'name': " + name);
 
-    try {
-      const data = await dynamoDb.put(userData).promise();
-      console.log("Success", data);
-      console.log("toggling modal");
-      toggleModal();
-    } catch (err) {
-      console.log("Error", err);
-    }
-  }
+  //   try {
+  //     const data = await dynamoDb.put(userData).promise();
+  //     console.log("Success", data);
+  //     console.log("toggling modal");
+  //     toggleModal();
+  //   } catch (err) {
+  //     console.log("Error", err);
+  //   }
+  // }
   const handleNameChange = (e) => {
     console.log(`New name value: ${e.target.value}`);
     const currentName = e.target.value;

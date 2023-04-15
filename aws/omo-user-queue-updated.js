@@ -1,6 +1,29 @@
 const AWS = require("aws-sdk");
 const dynamodb = new AWS.DynamoDB();
 const docClient = new AWS.DynamoDB.DocumentClient();
+const { v1: uuid } = require("uuid");
+
+// Add the sendURLToClient function
+async function sendURLToClient(connectionId, uuid) {
+  console.log("------ sendURLToClient");
+  console.log("connectionId");
+  console.log(connectionId);
+  const apiGateway = new AWS.ApiGatewayManagementApi({
+    apiVersion: "2018-11-29",
+    endpoint:
+      "https://1myegfct68.execute-api.us-east-1.amazonaws.com/production",
+  });
+  try {
+    await apiGateway
+      .postToConnection({
+        ConnectionId: connectionId,
+        Data: JSON.stringify({ action: "sendURL", uuid }),
+      })
+      .promise();
+  } catch (error) {
+    console.error("Error sending URL to client:", error);
+  }
+}
 
 exports.handler = async (event, context) => {
   const tableName = "OMOUserQueue";
@@ -49,6 +72,9 @@ exports.handler = async (event, context) => {
             const matchedUsers = [user, ...match];
             console.log("matchedUsers");
             console.log(matchedUsers);
+
+            const uniqueUUID = `${uuid()}`;
+
             for (const matchedUser of matchedUsers) {
               // Remove user from the OMOUserQueue table
               const deleteParams = {
@@ -57,8 +83,9 @@ exports.handler = async (event, context) => {
               };
 
               // Send signal with unique URL to each matched user
+              await sendURLToClient(matchedUser.connectionId, uniqueUUID);
 
-              //await docClient.delete(deleteParams).promise();
+              await docClient.delete(deleteParams).promise();
             }
           }
         } else {
