@@ -142,7 +142,7 @@ const Room = (props) => {
 
     socketRef.current.emit("vote cast", {
       voterId: uid.uid,
-      votedUserId: user.id,
+      votedUserId: user.uid,
       roomId: roomID,
     });
   };
