@@ -129,11 +129,23 @@ const CreateRoom = (props) => {
         console.log("oddOneOutValue");
         console.log(oddOneOutValue);
 
+        console.log("Type of promptId");
+        console.log(typeof promptId);
+
         console.log("promptId");
         console.log(promptId);
 
+        console.log("Type of dummyPrompts[0].id");
+        console.log(typeof dummyPrompts[0].id);
+
         console.log("dummyPrompts");
         console.log(dummyPrompts);
+
+        const matchingPrompt = dummyPrompts.find(
+          (promptObj) => promptObj.id === promptId
+        );
+        console.log("matchingPrompt");
+        console.log(matchingPrompt);
 
         props.history.push(`/room/${uuid}`, {
           playerName: name,
