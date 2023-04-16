@@ -139,7 +139,7 @@ const Room = (props) => {
     console.log("handleUserVote user");
     console.log(user);
     console.log("handleUserVote roomId");
-    console.log(roomId);
+    console.log(roomID);
     // Add code to communicate the vote to other users
 
     socketRef.current.emit("vote cast", {
