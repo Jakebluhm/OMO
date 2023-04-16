@@ -460,7 +460,7 @@ const Room = (props) => {
               <h2>Select the odd man out:</h2>
               {filteredPeers.map((peer) => (
                 <div key={peer.id}>
-                  {peer.peerName} - Votes: {voteCounts[peer.id] || 0}
+                  {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
                   <VoteButton
                     onClick={() => {
                       handleUserVote(peer);
