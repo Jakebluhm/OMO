@@ -46,6 +46,9 @@ io.on("connection", (socket) => {
     console.log(`Emitted update users event to room ${payload.roomID}`); // For server UI??
 
     socketToRoom[socket.id] = payload.roomID;
+
+    // Add this socket connection (Client that triggered this) to the roomId they are in
+    socket.join(payload.roomID);
     console.log("users");
     console.log(users);
     const usersInThisRoom = users[payload.roomID].filter(
