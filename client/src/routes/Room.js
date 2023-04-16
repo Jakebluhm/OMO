@@ -23,7 +23,7 @@ const Timer = styled.div`
   right: 20px;
   font-size: 24px;
   font-weight: bold;
-  color: white;
+  color: black;
 `;
 
 const ModalContainer = styled.div`
@@ -156,6 +156,7 @@ const Room = (props) => {
     console.log("Begining of useEffect in Room.js");
 
     console.log("Trying to read peers from storage");
+    startTimer();
 
     // if(window.localStorage["peers"]){
     //     console.log('peers were found in local storage in local storage, trying to get them...')
@@ -223,8 +224,6 @@ const Room = (props) => {
           console.log("---------ROOM FULL---------");
 
           setIsRoomFull(true);
-
-          startTimer();
         });
 
         //------------------ Callbacks--------------------
@@ -430,7 +429,7 @@ const Room = (props) => {
               <h2>Select the odd man out:</h2>
               {peers.map((peer) => (
                 <div key={peer.id}>
-                  {peer.name}
+                  {peer.peerName}
                   <VoteButton onClick={() => handleUserVote(peer)}>
                     Vote
                   </VoteButton>
