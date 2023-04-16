@@ -17,6 +17,49 @@ const StyledVideo = styled.video`
   width: 400px;
 `;
 
+const Timer = styled.div`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+`;
+
+const ModalContainer = styled.div`
+  display: ${(props) => (props.isOpen ? "block" : "none")};
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  text-align: center;
+`;
+
+const VoteButton = styled.button`
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 2px;
+  cursor: pointer;
+`;
+
 const Video = (props) => {
   const ref = useRef();
   useEffect(() => {
@@ -56,6 +99,37 @@ const Room = (props) => {
   const [peers, setPeers] = useState([]);
   //const [peerNames, setPeerNames]  = useState([]);
   const [isRoomFull, setIsRoomFull] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+    setSelectedUser(null);
+  };
+  const handleUserVote = (user) => {
+    setSelectedUser(user);
+    // Add code to communicate the vote to other users
+  };
+
+  const [timeLeft, setTimeLeft] = useState(120);
+  const formatTime = (time) =>
+    `${Math.floor(time / 60)}:${time % 60 < 10 ? "0" : ""}${time % 60}`;
+
+  const startTimer = () => {
+    const interval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(interval);
+          // Call toggle modal
+          toggleModal();
+          // You can call the function to show the modal here
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  };
+
   const socketRef = useRef();
   const userVideo = useRef();
   const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
@@ -149,6 +223,8 @@ const Room = (props) => {
           console.log("---------ROOM FULL---------");
 
           setIsRoomFull(true);
+
+          startTimer();
         });
 
         //------------------ Callbacks--------------------
@@ -315,6 +391,7 @@ const Room = (props) => {
   });
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
+      <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
         <div
           style={{
@@ -345,6 +422,27 @@ const Room = (props) => {
           </div>
         </div>
       )}
+
+      <ModalContainer isOpen={isModalOpen}>
+        <ModalContent>
+          {selectedUser === null ? (
+            <>
+              <h2>Select the odd man out:</h2>
+              {peers.map((peer) => (
+                <div key={peer.id}>
+                  {peer.name}
+                  <VoteButton onClick={() => handleUserVote(peer)}>
+                    Vote
+                  </VoteButton>
+                </div>
+              ))}
+            </>
+          ) : (
+            <h2>Waiting for results...</h2>
+          )}
+          <button onClick={toggleModal}>Close</button>
+        </ModalContent>
+      </ModalContainer>
 
       <div
         style={{
