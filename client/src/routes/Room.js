@@ -100,15 +100,13 @@ const Room = (props) => {
   //const [peerNames, setPeerNames]  = useState([]);
   const [isRoomFull, setIsRoomFull] = useState(false);
 
+  const [voteCounts, setVoteCounts] = useState({});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     setSelectedUser(null);
-  };
-  const handleUserVote = (user) => {
-    setSelectedUser(user);
-    // Add code to communicate the vote to other users
   };
 
   const [timeLeft, setTimeLeft] = useState(20);
@@ -134,6 +132,20 @@ const Room = (props) => {
   const userVideo = useRef();
   const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
   const roomID = props.match.params.roomID;
+
+  const handleUserVote = (user) => {
+    console.log("----- Inside handleUserVote");
+    setSelectedUser(user);
+    console.log("handleUserVote user");
+    console.log(user);
+    // Add code to communicate the vote to other users
+
+    socketRef.current.emit("vote cast", {
+      voterId: uid.uid,
+      votedUserId: user.id,
+      roomId: roomID,
+    });
+  };
 
   useEffect(() => {
     console.log("--------------useEffect 1---------------");
@@ -227,6 +239,23 @@ const Room = (props) => {
         });
 
         //------------------ Callbacks--------------------
+
+        socketRef.current.on("vote update", (payload) => {
+          const { voterId, votedUserId } = payload;
+          console.log("vote update received!");
+          console.log("payload");
+          console.log(payload);
+          // Update the UI or process the vote information as needed
+          setVoteCounts((prevVoteCounts) => {
+            const updatedVoteCounts = { ...prevVoteCounts };
+            if (updatedVoteCounts[votedUserId]) {
+              updatedVoteCounts[votedUserId] += 1;
+            } else {
+              updatedVoteCounts[votedUserId] = 1;
+            }
+            return updatedVoteCounts;
+          });
+        });
 
         //  Callback for when someone joined the room?
         socketRef.current.on("user joined", (payload) => {
@@ -429,7 +458,7 @@ const Room = (props) => {
               <h2>Select the odd man out:</h2>
               {filteredPeers.map((peer) => (
                 <div key={peer.id}>
-                  {peer.peerName}
+                  {peer.peerName} - Votes: {voteCounts[peer.id] || 0}
                   <VoteButton
                     onClick={() => {
                       handleUserVote(peer);

@@ -56,6 +56,19 @@ io.on("connection", (socket) => {
     socket.emit("all users", usersInThisRoom);
   });
 
+  socket.on("vote cast", (payload) => {
+    const { voterId, votedUserId, roomId } = payload;
+    console.log("vote cast received!");
+    console.log("voterId");
+    console.log(voterId);
+    console.log("votedUserId");
+    console.log(votedUserId);
+    // You can store the vote information in a data structure or process it as needed
+
+    // Broadcast the vote information to other users in the same room
+    socket.broadcast.to(roomId).emit("vote update", { voterId, votedUserId });
+  });
+
   socket.on("sending signal", (payload) => {
     console.log("Emitting User Joined");
     // console.log('payload.uid.uid')
