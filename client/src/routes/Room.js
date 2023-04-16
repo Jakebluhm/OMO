@@ -111,7 +111,7 @@ const Room = (props) => {
     // Add code to communicate the vote to other users
   };
 
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(20);
   const formatTime = (time) =>
     `${Math.floor(time / 60)}:${time % 60 < 10 ? "0" : ""}${time % 60}`;
 
@@ -427,10 +427,16 @@ const Room = (props) => {
           {selectedUser === null ? (
             <>
               <h2>Select the odd man out:</h2>
-              {peers.map((peer) => (
+              {filteredPeers.map((peer) => (
                 <div key={peer.id}>
                   {peer.peerName}
-                  <VoteButton onClick={() => handleUserVote(peer)}>
+                  <VoteButton
+                    onClick={() => {
+                      handleUserVote(peer);
+                      console.log("filteredPeers");
+                      console.log(filteredPeers);
+                    }}
+                  >
                     Vote
                   </VoteButton>
                 </div>
