@@ -6,6 +6,7 @@ git pull
 npm ci
 cd client
 NODE_OPTIONS="--max-old-space-size=4096" npm run build
-cd ..
+cd .. 
+echo "Deploying and serving OMO..."
 node server.js
 
