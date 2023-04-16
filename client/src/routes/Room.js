@@ -385,6 +385,8 @@ const Room = (props) => {
             <label style={{ padding: 5 }}>
               {typeof oddOneOut !== "undefined" && oddOneOut != null
                 ? oddOneOut.oddOneOut
+                  ? "true"
+                  : "false"
                 : "empty"}
             </label>
           </div>
