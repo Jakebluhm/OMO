@@ -129,8 +129,11 @@ const CreateRoom = (props) => {
         console.log("oddOneOutValue");
         console.log(oddOneOutValue);
 
-        // Redirect the user to the URL received from the Lambda function
-        //window.location.href = url;
+        console.log("promptId");
+        console.log(promptId);
+
+        console.log("dummyPrompts");
+        console.log(dummyPrompts);
 
         props.history.push(`/room/${uuid}`, {
           playerName: name,
