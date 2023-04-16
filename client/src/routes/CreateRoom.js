@@ -142,7 +142,7 @@ const CreateRoom = (props) => {
         console.log(dummyPrompts);
 
         const matchingPrompt = dummyPrompts.find(
-          (promptObj) => promptObj.id === promptId
+          (promptObj) => promptObj.id === Number(promptId)
         );
         console.log("matchingPrompt");
         console.log(matchingPrompt);
@@ -151,7 +151,7 @@ const CreateRoom = (props) => {
           playerName: name,
           oddOneOut: oddOneOutValue,
           uid: userData.Item.user,
-          prompt: dummyPrompts.find((promptObj) => promptObj.id === promptId),
+          prompt: matchingPrompt,
         });
       }
     };
