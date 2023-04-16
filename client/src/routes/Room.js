@@ -382,6 +382,11 @@ const Room = (props) => {
                 ? name.playerName
                 : "empty"}
             </label>
+            <label style={{ padding: 5 }}>
+              {typeof oddOneOut !== "undefined" && oddOneOut != null
+                ? oddOneOut.oddOneOut
+                : "empty"}
+            </label>
           </div>
         </div>
         {peers.length > 0 &&
