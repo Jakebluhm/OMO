@@ -95,6 +95,12 @@ const Room = (props) => {
   console.log("uid?");
   console.log(uid);
 
+  const currentPlayer = {
+    peerName: playerInfo.playerName,
+    uid: playerInfo.uid,
+    omo: playerInfo.oddOneOut,
+  };
+
   // ------------------- STATE VARIABLES ----------------
   const [peers, setPeers] = useState([]);
   //const [peerNames, setPeerNames]  = useState([]);
@@ -455,12 +461,16 @@ const Room = (props) => {
 
       <ModalContainer isOpen={isModalOpen}>
         <ModalContent>
-          {selectedUser === null ? (
-            <>
-              <h2>Select the odd man out:</h2>
-              {filteredPeers.map((peer) => (
-                <div key={peer.id}>
-                  {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+          <>
+            <h2>Select the odd man out:</h2>
+            <div key={currentPlayer.uid}>
+              {currentPlayer.peerName} - Votes:{" "}
+              {voteCounts[currentPlayer.uid] || 0}
+            </div>
+            {filteredPeers.map((peer) => (
+              <div key={peer.id}>
+                {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+                {selectedUser === null && (
                   <VoteButton
                     onClick={() => {
                       handleUserVote(peer);
@@ -470,12 +480,10 @@ const Room = (props) => {
                   >
                     Vote
                   </VoteButton>
-                </div>
-              ))}
-            </>
-          ) : (
-            <h2>Waiting for results...</h2>
-          )}
+                )}
+              </div>
+            ))}
+          </>
           <button onClick={toggleModal}>Close</button>
         </ModalContent>
       </ModalContainer>
