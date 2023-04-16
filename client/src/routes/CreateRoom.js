@@ -118,12 +118,23 @@ const CreateRoom = (props) => {
 
       if (message.action === "sendURL") {
         const uuid = message.uuid;
+        const promptId = message.promptId;
+
+        // Find the corresponding prompt object and parse its value
+        const prompt = userData.Item.prompts.find(
+          (p) => Object.keys(JSON.parse(p))[0] === promptId
+        );
+        const oddOneOutValue = JSON.parse(prompt)[promptId];
+
+        console.log("oddOneOutValue");
+        console.log(oddOneOutValue);
+
         // Redirect the user to the URL received from the Lambda function
         //window.location.href = url;
 
         props.history.push(`/room/${uuid}`, {
           playerName: name,
-          oddOneOut: true, //CHANGE THIS, NEED TO FIGURE OUT WHICH PROMPT ID WAS SELECTED AND THEN APPEND BOOLEAN THIS USER SELECTED
+          oddOneOut: oddOneOutValue,
           uid: userData.Item.user,
         });
       }

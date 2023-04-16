@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
       callerID: payload.callerID,
       userName: payload.name,
       uid: payload.uid.uid,
+      omo: payload.oddOneOut.oddOneOut,
     });
   });
 

@@ -4,7 +4,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const { v1: uuid } = require("uuid");
 
 // Add the sendURLToClient function
-async function sendURLToClient(connectionId, uuid) {
+async function sendURLToClient(connectionId, uuid, promptId) {
   console.log("------ sendURLToClient");
   console.log("connectionId");
   console.log(connectionId);
@@ -17,7 +17,7 @@ async function sendURLToClient(connectionId, uuid) {
     await apiGateway
       .postToConnection({
         ConnectionId: connectionId,
-        Data: JSON.stringify({ action: "sendURL", uuid }),
+        Data: JSON.stringify({ action: "sendURL", uuid, promptId }),
       })
       .promise();
   } catch (error) {
@@ -69,10 +69,12 @@ exports.handler = async (event, context) => {
 
             // Handle the match, send a unique URL to matched users
             // Remove matched users from the OMOUserQueue table
-            const matchedUsers = [user, ...match];
+            const matchedUsers = [user, ...match.matches];
             console.log("matchedUsers");
             console.log(matchedUsers);
 
+            // Payload
+            const promptId = match.promptId;
             const uniqueUUID = `${uuid()}`;
 
             for (const matchedUser of matchedUsers) {
@@ -83,7 +85,11 @@ exports.handler = async (event, context) => {
               };
 
               // Send signal with unique URL to each matched user
-              await sendURLToClient(matchedUser.connectionId, uniqueUUID);
+              await sendURLToClient(
+                matchedUser.connectionId,
+                uniqueUUID,
+                promptId
+              );
 
               await docClient.delete(deleteParams).promise();
             }
@@ -102,16 +108,20 @@ exports.handler = async (event, context) => {
 
 // Matchmaking function
 function findMatch(user, users) {
-  // Add your matchmaking algorithm here
-  // For example, find two other users with the same answer to the same question
   const potentialMatches = [];
+
+  let commonPromptId = null;
 
   for (const otherUser of users) {
     if (otherUser.user !== user.user) {
       for (const prompt of user.prompts) {
-        const otherUserPrompt = otherUser.prompts.find((p) => p.S === prompt.S);
-        if (otherUserPrompt && otherUserPrompt.S === prompt.S) {
+        const promptId = Object.keys(prompt)[0];
+        const otherUserPrompt = otherUser.prompts.find(
+          (p) => Object.keys(p)[0] === promptId
+        );
+        if (otherUserPrompt && otherUserPrompt[promptId] === prompt[promptId]) {
           potentialMatches.push(otherUser);
+          commonPromptId = promptId;
           break;
         }
       }
@@ -119,7 +129,7 @@ function findMatch(user, users) {
   }
 
   if (potentialMatches.length >= 2) {
-    return potentialMatches.slice(0, 2);
+    return { matches: potentialMatches.slice(0, 2), promptId: commonPromptId };
   }
   return null;
 }
