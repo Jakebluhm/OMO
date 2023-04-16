@@ -138,6 +138,8 @@ const Room = (props) => {
     setSelectedUser(user);
     console.log("handleUserVote user");
     console.log(user);
+    console.log("handleUserVote roomId");
+    console.log(roomId);
     // Add code to communicate the vote to other users
 
     socketRef.current.emit("vote cast", {

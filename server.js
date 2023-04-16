@@ -63,6 +63,8 @@ io.on("connection", (socket) => {
     console.log(voterId);
     console.log("votedUserId");
     console.log(votedUserId);
+    console.log("roomId");
+    console.log(roomId);
     // You can store the vote information in a data structure or process it as needed
 
     // Broadcast the vote information to other users in the same room
