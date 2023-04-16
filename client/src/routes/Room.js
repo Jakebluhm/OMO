@@ -95,6 +95,10 @@ const Room = (props) => {
   console.log("uid?");
   console.log(uid);
 
+  const prompt = { prompt: playerInfo.prompt };
+  console.log("prompt?");
+  console.log(prompt);
+
   const currentPlayer = {
     peerName: playerInfo.playerName,
     uid: playerInfo.uid,
@@ -427,6 +431,9 @@ const Room = (props) => {
   });
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
+      <div>
+        <h3>{prompt.prompt.question}</h3>
+      </div>
       <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
         <div

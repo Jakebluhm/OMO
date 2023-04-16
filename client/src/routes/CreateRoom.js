@@ -136,6 +136,7 @@ const CreateRoom = (props) => {
           playerName: name,
           oddOneOut: oddOneOutValue,
           uid: userData.Item.user,
+          prompt: dummyPrompts.find((promptObj) => promptObj.id === promptId),
         });
       }
     };
