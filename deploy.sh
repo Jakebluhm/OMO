@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Fetching changes from remote..."
 git fetch --all
 git checkout barebonesGame
 git pull
