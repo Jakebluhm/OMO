@@ -242,23 +242,6 @@ const Room = (props) => {
 
         //------------------ Callbacks--------------------
 
-        socketRef.current.on("vote update", (payload) => {
-          const { voterId, votedUserId } = payload;
-          console.log("vote update received!");
-          console.log("payload");
-          console.log(payload);
-          // Update the UI or process the vote information as needed
-          setVoteCounts((prevVoteCounts) => {
-            const updatedVoteCounts = { ...prevVoteCounts };
-            if (updatedVoteCounts[votedUserId]) {
-              updatedVoteCounts[votedUserId] += 1;
-            } else {
-              updatedVoteCounts[votedUserId] = 1;
-            }
-            return updatedVoteCounts;
-          });
-        });
-
         //  Callback for when someone joined the room?
         socketRef.current.on("user joined", (payload) => {
           console.log("--------------user joined---------------");
@@ -319,6 +302,23 @@ const Room = (props) => {
           console.log(peersRef);
           //console.log("receiving returned signal  " + [item.peer._id] + "   " + "   " + payload.userName.playerName)
           //setPeerNames(oldArray => [...oldArray, { [item.peer._id] : payload.userName.playerName} ]);
+        });
+
+        socketRef.current.on("vote update", (payload) => {
+          const { voterId, votedUserId } = payload;
+          console.log("vote update received!");
+          console.log("payload");
+          console.log(payload);
+          // Update the UI or process the vote information as needed
+          setVoteCounts((prevVoteCounts) => {
+            const updatedVoteCounts = { ...prevVoteCounts };
+            if (updatedVoteCounts[votedUserId]) {
+              updatedVoteCounts[votedUserId] += 1;
+            } else {
+              updatedVoteCounts[votedUserId] = 1;
+            }
+            return updatedVoteCounts;
+          });
         });
       })
       .catch((error) => {

@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
     // You can store the vote information in a data structure or process it as needed
 
     // Broadcast the vote information to other users in the same room
-    socket.broadcast.to(roomId).emit("vote update", { voterId, votedUserId });
+    io.in(roomId).emit("vote update", { voterId, votedUserId });
   });
 
   socket.on("sending signal", (payload) => {
