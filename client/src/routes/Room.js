@@ -110,6 +110,9 @@ const Room = (props) => {
   //const [peerNames, setPeerNames]  = useState([]);
   const [isRoomFull, setIsRoomFull] = useState(false);
 
+  const [identityATally, setIdentityATally] = useState(0);
+  const [identityBTally, setIdentityBTally] = useState(0);
+
   const [voteCounts, setVoteCounts] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -177,22 +180,18 @@ const Room = (props) => {
   useEffect(() => {
     console.log("--------------useEffect 2---------------");
 
+    // if (oddOneOut.oddOneOut === 0) {
+    //   setIdentityATally(identityATally + 1);
+    // } else if (oddOneOut.oddOneOut === 0) {
+    //   setIdentityBTally(identityBTally + 1);
+    // } else {
+    //   console.log("invalid oddOneOut Value!!!!!");
+    // }
+
     console.log("Begining of useEffect in Room.js");
 
     console.log("Trying to read peers from storage");
     startTimer();
-
-    // if(window.localStorage["peers"]){
-    //     console.log('peers were found in local storage in local storage, trying to get them...')
-    //     const peersFromLocalStorage = window.localStorage.getItem('peers')
-
-    //     console.log('-------peersFromLocalStorage')
-    //     console.log(peersFromLocalStorage)
-    //     setPeers(JSON.parse(peersFromLocalStorage));
-    // }
-    // else{
-    //     console.log('No peers stored in local storage')
-    // }
 
     console.log("Getting all users currently in room");
     socketRef.current = io.connect("/");
@@ -330,6 +329,24 @@ const Room = (props) => {
             return updatedVoteCounts;
           });
         });
+
+        socketRef.current.on("room ready", () => {
+          console.log("---------ROOM READY---------");
+
+          let newIdentityATally = oddOneOut === 0 ? 1 : 0;
+          let newIdentityBTally = oddOneOut === 1 ? 1 : 0;
+
+          peers.forEach((peer) => {
+            if (peer.omo === 0) {
+              newIdentityATally++;
+            } else if (peer.omo === 1) {
+              newIdentityBTally++;
+            }
+          });
+
+          setIdentityATally(newIdentityATally);
+          setIdentityBTally(newIdentityBTally);
+        });
       })
       .catch((error) => {
         // TODO: Handle error where user web cam or microphone could not be found
@@ -432,7 +449,11 @@ const Room = (props) => {
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
       <div>
-        <h3>{prompt.prompt.question}</h3>
+        <h3>
+          {identityATally} + " " + {prompt.prompt.identityA} " - "{" "}
+          {identityBTally} + " " + {prompt.prompt.identityB}
+        </h3>
+        <h2>"Find the Odd Man Out"</h2>
       </div>
       <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
@@ -534,8 +555,6 @@ const Room = (props) => {
             <label style={{ padding: 5 }}>
               {typeof oddOneOut !== "undefined" && oddOneOut != null
                 ? oddOneOut.oddOneOut
-                  ? "true"
-                  : "false"
                 : "empty"}
             </label>
           </div>

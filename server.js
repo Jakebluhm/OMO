@@ -15,7 +15,7 @@ io.on("connection", (socket) => {
     console.log("payload");
     console.log(payload);
     if (users[payload.roomID]) {
-      const length = users[payload.roomID].length;
+      var length = users[payload.roomID].length;
       if (length === 3) {
         socket.emit("room full");
         return;
@@ -40,6 +40,7 @@ io.on("connection", (socket) => {
     console.log("--------USERS---------");
     console.log("users:", users);
 
+    //Not sure this is used
     io.emit("update users", {
       allUsers: users,
     });
@@ -56,6 +57,14 @@ io.on("connection", (socket) => {
     );
     console.log("usersInThisRoom");
     console.log(usersInThisRoom);
+
+    length = users[payload.roomID].length;
+    if (length === 3) {
+      console.log("--- Sending room ready to " + payload.roomID);
+      io.in(payload.roomID).emit("room ready");
+    }
+
+    //This needs to be sent to room specific socket, see above
     socket.emit("all users", usersInThisRoom);
   });
 
