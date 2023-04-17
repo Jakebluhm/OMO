@@ -336,6 +336,11 @@ const Room = (props) => {
           let newIdentityATally = oddOneOut === 0 ? 1 : 0;
           let newIdentityBTally = oddOneOut === 1 ? 1 : 0;
 
+          console.log("newIdentityATally before loop");
+          console.log(newIdentityATally);
+          console.log("newIdentityBTally before loop");
+          console.log(newIdentityBTally);
+          console.log("entering loop - peers.length" + peers.length);
           peers.forEach((peer) => {
             if (peer.omo === 0) {
               newIdentityATally++;
@@ -343,6 +348,11 @@ const Room = (props) => {
               newIdentityBTally++;
             }
           });
+
+          console.log("newIdentityATally after loop");
+          console.log(newIdentityATally);
+          console.log("newIdentityBTally after loop");
+          console.log(newIdentityBTally);
 
           setIdentityATally(newIdentityATally);
           setIdentityBTally(newIdentityBTally);
@@ -450,10 +460,10 @@ const Room = (props) => {
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
       <div>
         <h3>
-          {identityATally} + " " + {prompt.prompt.identityA} " - "{" "}
-          {identityBTally} + " " + {prompt.prompt.identityB}
+          {identityATally} {prompt.prompt.identityA} - {identityBTally}
+          {prompt.prompt.identityB}
         </h3>
-        <h2>"Find the Odd Man Out"</h2>
+        <h4>Find the Odd Man Out</h4>
       </div>
       <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
