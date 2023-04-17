@@ -4,16 +4,16 @@ import { useState } from "react";
 function PromptComponent({ prompt, onButtonClick }) {
   const [isAnswered, setIsAnswered] = useState(false);
 
-  const handleOddManOutSelected = () => {
-    console.log("Odd man out selected");
+  const handleIdentityASelected = () => {
+    console.log("Identity A selected");
     setIsAnswered(true);
-    onButtonClick({ [prompt.id]: false });
+    onButtonClick({ [prompt.id]: 0 });
   };
 
-  const handleTruthTellerSelected = () => {
-    console.log("Truth teller selected");
+  const handleIdentityBSelected = () => {
+    console.log("Identity B selected");
     setIsAnswered(true);
-    onButtonClick({ [prompt.id]: true });
+    onButtonClick({ [prompt.id]: 1 });
   };
 
   const divStyle = {
@@ -27,30 +27,17 @@ function PromptComponent({ prompt, onButtonClick }) {
     <div style={divStyle}>
       <button
         label={prompt.id}
-        onClick={handleOddManOutSelected}
-        style={{ marginRight: 10, width: 50 }}
+        onClick={handleIdentityASelected}
+        style={{ marginRight: 10, width: 150 }}
       >
-        {" "}
-        {prompt.omoAns}{" "}
+        {prompt.identityA}
       </button>
-      <label
-        style={{
-          flex: 1,
-          wordWrap: "break-word",
-          maxWidth: "300px",
-          textAlign: "center",
-          padding: 5,
-        }}
-      >
-        {prompt.question}
-      </label>
       <button
         label={prompt.id}
-        onClick={handleTruthTellerSelected}
-        style={{ marginLeft: 10, width: 50 }}
+        onClick={handleIdentityBSelected}
+        style={{ marginLeft: 10, width: 150 }}
       >
-        {" "}
-        {prompt.notOmoAns}{" "}
+        {prompt.identityB}
       </button>
     </div>
   );
