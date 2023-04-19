@@ -112,7 +112,36 @@ const Room = (props) => {
 
   const [identityATally, setIdentityATally] = useState(0);
   const [identityBTally, setIdentityBTally] = useState(0);
+  const updateTally = () => {
+    let uniqueIds = new Set();
+    let newIdentityATally = oddOneOut.oddOneOut === 0 ? 1 : 0;
+    let newIdentityBTally = oddOneOut.oddOneOut === 1 ? 1 : 0;
 
+    console.log("newIdentityATally before loop");
+    console.log(newIdentityATally);
+    console.log("newIdentityBTally before loop");
+    console.log(newIdentityBTally);
+    console.log("entering loop - peers.length" + peers.length);
+
+    peers.forEach((peer) => {
+      if (!uniqueIds.has(peer.uid)) {
+        uniqueIds.add(peer.uid);
+        if (peer.omo === 0) {
+          newIdentityATally++;
+        } else if (peer.omo === 1) {
+          newIdentityBTally++;
+        }
+      }
+    });
+
+    console.log("newIdentityATally after loop");
+    console.log(newIdentityATally);
+    console.log("newIdentityBTally after loop");
+    console.log(newIdentityBTally);
+
+    setIdentityATally(newIdentityATally);
+    setIdentityBTally(newIdentityBTally);
+  };
   const [voteCounts, setVoteCounts] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -239,6 +268,7 @@ const Room = (props) => {
 
           if (initPeers.length > 0) {
             setPeers(initPeers); // JAKE Set peersRef state variable
+            updateTally();
           }
         });
 
@@ -278,6 +308,7 @@ const Room = (props) => {
           console.log("Adding peer to peers list:");
           console.log(tempPeer);
           setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
+          updateTally();
         });
 
         socketRef.current.on("user left", (id) => {
@@ -330,33 +361,33 @@ const Room = (props) => {
           });
         });
 
-        socketRef.current.on("room ready", () => {
-          console.log("---------ROOM READY---------");
+        // socketRef.current.on("room ready", () => {
+        //   console.log("---------ROOM READY---------");
 
-          let newIdentityATally = oddOneOut === 0 ? 1 : 0;
-          let newIdentityBTally = oddOneOut === 1 ? 1 : 0;
+        //   let newIdentityATally = oddOneOut === 0 ? 1 : 0;
+        //   let newIdentityBTally = oddOneOut === 1 ? 1 : 0;
 
-          console.log("newIdentityATally before loop");
-          console.log(newIdentityATally);
-          console.log("newIdentityBTally before loop");
-          console.log(newIdentityBTally);
-          console.log("entering loop - peers.length" + peers.length);
-          peers.forEach((peer) => {
-            if (peer.omo === 0) {
-              newIdentityATally++;
-            } else if (peer.omo === 1) {
-              newIdentityBTally++;
-            }
-          });
+        //   console.log("newIdentityATally before loop");
+        //   console.log(newIdentityATally);
+        //   console.log("newIdentityBTally before loop");
+        //   console.log(newIdentityBTally);
+        //   console.log("entering loop - peers.length" + peers.length);
+        //   peers.forEach((peer) => {
+        //     if (peer.omo === 0) {
+        //       newIdentityATally++;
+        //     } else if (peer.omo === 1) {
+        //       newIdentityBTally++;
+        //     }
+        //   });
 
-          console.log("newIdentityATally after loop");
-          console.log(newIdentityATally);
-          console.log("newIdentityBTally after loop");
-          console.log(newIdentityBTally);
+        //   console.log("newIdentityATally after loop");
+        //   console.log(newIdentityATally);
+        //   console.log("newIdentityBTally after loop");
+        //   console.log(newIdentityBTally);
 
-          setIdentityATally(newIdentityATally);
-          setIdentityBTally(newIdentityBTally);
-        });
+        //   setIdentityATally(newIdentityATally);
+        //   setIdentityBTally(newIdentityBTally);
+        // });
       })
       .catch((error) => {
         // TODO: Handle error where user web cam or microphone could not be found

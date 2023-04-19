@@ -58,11 +58,11 @@ io.on("connection", (socket) => {
     console.log("usersInThisRoom");
     console.log(usersInThisRoom);
 
-    length = users[payload.roomID].length;
-    if (length === 3) {
-      console.log("--- Sending room ready to " + payload.roomID);
-      io.in(payload.roomID).emit("room ready");
-    }
+    // length = users[payload.roomID].length;
+    // if (length === 3) {
+    //   console.log("--- Sending room ready to " + payload.roomID);
+    //   io.in(payload.roomID).emit("room ready");
+    // }
 
     //This needs to be sent to room specific socket, see above
     socket.emit("all users", usersInThisRoom);
