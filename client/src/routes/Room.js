@@ -278,12 +278,16 @@ const Room = (props) => {
         console.log("Countdown finished.");
 
         // Find the real odd man out here and update the state
+        const uniquePeerIds = new Set([currentPlayer.uid]);
         const identityCounts = {
           [currentPlayer.omo]: 1, // Initialize with the current player's identity
         };
 
         peers.forEach((peer) => {
-          identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+          if (!uniquePeerIds.has(peer.uid)) {
+            uniquePeerIds.add(peer.uid);
+            identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+          }
         });
 
         console.log("Identity counts:", identityCounts);
