@@ -60,6 +60,13 @@ const VoteButton = styled.button`
   cursor: pointer;
 `;
 
+// const GameState = {
+//   CONNECTING: "CONNECTING",
+//   INPROGRESS: "INPROGRESS",
+//   VOTING: "VOTING",
+//   RESULTS: "RESULTS"
+// }
+
 const Video = (props) => {
   const ref = useRef();
   useEffect(() => {
@@ -145,6 +152,11 @@ const Room = (props) => {
   }, [peers]);
 
   const [voteCounts, setVoteCounts] = useState({});
+  const [voteComplete, setVoteComplete] = useState(false);
+  const [voteResult, setVoteResult] = useState(null);
+
+  const [countdown, setCountdown] = useState(null);
+  const [realOddManOut, setRealOddManOut] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -196,6 +208,91 @@ const Room = (props) => {
   useEffect(() => {
     updateTally();
   }, [peers, updateTally]);
+
+  useEffect(() => {
+    console.log("voteCounts:");
+    console.log(voteCounts);
+
+    let totalVotes = 0;
+
+    // Loop through the voteCounts object and sum the counts
+    for (const count of Object.values(voteCounts)) {
+      totalVotes += count;
+    }
+
+    console.log("Total votes cast:", totalVotes);
+
+    if (totalVotes === 3) {
+      console.log("Voting complete!!!!!");
+      setVoteComplete(true);
+
+      // Calculate the person with the most votes
+      let maxVotes = 0;
+      let maxVotedUserId = null;
+      let tie = false;
+
+      for (const [userId, count] of Object.entries(voteCounts)) {
+        if (count > maxVotes) {
+          maxVotes = count;
+          maxVotedUserId = userId;
+          tie = false;
+        } else if (count === maxVotes) {
+          tie = true;
+        }
+      }
+
+      console.log("Max votes:", maxVotes);
+      console.log("Max voted user ID:", maxVotedUserId);
+      console.log("Tie:", tie);
+
+      // Set the voteResult or "tie"
+      if (tie) {
+        setVoteResult("tie");
+      } else {
+        const voteResultName = peers.find(
+          (peer) => peer.uid === maxVotedUserId
+        )?.peerName;
+        setVoteResult(voteResultName);
+      }
+    }
+  }, [voteCounts, peers]);
+
+  useEffect(() => {
+    if (voteComplete) {
+      console.log("Voting complete, starting countdown...");
+      setCountdown(3);
+
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => prevCountdown - 1);
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        console.log("Countdown finished.");
+
+        // Find the real odd man out here and update the state
+        const identityCounts = {};
+        peers.forEach((peer) => {
+          identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+        });
+
+        console.log("Identity counts:", identityCounts);
+
+        const minorityIdentity = Object.entries(identityCounts).find(
+          ([, count]) => count === 1
+        )[0];
+
+        console.log("Minority identity:", minorityIdentity);
+
+        const realOddManOutPeer = peers.find(
+          (peer) => peer.omo === parseInt(minorityIdentity)
+        );
+
+        console.log("Real odd man out:", realOddManOutPeer.peerName);
+        setRealOddManOut(realOddManOutPeer.peerName);
+      }, 3000);
+    }
+  }, [voteComplete, peers]);
 
   useEffect(() => {
     console.log("--------------useEffect 1---------------");
@@ -556,6 +653,20 @@ const Room = (props) => {
                 )}
               </div>
             ))}
+            {voteComplete && (
+              <div>
+                <div>Voting Complete</div>
+                <div>
+                  {voteResult === "tie"
+                    ? "It's a tie!"
+                    : `Person with the most votes: ${voteResult}`}
+                </div>
+                <div>Countdown: {countdown}</div>
+                {countdown === 0 && (
+                  <div>Real odd man out: {realOddManOut}</div>
+                )}
+              </div>
+            )}
           </>
           <button onClick={toggleModal}>Close</button>
         </ModalContent>
