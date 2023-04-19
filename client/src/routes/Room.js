@@ -154,6 +154,7 @@ const Room = (props) => {
   const [voteCounts, setVoteCounts] = useState({});
   const [voteComplete, setVoteComplete] = useState(false);
   const [voteResult, setVoteResult] = useState(null);
+  const [isRevote, setIsRevote] = useState(false);
 
   const [countdown, setCountdown] = useState(null);
   const [realOddManOut, setRealOddManOut] = useState(null);
@@ -277,41 +278,55 @@ const Room = (props) => {
         clearInterval(timer);
         console.log("Countdown finished.");
 
-        // Find the real odd man out here and update the state
-        const uniquePeerIds = new Set([currentPlayer.uid]);
-        const identityCounts = {
-          [currentPlayer.omo]: 1, // Initialize with the current player's identity
-        };
+        // If it's a tie, reset the state variables and start a new vote
+        if (voteResult === "tie") {
+          console.log("Vote ended in a tie, resetting the vote...");
 
-        peers.forEach((peer) => {
-          if (!uniquePeerIds.has(peer.uid)) {
-            uniquePeerIds.add(peer.uid);
-            identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
-          }
-        });
+          setIsRevote(true); // Update the isRevote state
 
-        console.log("Identity counts:", identityCounts);
-
-        const minorityIdentity = Object.entries(identityCounts).find(
-          ([, count]) => count === 1
-        )[0];
-
-        console.log("Minority identity:", minorityIdentity);
-
-        let realOddManOutPeer;
-
-        if (currentPlayer.omo === parseInt(minorityIdentity)) {
-          realOddManOutPeer = {
-            peerName: currentPlayer.peerName,
-          };
+          // Reset all relevant state variables
+          setVoteCounts({});
+          setCountdown(null);
+          setVoteComplete(false);
+          setVoteResult(null);
+          setSelectedUser(null);
         } else {
-          realOddManOutPeer = peers.find(
-            (peer) => peer.omo === parseInt(minorityIdentity)
-          );
-        }
+          // Find the real odd man out here and update the state
+          const uniquePeerIds = new Set([currentPlayer.uid]);
+          const identityCounts = {
+            [currentPlayer.omo]: 1, // Initialize with the current player's identity
+          };
 
-        console.log("Real odd man out:", realOddManOutPeer.peerName);
-        setRealOddManOut(realOddManOutPeer.peerName);
+          peers.forEach((peer) => {
+            if (!uniquePeerIds.has(peer.uid)) {
+              uniquePeerIds.add(peer.uid);
+              identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+            }
+          });
+
+          console.log("Identity counts:", identityCounts);
+
+          const minorityIdentity = Object.entries(identityCounts).find(
+            ([, count]) => count === 1
+          )[0];
+
+          console.log("Minority identity:", minorityIdentity);
+
+          let realOddManOutPeer;
+
+          if (currentPlayer.omo === parseInt(minorityIdentity)) {
+            realOddManOutPeer = {
+              peerName: currentPlayer.peerName,
+            };
+          } else {
+            realOddManOutPeer = peers.find(
+              (peer) => peer.omo === parseInt(minorityIdentity)
+            );
+          }
+
+          console.log("Real odd man out:", realOddManOutPeer.peerName);
+          setRealOddManOut(realOddManOutPeer.peerName);
+        }
       }, 3000);
     }
   }, [voteComplete, peers]);
@@ -677,16 +692,19 @@ const Room = (props) => {
             ))}
             {voteComplete && (
               <div>
-                <div>Voting Complete</div>
-                <div>
+                {isRevote && (
+                  <div>
+                    Revote is happening due to a tie. Please vote again.
+                  </div>
+                )}
+                <h2>Voting Complete</h2>
+                <h1>
                   {voteResult === "tie"
                     ? "It's a tie!"
                     : `Person with the most votes: ${voteResult}`}
-                </div>
+                </h1>
                 <div>Countdown: {countdown}</div>
-                {countdown === 0 && (
-                  <div>Real odd man out: {realOddManOut}</div>
-                )}
+                {countdown === 0 && <h1>Real odd man out: {realOddManOut}</h1>}
               </div>
             )}
           </>
