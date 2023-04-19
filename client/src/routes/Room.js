@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
@@ -112,7 +112,8 @@ const Room = (props) => {
 
   const [identityATally, setIdentityATally] = useState(0);
   const [identityBTally, setIdentityBTally] = useState(0);
-  const updateTally = () => {
+
+  const updateTally = useCallback(() => {
     let uniqueIds = new Set();
     let newIdentityATally = oddOneOut.oddOneOut === 0 ? 1 : 0;
     let newIdentityBTally = oddOneOut.oddOneOut === 1 ? 1 : 0;
@@ -141,7 +142,8 @@ const Room = (props) => {
 
     setIdentityATally(newIdentityATally);
     setIdentityBTally(newIdentityBTally);
-  };
+  }, [peers]);
+
   const [voteCounts, setVoteCounts] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -190,6 +192,10 @@ const Room = (props) => {
       roomId: roomID,
     });
   };
+
+  useEffect(() => {
+    updateTally();
+  }, [peers, updateTally]);
 
   useEffect(() => {
     console.log("--------------useEffect 1---------------");
@@ -268,7 +274,6 @@ const Room = (props) => {
 
           if (initPeers.length > 0) {
             setPeers(initPeers); // JAKE Set peersRef state variable
-            updateTally();
           }
         });
 
@@ -308,7 +313,6 @@ const Room = (props) => {
           console.log("Adding peer to peers list:");
           console.log(tempPeer);
           setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
-          updateTally();
         });
 
         socketRef.current.on("user left", (id) => {
