@@ -249,9 +249,16 @@ const Room = (props) => {
       if (tie) {
         setVoteResult("tie");
       } else {
-        const voteResultName = peers.find(
-          (peer) => peer.uid === maxVotedUserId
-        )?.peerName;
+        let voteResultName;
+
+        if (maxVotedUserId === currentPlayer.uid) {
+          voteResultName = currentPlayer.peerName;
+        } else {
+          voteResultName = peers.find(
+            (peer) => peer.uid === maxVotedUserId
+          )?.peerName;
+        }
+
         setVoteResult(voteResultName);
       }
     }
@@ -271,7 +278,10 @@ const Room = (props) => {
         console.log("Countdown finished.");
 
         // Find the real odd man out here and update the state
-        const identityCounts = {};
+        const identityCounts = {
+          [currentPlayer.omo]: 1, // Initialize with the current player's identity
+        };
+
         peers.forEach((peer) => {
           identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
         });
@@ -284,9 +294,17 @@ const Room = (props) => {
 
         console.log("Minority identity:", minorityIdentity);
 
-        const realOddManOutPeer = peers.find(
-          (peer) => peer.omo === parseInt(minorityIdentity)
-        );
+        let realOddManOutPeer;
+
+        if (currentPlayer.omo === parseInt(minorityIdentity)) {
+          realOddManOutPeer = {
+            peerName: currentPlayer.peerName,
+          };
+        } else {
+          realOddManOutPeer = peers.find(
+            (peer) => peer.omo === parseInt(minorityIdentity)
+          );
+        }
 
         console.log("Real odd man out:", realOddManOutPeer.peerName);
         setRealOddManOut(realOddManOutPeer.peerName);
