@@ -64,6 +64,22 @@ const VoteButton = styled.button`
     background-color: #2980b9;
   }
 `;
+const VoteItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+`;
+
+const VoteResult = styled.div`
+  background-color: #f4f4f4;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+`;
 
 const CloseButton = styled.button`
   background-color: #e74c3c;
@@ -212,7 +228,7 @@ const Room = (props) => {
   const roomID = props.match.params.roomID;
 
   const history = useHistory();
-  const [redirectCount, setRedirectCount] = useState(10);
+  const [redirectCount, setRedirectCount] = useState(20);
 
   useEffect(() => {
     if (
@@ -222,7 +238,7 @@ const Room = (props) => {
       setGameComplete(true);
       const timer = setTimeout(() => {
         history.push("/");
-      }, 10000);
+      }, 20000);
 
       const countdownTimer = setInterval(() => {
         setRedirectCount((prev) => prev - 1);
@@ -313,7 +329,7 @@ const Room = (props) => {
   useEffect(() => {
     if (voteComplete) {
       console.log("Voting complete, starting countdown...");
-      setCountdown(3);
+      setCountdown(10);
 
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
@@ -715,13 +731,14 @@ const Room = (props) => {
         <ModalContent>
           <>
             <h1>Select the odd man out:</h1>
-            <div key={currentPlayer.uid}>
-              {currentPlayer.peerName} - Votes:{" "}
-              {voteCounts[currentPlayer.uid] || 0}
-            </div>
+            <VoteItem key={currentPlayer.uid}>
+              <span>{currentPlayer.peerName}</span>
+              <span>- Votes: {voteCounts[currentPlayer.uid] || 0}</span>
+            </VoteItem>
             {filteredPeers.map((peer) => (
-              <div key={peer.id}>
-                {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+              <VoteItem key={peer.id}>
+                <span>{peer.peerName}</span>
+                <span>- Votes: {voteCounts[peer.uid] || 0}</span>
                 {selectedUser === null && (
                   <VoteButton
                     onClick={() => {
@@ -733,25 +750,27 @@ const Room = (props) => {
                     Vote
                   </VoteButton>
                 )}
-              </div>
+              </VoteItem>
             ))}
             {isRevote && (
               <h2>Revote is happening due to a tie. Please vote again.</h2>
             )}
             {voteComplete && (
-              <div>
+              <VoteResult>
                 <h1>Voting Complete</h1>
                 <h2>
                   {voteResult === "tie"
                     ? "It's a tie!"
                     : `Person with the most votes: ${voteResult}`}
                 </h2>
+                <h3>Reveal in {countdown}</h3>
                 <h3>Countdown: {countdown}</h3>
                 {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
-              </div>
+              </VoteResult>
             )}
             {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
+          <CloseButton onClick={toggleModal}>Close</CloseButton>
         </ModalContent>
       </ModalContainer>
 
