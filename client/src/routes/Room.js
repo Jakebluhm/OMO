@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
@@ -155,6 +156,7 @@ const Room = (props) => {
   const [voteComplete, setVoteComplete] = useState(false);
   const [voteResult, setVoteResult] = useState(null);
   const [isRevote, setIsRevote] = useState(false);
+  const [gameComplete, setGameComplete] = useState(false);
 
   const [countdown, setCountdown] = useState(null);
   const [realOddManOut, setRealOddManOut] = useState(null);
@@ -189,6 +191,27 @@ const Room = (props) => {
   const userVideo = useRef();
   const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
   const roomID = props.match.params.roomID;
+
+  const history = useHistory();
+  const [redirectCount, setRedirectCount] = useState(null);
+
+  useEffect(() => {
+    if (voteComplete && (voteResult !== "tie" || isRevote)) {
+      setGameComplete(true);
+      const timer = setTimeout(() => {
+        history.push("/");
+      }, 10000);
+
+      const countdownTimer = setInterval(() => {
+        setRedirectCount((prev) => prev - 1);
+      }, 1000);
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(countdownTimer);
+      };
+    }
+  }, [voteComplete, voteResult, isRevote, history]);
 
   const handleUserVote = (user) => {
     console.log("----- Inside handleUserVote");
@@ -669,7 +692,7 @@ const Room = (props) => {
       <ModalContainer isOpen={isModalOpen}>
         <ModalContent>
           <>
-            <h2>Select the odd man out:</h2>
+            <h1>Select the odd man out:</h1>
             <div key={currentPlayer.uid}>
               {currentPlayer.peerName} - Votes:{" "}
               {voteCounts[currentPlayer.uid] || 0}
@@ -690,23 +713,22 @@ const Room = (props) => {
                 )}
               </div>
             ))}
+            {isRevote && (
+              <h2>Revote is happening due to a tie. Please vote again.</h2>
+            )}
             {voteComplete && (
               <div>
-                {isRevote && (
-                  <div>
-                    Revote is happening due to a tie. Please vote again.
-                  </div>
-                )}
-                <h2>Voting Complete</h2>
-                <h1>
+                <h1>Voting Complete</h1>
+                <h2>
                   {voteResult === "tie"
                     ? "It's a tie!"
                     : `Person with the most votes: ${voteResult}`}
-                </h1>
-                <div>Countdown: {countdown}</div>
-                {countdown === 0 && <h1>Real odd man out: {realOddManOut}</h1>}
+                </h2>
+                <h3>Countdown: {countdown}</h3>
+                {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
               </div>
             )}
+            {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
           <button onClick={toggleModal}>Close</button>
         </ModalContent>
