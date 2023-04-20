@@ -168,7 +168,7 @@ const Room = (props) => {
     setSelectedUser(null);
   };
 
-  const [timeLeft, setTimeLeft] = useState(20);
+  const [timeLeft, setTimeLeft] = useState(120);
   const formatTime = (time) =>
     `${Math.floor(time / 60)}:${time % 60 < 10 ? "0" : ""}${time % 60}`;
 
@@ -193,7 +193,7 @@ const Room = (props) => {
   const roomID = props.match.params.roomID;
 
   const history = useHistory();
-  const [redirectCount, setRedirectCount] = useState(10);
+  const [redirectCount, setRedirectCount] = useState(30);
 
   useEffect(() => {
     if (
@@ -203,7 +203,7 @@ const Room = (props) => {
       setGameComplete(true);
       const timer = setTimeout(() => {
         history.push("/");
-      }, 10000);
+      }, 30000);
 
       const countdownTimer = setInterval(() => {
         setRedirectCount((prev) => prev - 1);
@@ -294,7 +294,7 @@ const Room = (props) => {
   useEffect(() => {
     if (voteComplete) {
       console.log("Voting complete, starting countdown...");
-      setCountdown(3);
+      setCountdown(10);
 
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
@@ -353,7 +353,7 @@ const Room = (props) => {
           console.log("Real odd man out:", realOddManOutPeer.peerName);
           setRealOddManOut(realOddManOutPeer.peerName);
         }
-      }, 3000);
+      }, 10000);
     }
   }, [voteComplete, peers]);
 
