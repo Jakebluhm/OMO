@@ -40,25 +40,44 @@ const ModalContainer = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
+  background-color: #f4f4f4;
   margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
+  border-radius: 15px;
   width: 50%;
   text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const VoteButton = styled.button`
-  background-color: #4caf50;
-  border: none;
+  background-color: #3498db;
   color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 2px;
+  padding: 8px 16px;
+  margin-left: 10px;
+  border-radius: 5px;
+  border: none;
   cursor: pointer;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #2980b9;
+  }
+`;
+
+const CloseButton = styled.button`
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 16px;
+  margin-top: 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #c0392b;
+  }
 `;
 
 // const GameState = {
@@ -733,7 +752,6 @@ const Room = (props) => {
             )}
             {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
-          <button onClick={toggleModal}>Close</button>
         </ModalContent>
       </ModalContainer>
 
