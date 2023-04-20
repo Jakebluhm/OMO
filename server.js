@@ -15,7 +15,7 @@ io.on("connection", (socket) => {
     console.log("payload");
     console.log(payload);
     if (users[payload.roomID]) {
-      const length = users[payload.roomID].length;
+      var length = users[payload.roomID].length;
       if (length === 3) {
         socket.emit("room full");
         return;
@@ -40,12 +40,16 @@ io.on("connection", (socket) => {
     console.log("--------USERS---------");
     console.log("users:", users);
 
+    //Not sure this is used
     io.emit("update users", {
       allUsers: users,
     });
     console.log(`Emitted update users event to room ${payload.roomID}`); // For server UI??
 
     socketToRoom[socket.id] = payload.roomID;
+
+    // Add this socket connection (Client that triggered this) to the roomId they are in
+    socket.join(payload.roomID);
     console.log("users");
     console.log(users);
     const usersInThisRoom = users[payload.roomID].filter(
@@ -53,7 +57,30 @@ io.on("connection", (socket) => {
     );
     console.log("usersInThisRoom");
     console.log(usersInThisRoom);
+
+    // length = users[payload.roomID].length;
+    // if (length === 3) {
+    //   console.log("--- Sending room ready to " + payload.roomID);
+    //   io.in(payload.roomID).emit("room ready");
+    // }
+
+    //This needs to be sent to room specific socket, see above
     socket.emit("all users", usersInThisRoom);
+  });
+
+  socket.on("vote cast", (payload) => {
+    const { voterId, votedUserId, roomId } = payload;
+    console.log("vote cast received!");
+    console.log("voterId");
+    console.log(voterId);
+    console.log("votedUserId");
+    console.log(votedUserId);
+    console.log("roomId");
+    console.log(roomId);
+    // You can store the vote information in a data structure or process it as needed
+
+    // Broadcast the vote information to other users in the same room
+    io.in(roomId).emit("vote update", { voterId, votedUserId });
   });
 
   socket.on("sending signal", (payload) => {

@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
@@ -16,6 +17,56 @@ const StyledVideo = styled.video`
   height: 400px;
   width: 400px;
 `;
+
+const Timer = styled.div`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+`;
+
+const ModalContainer = styled.div`
+  display: ${(props) => (props.isOpen ? "block" : "none")};
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  text-align: center;
+`;
+
+const VoteButton = styled.button`
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 2px;
+  cursor: pointer;
+`;
+
+// const GameState = {
+//   CONNECTING: "CONNECTING",
+//   INPROGRESS: "INPROGRESS",
+//   VOTING: "VOTING",
+//   RESULTS: "RESULTS"
+// }
 
 const Video = (props) => {
   const ref = useRef();
@@ -52,14 +103,259 @@ const Room = (props) => {
   console.log("uid?");
   console.log(uid);
 
+  const prompt = { prompt: playerInfo.prompt };
+  console.log("prompt?");
+  console.log(prompt);
+
+  const currentPlayer = {
+    peerName: playerInfo.playerName,
+    uid: playerInfo.uid,
+    omo: playerInfo.oddOneOut,
+  };
+
   // ------------------- STATE VARIABLES ----------------
   const [peers, setPeers] = useState([]);
   //const [peerNames, setPeerNames]  = useState([]);
   const [isRoomFull, setIsRoomFull] = useState(false);
+
+  const [identityATally, setIdentityATally] = useState(0);
+  const [identityBTally, setIdentityBTally] = useState(0);
+
+  const updateTally = useCallback(() => {
+    let uniqueIds = new Set();
+    let newIdentityATally = oddOneOut.oddOneOut === 0 ? 1 : 0;
+    let newIdentityBTally = oddOneOut.oddOneOut === 1 ? 1 : 0;
+
+    console.log("newIdentityATally before loop");
+    console.log(newIdentityATally);
+    console.log("newIdentityBTally before loop");
+    console.log(newIdentityBTally);
+    console.log("entering loop - peers.length" + peers.length);
+
+    peers.forEach((peer) => {
+      if (!uniqueIds.has(peer.uid)) {
+        uniqueIds.add(peer.uid);
+        if (peer.omo === 0) {
+          newIdentityATally++;
+        } else if (peer.omo === 1) {
+          newIdentityBTally++;
+        }
+      }
+    });
+
+    console.log("newIdentityATally after loop");
+    console.log(newIdentityATally);
+    console.log("newIdentityBTally after loop");
+    console.log(newIdentityBTally);
+
+    setIdentityATally(newIdentityATally);
+    setIdentityBTally(newIdentityBTally);
+  }, [peers]);
+
+  const [voteCounts, setVoteCounts] = useState({});
+  const [voteComplete, setVoteComplete] = useState(false);
+  const [voteResult, setVoteResult] = useState(null);
+  const [isRevote, setIsRevote] = useState(false);
+  const [gameComplete, setGameComplete] = useState(false);
+
+  const [countdown, setCountdown] = useState(null);
+  const [realOddManOut, setRealOddManOut] = useState(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+    setSelectedUser(null);
+  };
+
+  const [timeLeft, setTimeLeft] = useState(120);
+  const formatTime = (time) =>
+    `${Math.floor(time / 60)}:${time % 60 < 10 ? "0" : ""}${time % 60}`;
+
+  const startTimer = () => {
+    const interval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(interval);
+          // Call toggle modal
+          toggleModal();
+          // You can call the function to show the modal here
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  };
+
   const socketRef = useRef();
   const userVideo = useRef();
   const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
   const roomID = props.match.params.roomID;
+
+  const history = useHistory();
+  const [redirectCount, setRedirectCount] = useState(30);
+
+  useEffect(() => {
+    if (
+      (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
+      (voteComplete && isRevote && countdown === 0)
+    ) {
+      setGameComplete(true);
+      const timer = setTimeout(() => {
+        history.push("/");
+      }, 30000);
+
+      const countdownTimer = setInterval(() => {
+        setRedirectCount((prev) => prev - 1);
+      }, 1000);
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(countdownTimer);
+      };
+    }
+  }, [voteComplete, voteResult, isRevote, history, countdown]);
+
+  const handleUserVote = (user) => {
+    console.log("----- Inside handleUserVote");
+    setSelectedUser(user);
+    console.log("handleUserVote user");
+    console.log(user);
+    console.log("handleUserVote roomId");
+    console.log(roomID);
+    // Add code to communicate the vote to other users
+
+    socketRef.current.emit("vote cast", {
+      voterId: uid.uid,
+      votedUserId: user.uid,
+      roomId: roomID,
+    });
+  };
+
+  useEffect(() => {
+    updateTally();
+  }, [peers, updateTally]);
+
+  useEffect(() => {
+    console.log("voteCounts:");
+    console.log(voteCounts);
+
+    let totalVotes = 0;
+
+    // Loop through the voteCounts object and sum the counts
+    for (const count of Object.values(voteCounts)) {
+      totalVotes += count;
+    }
+
+    console.log("Total votes cast:", totalVotes);
+
+    if (totalVotes === 3) {
+      console.log("Voting complete!!!!!");
+      setVoteComplete(true);
+
+      // Calculate the person with the most votes
+      let maxVotes = 0;
+      let maxVotedUserId = null;
+      let tie = false;
+
+      for (const [userId, count] of Object.entries(voteCounts)) {
+        if (count > maxVotes) {
+          maxVotes = count;
+          maxVotedUserId = userId;
+          tie = false;
+        } else if (count === maxVotes) {
+          tie = true;
+        }
+      }
+
+      console.log("Max votes:", maxVotes);
+      console.log("Max voted user ID:", maxVotedUserId);
+      console.log("Tie:", tie);
+
+      // Set the voteResult or "tie"
+      if (tie) {
+        setVoteResult("tie");
+      } else {
+        let voteResultName;
+
+        if (maxVotedUserId === currentPlayer.uid) {
+          voteResultName = currentPlayer.peerName;
+        } else {
+          voteResultName = peers.find(
+            (peer) => peer.uid === maxVotedUserId
+          )?.peerName;
+        }
+
+        setVoteResult(voteResultName);
+      }
+    }
+  }, [voteCounts, peers]);
+
+  useEffect(() => {
+    if (voteComplete) {
+      console.log("Voting complete, starting countdown...");
+      setCountdown(10);
+
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => prevCountdown - 1);
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        console.log("Countdown finished.");
+
+        // If it's a tie, reset the state variables and start a new vote
+        if (voteResult === "tie") {
+          console.log("Vote ended in a tie, resetting the vote...");
+
+          setIsRevote(true); // Update the isRevote state
+
+          // Reset all relevant state variables
+          setVoteCounts({});
+          setCountdown(null);
+          setVoteComplete(false);
+          setVoteResult(null);
+          setSelectedUser(null);
+        } else {
+          // Find the real odd man out here and update the state
+          const uniquePeerIds = new Set([currentPlayer.uid]);
+          const identityCounts = {
+            [currentPlayer.omo]: 1, // Initialize with the current player's identity
+          };
+
+          peers.forEach((peer) => {
+            if (!uniquePeerIds.has(peer.uid)) {
+              uniquePeerIds.add(peer.uid);
+              identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+            }
+          });
+
+          console.log("Identity counts:", identityCounts);
+
+          const minorityIdentity = Object.entries(identityCounts).find(
+            ([, count]) => count === 1
+          )[0];
+
+          console.log("Minority identity:", minorityIdentity);
+
+          let realOddManOutPeer;
+
+          if (currentPlayer.omo === parseInt(minorityIdentity)) {
+            realOddManOutPeer = {
+              peerName: currentPlayer.peerName,
+            };
+          } else {
+            realOddManOutPeer = peers.find(
+              (peer) => peer.omo === parseInt(minorityIdentity)
+            );
+          }
+
+          console.log("Real odd man out:", realOddManOutPeer.peerName);
+          setRealOddManOut(realOddManOutPeer.peerName);
+        }
+      }, 10000);
+    }
+  }, [voteComplete, peers]);
 
   useEffect(() => {
     console.log("--------------useEffect 1---------------");
@@ -79,21 +375,18 @@ const Room = (props) => {
   useEffect(() => {
     console.log("--------------useEffect 2---------------");
 
+    // if (oddOneOut.oddOneOut === 0) {
+    //   setIdentityATally(identityATally + 1);
+    // } else if (oddOneOut.oddOneOut === 0) {
+    //   setIdentityBTally(identityBTally + 1);
+    // } else {
+    //   console.log("invalid oddOneOut Value!!!!!");
+    // }
+
     console.log("Begining of useEffect in Room.js");
 
     console.log("Trying to read peers from storage");
-
-    // if(window.localStorage["peers"]){
-    //     console.log('peers were found in local storage in local storage, trying to get them...')
-    //     const peersFromLocalStorage = window.localStorage.getItem('peers')
-
-    //     console.log('-------peersFromLocalStorage')
-    //     console.log(peersFromLocalStorage)
-    //     setPeers(JSON.parse(peersFromLocalStorage));
-    // }
-    // else{
-    //     console.log('No peers stored in local storage')
-    // }
+    startTimer();
 
     console.log("Getting all users currently in room");
     socketRef.current = io.connect("/");
@@ -214,6 +507,51 @@ const Room = (props) => {
           //console.log("receiving returned signal  " + [item.peer._id] + "   " + "   " + payload.userName.playerName)
           //setPeerNames(oldArray => [...oldArray, { [item.peer._id] : payload.userName.playerName} ]);
         });
+
+        socketRef.current.on("vote update", (payload) => {
+          const { voterId, votedUserId } = payload;
+          console.log("vote update received!");
+          console.log("payload");
+          console.log(payload);
+          // Update the UI or process the vote information as needed
+          setVoteCounts((prevVoteCounts) => {
+            const updatedVoteCounts = { ...prevVoteCounts };
+            if (updatedVoteCounts[votedUserId]) {
+              updatedVoteCounts[votedUserId] += 1;
+            } else {
+              updatedVoteCounts[votedUserId] = 1;
+            }
+            return updatedVoteCounts;
+          });
+        });
+
+        // socketRef.current.on("room ready", () => {
+        //   console.log("---------ROOM READY---------");
+
+        //   let newIdentityATally = oddOneOut === 0 ? 1 : 0;
+        //   let newIdentityBTally = oddOneOut === 1 ? 1 : 0;
+
+        //   console.log("newIdentityATally before loop");
+        //   console.log(newIdentityATally);
+        //   console.log("newIdentityBTally before loop");
+        //   console.log(newIdentityBTally);
+        //   console.log("entering loop - peers.length" + peers.length);
+        //   peers.forEach((peer) => {
+        //     if (peer.omo === 0) {
+        //       newIdentityATally++;
+        //     } else if (peer.omo === 1) {
+        //       newIdentityBTally++;
+        //     }
+        //   });
+
+        //   console.log("newIdentityATally after loop");
+        //   console.log(newIdentityATally);
+        //   console.log("newIdentityBTally after loop");
+        //   console.log(newIdentityBTally);
+
+        //   setIdentityATally(newIdentityATally);
+        //   setIdentityBTally(newIdentityBTally);
+        // });
       })
       .catch((error) => {
         // TODO: Handle error where user web cam or microphone could not be found
@@ -315,6 +653,14 @@ const Room = (props) => {
   });
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
+      <div>
+        <h3>
+          {identityATally} {prompt.prompt.identityA} - {identityBTally}
+          {prompt.prompt.identityB}
+        </h3>
+        <h4>Find the Odd Man Out</h4>
+      </div>
+      <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
         <div
           style={{
@@ -345,6 +691,51 @@ const Room = (props) => {
           </div>
         </div>
       )}
+
+      <ModalContainer isOpen={isModalOpen}>
+        <ModalContent>
+          <>
+            <h1>Select the odd man out:</h1>
+            <div key={currentPlayer.uid}>
+              {currentPlayer.peerName} - Votes:{" "}
+              {voteCounts[currentPlayer.uid] || 0}
+            </div>
+            {filteredPeers.map((peer) => (
+              <div key={peer.id}>
+                {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+                {selectedUser === null && (
+                  <VoteButton
+                    onClick={() => {
+                      handleUserVote(peer);
+                      console.log("filteredPeers");
+                      console.log(filteredPeers);
+                    }}
+                  >
+                    Vote
+                  </VoteButton>
+                )}
+              </div>
+            ))}
+            {isRevote && (
+              <h2>Revote is happening due to a tie. Please vote again.</h2>
+            )}
+            {voteComplete && (
+              <div>
+                <h1>Voting Complete</h1>
+                <h2>
+                  {voteResult === "tie"
+                    ? "It's a tie!"
+                    : `Person with the most votes: ${voteResult}`}
+                </h2>
+                <h3>Countdown: {countdown}</h3>
+                {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
+              </div>
+            )}
+            {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
+          </>
+          <button onClick={toggleModal}>Close</button>
+        </ModalContent>
+      </ModalContainer>
 
       <div
         style={{
@@ -382,13 +773,11 @@ const Room = (props) => {
                 ? name.playerName
                 : "empty"}
             </label>
-            <label style={{ padding: 5 }}>
+            {/* <label style={{ padding: 5 }}>
               {typeof oddOneOut !== "undefined" && oddOneOut != null
                 ? oddOneOut.oddOneOut
-                  ? "true"
-                  : "false"
                 : "empty"}
-            </label>
+            </label> */}
           </div>
         </div>
         {peers.length > 0 &&
@@ -422,9 +811,7 @@ const Room = (props) => {
                   />
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <label style={{ padding: 5 }}>
-                    {peer.peerName + ": " + peer.omo}
-                  </label>
+                  <label style={{ padding: 5 }}>{peer.peerName}</label>
                 </div>
               </div>
             );

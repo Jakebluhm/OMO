@@ -129,13 +129,29 @@ const CreateRoom = (props) => {
         console.log("oddOneOutValue");
         console.log(oddOneOutValue);
 
-        // Redirect the user to the URL received from the Lambda function
-        //window.location.href = url;
+        console.log("Type of promptId");
+        console.log(typeof promptId);
+
+        console.log("promptId");
+        console.log(promptId);
+
+        console.log("Type of dummyPrompts[0].id");
+        console.log(typeof dummyPrompts[0].id);
+
+        console.log("dummyPrompts");
+        console.log(dummyPrompts);
+
+        const matchingPrompt = dummyPrompts.find(
+          (promptObj) => promptObj.id === Number(promptId)
+        );
+        console.log("matchingPrompt");
+        console.log(matchingPrompt);
 
         props.history.push(`/room/${uuid}`, {
           playerName: name,
           oddOneOut: oddOneOutValue,
           uid: userData.Item.user,
+          prompt: matchingPrompt,
         });
       }
     };
@@ -299,32 +315,55 @@ const CreateRoom = (props) => {
 
   // These will be read in from database
   // TODO: UUID can be assigned when prompt is created
+  // const dummyPrompts = [
+  //   {
+  //     id: 0,
+  //     uuid: "abc123",
+  //     prompt: "Prompt 1",
+  //     question: "Are you a Kanye West Fan?",
+  //     omoAns: "No",
+  //     notOmoAns: "Yes",
+  //     count: 0,
+  //   },
+  //   {
+  //     id: 1,
+  //     prompt: "Prompt 2",
+  //     uuid: "xyz789",
+  //     question: "Are you apart of the LGBTQIA+ community and or non-bindary?",
+  //     omoAns: "No",
+  //     notOmoAns: "Yes",
+  //     count: 0,
+  //   },
+  //   {
+  //     id: 2,
+  //     prompt: "Prompt 3",
+  //     uuid: "jkl456",
+  //     question: "Are you married",
+  //     omoAns: "Yes",
+  //     notOmoAns: "No",
+  //     count: 0,
+  //   },
+  // ];
   const dummyPrompts = [
     {
       id: 0,
       uuid: "abc123",
-      prompt: "Prompt 1",
-      question: "Are you a Kanye West Fan?",
-      omoAns: "No",
-      notOmoAns: "Yes",
+      identityA: "Vegan",
+      identityB: "Meat Eater",
       count: 0,
     },
     {
       id: 1,
-      prompt: "Prompt 2",
       uuid: "xyz789",
-      question: "Are you apart of the LGBTQIA+ community and or non-bindary?",
-      omoAns: "No",
-      notOmoAns: "Yes",
+      identityA: "Christian",
+      identityB: "Atheist",
       count: 0,
     },
     {
       id: 2,
-      prompt: "Prompt 3",
       uuid: "jkl456",
-      question: "Are you married",
-      omoAns: "Yes",
-      notOmoAns: "No",
+      identityA: "Rapper",
+      identityB: "Fake Rapper",
       count: 0,
     },
   ];
