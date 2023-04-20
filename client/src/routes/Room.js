@@ -193,10 +193,10 @@ const Room = (props) => {
   const roomID = props.match.params.roomID;
 
   const history = useHistory();
-  const [redirectCount, setRedirectCount] = useState(null);
+  const [redirectCount, setRedirectCount] = useState(10);
 
   useEffect(() => {
-    if (voteComplete && (voteResult !== "tie" || isRevote)) {
+    if ((voteComplete && voteResult !== "tie") || (voteComplete && isRevote)) {
       setGameComplete(true);
       const timer = setTimeout(() => {
         history.push("/");
