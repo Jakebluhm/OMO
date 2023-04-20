@@ -197,8 +197,8 @@ const Room = (props) => {
 
   useEffect(() => {
     if (
-      (voteComplete && voteResult !== "tie" && !isRevote) ||
-      (voteComplete && isRevote)
+      (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
+      (voteComplete && isRevote && countdown === 0)
     ) {
       setGameComplete(true);
       const timer = setTimeout(() => {
@@ -214,7 +214,7 @@ const Room = (props) => {
         clearInterval(countdownTimer);
       };
     }
-  }, [voteComplete, voteResult, isRevote, history]);
+  }, [voteComplete, voteResult, isRevote, history, countdown]);
 
   const handleUserVote = (user) => {
     console.log("----- Inside handleUserVote");
@@ -773,11 +773,11 @@ const Room = (props) => {
                 ? name.playerName
                 : "empty"}
             </label>
-            <label style={{ padding: 5 }}>
+            {/* <label style={{ padding: 5 }}>
               {typeof oddOneOut !== "undefined" && oddOneOut != null
                 ? oddOneOut.oddOneOut
                 : "empty"}
-            </label>
+            </label> */}
           </div>
         </div>
         {peers.length > 0 &&
@@ -811,9 +811,7 @@ const Room = (props) => {
                   />
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <label style={{ padding: 5 }}>
-                    {peer.peerName + ": " + peer.omo}
-                  </label>
+                  <label style={{ padding: 5 }}>{peer.peerName}</label>
                 </div>
               </div>
             );
