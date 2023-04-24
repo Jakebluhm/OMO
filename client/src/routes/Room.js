@@ -816,6 +816,37 @@ const Room = (props) => {
             );
           })}
       </div>
+      {!gameReady && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 10,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderRadius: 10,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h2>Loading...</h2>
+            <p>Please wait while the game is being prepared</p>
+          </div>
+        </div>
+      )}
     </Container>
   );
 };
