@@ -121,6 +121,8 @@ const Room = (props) => {
   const [identityATally, setIdentityATally] = useState(0);
   const [identityBTally, setIdentityBTally] = useState(0);
 
+  const [gameReady, setGameReady] = useState(false);
+
   const updateTally = useCallback(() => {
     let uniqueIds = new Set();
     let newIdentityATally = oddOneOut.oddOneOut === 0 ? 1 : 0;
@@ -235,6 +237,13 @@ const Room = (props) => {
   useEffect(() => {
     updateTally();
   }, [peers, updateTally]);
+
+  useEffect(() => {
+    if (identityATally + identityBTally >= 3) {
+      console.log("-----------Game Ready!!------------");
+      setGameReady(true);
+    }
+  }, [identityBTally, identityATally]);
 
   useEffect(() => {
     //console.log("voteCounts:");
@@ -638,12 +647,6 @@ const Room = (props) => {
   const uniqueIds = [];
   const filteredPeers = peers.filter((element) => {
     const isDuplicate = uniqueIds.includes(element.uid);
-    //console.log("uniqueIds");
-    //console.log(uniqueIds);
-    //console.log("element.uid");
-    //console.log(element.uid);
-    //console.log("isDuplicate");
-    //console.log(isDuplicate);
 
     if (!isDuplicate) {
       uniqueIds.push(element.uid);
@@ -654,6 +657,22 @@ const Room = (props) => {
     //console.log("Removing duplicate !!!");
     return false;
   });
+
+  // Loading screen
+  if (!gameReady) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <h1>Loading...</h1>
+      </div>
+    );
+  }
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
       <div>
