@@ -72,9 +72,7 @@ const Video = (props) => {
   const ref = useRef();
   useEffect(() => {
     props.peer.on("stream", (stream) => {
-      if (ref.current) {
-        ref.current.srcObject = stream;
-      }
+      ref.current.srcObject = stream;
     });
   }, []);
 
@@ -660,21 +658,6 @@ const Room = (props) => {
     return false;
   });
 
-  // Loading screen
-  if (!gameReady) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <h1>Loading...</h1>
-      </div>
-    );
-  }
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
       <div>
