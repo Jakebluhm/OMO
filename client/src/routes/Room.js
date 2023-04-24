@@ -72,11 +72,20 @@ const Video = (props) => {
   const ref = useRef();
   useEffect(() => {
     props.peer.on("stream", (stream) => {
+      console.log("Inside peer received stream in Video");
+
       ref.current.srcObject = stream;
     });
   }, []);
 
-  return <StyledVideo playsInline autoPlay ref={ref} />;
+  return (
+    <StyledVideo
+      playsInline
+      autoPlay
+      ref={ref}
+      onLoadedMetadata={props.onVideoReady}
+    />
+  );
 };
 
 const videoConstraints = {
@@ -197,6 +206,21 @@ const Room = (props) => {
   const history = useHistory();
   const [redirectCount, setRedirectCount] = useState(30);
 
+  // Add a new state variable to keep track of ready videos
+  const [videosReady, setVideosReady] = useState(0);
+
+  // Create a callback function to handle video readiness
+  const handleVideoReady = () => {
+    setVideosReady((prevVideosReady) => prevVideosReady + 1);
+  };
+
+  // Update the gameReady state based on the number of ready videos
+  useEffect(() => {
+    if (videosReady === peers.length) {
+      setGameReady(true);
+    }
+  }, [videosReady, peers]);
+
   useEffect(() => {
     if (
       (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
@@ -238,12 +262,12 @@ const Room = (props) => {
     updateTally();
   }, [peers, updateTally]);
 
-  useEffect(() => {
-    if (identityATally + identityBTally >= 3) {
-      console.log("-----------Game Ready!!------------");
-      setGameReady(true);
-    }
-  }, [identityBTally, identityATally]);
+  // useEffect(() => {
+  //   if (identityATally + identityBTally >= 3) {
+  //     console.log("-----------Game Ready!!------------");
+  //     setGameReady(true);
+  //   }
+  // }, [identityBTally, identityATally]);
 
   useEffect(() => {
     //console.log("voteCounts:");
@@ -807,6 +831,7 @@ const Room = (props) => {
                     style={{ display: "flex", flex: 1 }}
                     key={peer.peerID}
                     peer={peer.peer}
+                    onVideoReady={handleVideoReady}
                   />
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
