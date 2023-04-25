@@ -854,7 +854,7 @@ const Room = (props) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            zIndex: 10,
+            zIndex: 9999, // Increase zIndex to a higher value
           }}
         >
           <div
@@ -866,6 +866,8 @@ const Room = (props) => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
+              width: "100%", // Set width and height to 100%
+              height: "100%",
             }}
           >
             <h2>Loading...</h2>
