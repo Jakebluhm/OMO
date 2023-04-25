@@ -216,7 +216,7 @@ const Room = (props) => {
 
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
-    if (videosReady === peers.length) {
+    if (videosReady >= 3) {
       setGameReady(true);
     }
   }, [videosReady, peers]);
