@@ -211,6 +211,7 @@ const Room = (props) => {
 
   // Create a callback function to handle video readiness
   const handleVideoReady = () => {
+    console.log("-------handleVideoReady-----");
     setVideosReady((prevVideosReady) => prevVideosReady + 1);
   };
 
