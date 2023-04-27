@@ -2,6 +2,8 @@ const AWS = require("aws-sdk");
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
+  console.log("OMOWSConnect Lambda RUNS!");
+
   const connectionId = event.requestContext.connectionId;
   const userId = event.queryStringParameters.userId;
   const prompts = JSON.parse(event.queryStringParameters.prompts);
@@ -16,6 +18,8 @@ exports.handler = async (event) => {
   };
 
   try {
+    console.log("params");
+    console.log(params);
     await dynamoDb.put(params).promise();
     return { statusCode: 200, body: "Connected." };
   } catch (error) {
