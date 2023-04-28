@@ -194,6 +194,7 @@ const Room = (props) => {
       setGameComplete(true);
       const timer = setTimeout(() => {
         stopMediaStream(userVideo.current.srcObject);
+        socketRef.current.disconnect();
 
         history.push("/");
       }, 30000);
@@ -577,6 +578,7 @@ const Room = (props) => {
     const unlisten = history.listen(() => {
       console.log("Inside history callback!! revoking acess to camera");
       stopMediaStream(userVideo.current.srcObject);
+      socketRef.current.disconnect();
     });
 
     return () => {
