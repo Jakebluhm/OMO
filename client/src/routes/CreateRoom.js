@@ -80,7 +80,36 @@ const CreateRoom = (props) => {
     console.log("userData:", userData);
   }, [userData]);
 
+  function checkDevices() {
+    let hasWebcam = false;
+    let hasMicrophone = false;
+
+    return navigator.mediaDevices
+      .enumerateDevices()
+      .then((devices) => {
+        devices.forEach((device) => {
+          if (device.kind === "videoinput") {
+            hasWebcam = true;
+          }
+          if (device.kind === "audioinput") {
+            hasMicrophone = true;
+          }
+        });
+
+        return { hasWebcam, hasMicrophone };
+      })
+      .catch((error) => {
+        console.error("Error enumerating devices:", error);
+        return { hasWebcam: false, hasMicrophone: false };
+      });
+  }
+
   useEffect(() => {
+    checkDevices().then(({ hasWebcam, hasMicrophone }) => {
+      console.log("Webcam available:", hasWebcam);
+      console.log("Microphone available:", hasMicrophone);
+    });
+
     const unloadHandler = () => {
       // Code to execute when user leaves the website
       console.log("User is leaving the website...");
