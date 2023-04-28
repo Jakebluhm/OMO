@@ -61,13 +61,6 @@ const VoteButton = styled.button`
   cursor: pointer;
 `;
 
-// const GameState = {
-//   CONNECTING: "CONNECTING",
-//   INPROGRESS: "INPROGRESS",
-//   VOTING: "VOTING",
-//   RESULTS: "RESULTS"
-// }
-
 const Video = (props) => {
   const ref = useRef();
   useEffect(() => {
@@ -92,29 +85,15 @@ const videoConstraints = {
   width: { min: 100, ideal: 200, max: 480 },
   height: { min: 100, ideal: 200, max: 480 },
   frameRate: { ideal: 10, max: 15 },
-  //height: 10,//window.innerHeight / 2,
-  //width: 20//window.innerWidth / 2
 };
 
 localStorage.debug = "";
 const Room = (props) => {
-  //console.log("inside Room ------------------");
   const playerInfo = props.history.location.state;
-  //console.log("playerInfo?");
-  //console.log(playerInfo);
   const name = { playerName: playerInfo.playerName };
-  //console.log("name?");
-  //console.log(name);
   const oddOneOut = { oddOneOut: playerInfo.oddOneOut };
-  //console.log("oddOneOut?");
-  //console.log(oddOneOut);
   const uid = { uid: playerInfo.uid };
-  //console.log("uid?");
-  //console.log(uid);
-
   const prompt = { prompt: playerInfo.prompt };
-  //console.log("prompt?");
-  //console.log(prompt);
 
   const currentPlayer = {
     peerName: playerInfo.playerName,
@@ -124,24 +103,33 @@ const Room = (props) => {
 
   // ------------------- STATE VARIABLES ----------------
   const [peers, setPeers] = useState([]);
-  //const [peerNames, setPeerNames]  = useState([]);
   const [isRoomFull, setIsRoomFull] = useState(false);
-
   const [identityATally, setIdentityATally] = useState(0);
   const [identityBTally, setIdentityBTally] = useState(0);
-
   const [gameReady, setGameReady] = useState(false);
+  const [voteCounts, setVoteCounts] = useState({});
+  const [voteComplete, setVoteComplete] = useState(false);
+  const [voteResult, setVoteResult] = useState(null);
+  const [isRevote, setIsRevote] = useState(false);
+  const [gameComplete, setGameComplete] = useState(false);
+  const [countdown, setCountdown] = useState(null);
+  const [realOddManOut, setRealOddManOut] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [redirectCount, setRedirectCount] = useState(30);
+  const [videosReady, setVideosReady] = useState(0);
+
+  const socketRef = useRef();
+  const userVideo = useRef();
+  const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
+
+  // useCallback Definitions
 
   const updateTally = useCallback(() => {
     let uniqueIds = new Set();
     let newIdentityATally = oddOneOut.oddOneOut === 0 ? 1 : 0;
     let newIdentityBTally = oddOneOut.oddOneOut === 1 ? 1 : 0;
-
-    //console.log("newIdentityATally before loop");
-    //console.log(newIdentityATally);
-    //console.log("newIdentityBTally before loop");
-    //console.log(newIdentityBTally);
-    //console.log("entering loop - peers.length" + peers.length);
 
     peers.forEach((peer) => {
       if (!uniqueIds.has(peer.uid)) {
@@ -154,32 +142,15 @@ const Room = (props) => {
       }
     });
 
-    //console.log("newIdentityATally after loop");
-    //console.log(newIdentityATally);
-    //console.log("newIdentityBTally after loop");
-    //console.log(newIdentityBTally);
-
     setIdentityATally(newIdentityATally);
     setIdentityBTally(newIdentityBTally);
   }, [peers]);
 
-  const [voteCounts, setVoteCounts] = useState({});
-  const [voteComplete, setVoteComplete] = useState(false);
-  const [voteResult, setVoteResult] = useState(null);
-  const [isRevote, setIsRevote] = useState(false);
-  const [gameComplete, setGameComplete] = useState(false);
-
-  const [countdown, setCountdown] = useState(null);
-  const [realOddManOut, setRealOddManOut] = useState(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     setSelectedUser(null);
   };
 
-  const [timeLeft, setTimeLeft] = useState(120);
   const formatTime = (time) =>
     `${Math.floor(time / 60)}:${time % 60 < 10 ? "0" : ""}${time % 60}`;
 
@@ -198,16 +169,9 @@ const Room = (props) => {
     }, 1000);
   };
 
-  const socketRef = useRef();
-  const userVideo = useRef();
-  const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
   const roomID = props.match.params.roomID;
 
   const history = useHistory();
-  const [redirectCount, setRedirectCount] = useState(30);
-
-  // Add a new state variable to keep track of ready videos
-  const [videosReady, setVideosReady] = useState(0);
 
   // Create a callback function to handle video readiness
   const handleVideoReady = () => {
