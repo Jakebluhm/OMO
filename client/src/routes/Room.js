@@ -193,6 +193,8 @@ const Room = (props) => {
     ) {
       setGameComplete(true);
       const timer = setTimeout(() => {
+        stopMediaStream(userVideo.current.srcObject);
+
         history.push("/");
       }, 30000);
 
@@ -356,10 +358,11 @@ const Room = (props) => {
   }, [voteComplete, peers]);
 
   useEffect(() => {
-    //console.log("--------------useEffect 1---------------");
+    // Handle Exit and prompt user with "Are you sure? message"
     const unloadCallback = (event) => {
       event.preventDefault();
       event.returnValue = "";
+
       return "";
     };
 
@@ -370,6 +373,7 @@ const Room = (props) => {
   // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
   // of function change value. In this case no variables are specified so it runs when this
   // Component mounts aka displays to screen
+
   useEffect(() => {
     //console.log("--------------useEffect 2---------------");
 
@@ -560,6 +564,25 @@ const Room = (props) => {
         console.error("error: " + error);
       });
   }, []);
+
+  function stopMediaStream(stream) {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+  }
+
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      console.log("Inside history callback!! revoking acess to camera");
+      stopMediaStream(userVideo.current.srcObject);
+    });
+
+    return () => {
+      unlisten();
+    };
+  }, [history]);
 
   window.onunload = function () {
     console.log(
