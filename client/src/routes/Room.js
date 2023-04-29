@@ -116,8 +116,8 @@ const Room = (props) => {
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(120);
-  const [redirectCount, setRedirectCount] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [redirectCount, setRedirectCount] = useState(120);
   const [videosReady, setVideosReady] = useState(0);
 
   const socketRef = useRef();
@@ -193,6 +193,9 @@ const Room = (props) => {
     ) {
       setGameComplete(true);
       const timer = setTimeout(() => {
+        stopMediaStream(userVideo.current.srcObject);
+        socketRef.current.disconnect();
+
         history.push("/");
       }, 30000);
 
@@ -356,10 +359,11 @@ const Room = (props) => {
   }, [voteComplete, peers]);
 
   useEffect(() => {
-    //console.log("--------------useEffect 1---------------");
+    // Handle Exit and prompt user with "Are you sure? message"
     const unloadCallback = (event) => {
       event.preventDefault();
       event.returnValue = "";
+
       return "";
     };
 
@@ -370,20 +374,8 @@ const Room = (props) => {
   // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
   // of function change value. In this case no variables are specified so it runs when this
   // Component mounts aka displays to screen
+
   useEffect(() => {
-    //console.log("--------------useEffect 2---------------");
-
-    // if (oddOneOut.oddOneOut === 0) {
-    //   setIdentityATally(identityATally + 1);
-    // } else if (oddOneOut.oddOneOut === 0) {
-    //   setIdentityBTally(identityBTally + 1);
-    // } else {
-    //   console.log("invalid oddOneOut Value!!!!!");
-    // }
-
-    //console.log("Begining of useEffect in Room.js");
-
-    //console.log("Trying to read peers from storage");
     startTimer();
 
     //console.log("Getting all users currently in room");
@@ -408,11 +400,7 @@ const Room = (props) => {
               userID.socketID,
               socketRef.current.id,
               stream
-            ); // Create peer object
-            //console.log("userID");
-            //console.log(userID);
-            //console.log("userID.name");
-            //console.log(userID.name);
+            );
             peersRef.current.push({
               // Pushing a new player into array of players -
               peerID: userID.socketID,
@@ -438,22 +426,15 @@ const Room = (props) => {
         });
 
         socketRef.current.on("room full", (users) => {
-          // Return all users currently in the group video chat
-          //console.log("---------ROOM FULL---------");
-
           setIsRoomFull(true);
         });
 
         //------------------ Callbacks--------------------
 
-        //  Callback for when someone joined the room?
         socketRef.current.on("user joined", (payload) => {
           //console.log("--------------user joined---------------");
           const peer = addPeer(payload.signal, payload.callerID, stream);
-          //console.log("payload.userName.playerName");
-          //console.log(payload.userName.playerName);
-          //console.log("payload");
-          //console.log(payload);
+
           peersRef.current.push({
             peerID: payload.callerID,
             peerName: payload.userName.playerName,
@@ -461,8 +442,7 @@ const Room = (props) => {
             omo: payload.omo,
             peer,
           });
-          //console.log("before adding peer to peers list:");
-          //console.log(peers);
+
           const tempPeer = {
             peerID: payload.callerID,
             peerName: payload.userName.playerName,
@@ -477,9 +457,6 @@ const Room = (props) => {
         });
 
         socketRef.current.on("user left", (id) => {
-          //console.log("--------------user left handler---------------");
-          //console.log("peersRef before user left handler");
-          //console.log(peersRef);
           const peerObj = peersRef.current.find((p) => p.peerID === id);
           if (peerObj) {
             peerObj.peer.destroy();
@@ -487,26 +464,13 @@ const Room = (props) => {
 
           const peers = peersRef.current.filter((p) => p.peerID !== id);
           peersRef.current = peers;
-          //console.log("peers after user left");
-          //console.log(peers);
-
-          //console.log("peersRef after user left handler");
-          //console.log(peersRef);
 
           setPeers(peers);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
-          //console.log("--------------receiving returned signal---------------");
-          //console.log("peersRef before receiving returned signal");
-          //console.log(peersRef);
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
-
-          //console.log("peersRef after receiving returned signal");
-          //console.log(peersRef);
-          //console.log("receiving returned signal  " + [item.peer._id] + "   " + "   " + payload.userName.playerName)
-          //setPeerNames(oldArray => [...oldArray, { [item.peer._id] : payload.userName.playerName} ]);
         });
 
         socketRef.current.on("vote update", (payload) => {
@@ -525,41 +489,41 @@ const Room = (props) => {
             return updatedVoteCounts;
           });
         });
-
-        // socketRef.current.on("room ready", () => {
-        //   console.log("---------ROOM READY---------");
-
-        //   let newIdentityATally = oddOneOut === 0 ? 1 : 0;
-        //   let newIdentityBTally = oddOneOut === 1 ? 1 : 0;
-
-        //   console.log("newIdentityATally before loop");
-        //   console.log(newIdentityATally);
-        //   console.log("newIdentityBTally before loop");
-        //   console.log(newIdentityBTally);
-        //   console.log("entering loop - peers.length" + peers.length);
-        //   peers.forEach((peer) => {
-        //     if (peer.omo === 0) {
-        //       newIdentityATally++;
-        //     } else if (peer.omo === 1) {
-        //       newIdentityBTally++;
-        //     }
-        //   });
-
-        //   console.log("newIdentityATally after loop");
-        //   console.log(newIdentityATally);
-        //   console.log("newIdentityBTally after loop");
-        //   console.log(newIdentityBTally);
-
-        //   setIdentityATally(newIdentityATally);
-        //   setIdentityBTally(newIdentityBTally);
-        // });
       })
       .catch((error) => {
-        // TODO: Handle error where user web cam or microphone could not be found
-        ////console.log('inside catch----getUserMedia')
         console.error("error: " + error);
       });
+
+    return () => {
+      // Cleanup function
+      console.log("Cleaning up Peers");
+      peersRef.current.forEach((peerObj) => {
+        if (peerObj.peer) {
+          peerObj.peer.destroy();
+        }
+      });
+    };
   }, []);
+
+  function stopMediaStream(stream) {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+  }
+
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      console.log("Inside history callback!! revoking acess to camera");
+      stopMediaStream(userVideo.current.srcObject);
+      socketRef.current.disconnect();
+    });
+
+    return () => {
+      unlisten();
+    };
+  }, [history]);
 
   window.onunload = function () {
     console.log(
@@ -587,11 +551,6 @@ const Room = (props) => {
     });
 
     peer.on("signal", (signal) => {
-      //console.log("--------------signal createPeer---------------");
-      //console.log("peersRef before signal createPeer");
-      //console.log(peersRef);
-      //console.log("name?");
-      //console.log(name);
       socketRef.current.emit("sending signal", {
         userToSignal,
         callerID,
@@ -600,8 +559,6 @@ const Room = (props) => {
         uid,
         oddOneOut,
       });
-      //console.log("peersRef after signal createPeer");
-      //console.log(peersRef);
     });
 
     return peer;
@@ -625,14 +582,6 @@ const Room = (props) => {
     return peer;
   }
 
-  //console.log("peers--------");
-  //console.log(peers);
-  //console.log("peers.length--------");
-  //console.log(peers.length);
-
-  //console.log("peers");
-  //console.log(peers);
-
   const uniqueIds = [];
   const filteredPeers = peers.filter((element) => {
     const isDuplicate = uniqueIds.includes(element.uid);
@@ -643,7 +592,6 @@ const Room = (props) => {
 
       return true;
     }
-    //console.log("Removing duplicate !!!");
     return false;
   });
 
