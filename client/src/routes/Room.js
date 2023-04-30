@@ -566,10 +566,25 @@ const Room = (props) => {
 
   //  Add new player to current call that this user is already in
   function addPeer(incomingSignal, callerID, stream) {
+    console.log("------Inside addPeer()-----");
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream,
+    });
+
+    // Log ICE candidates
+    peer._pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("ICE candidate:", event.candidate);
+      } else {
+        console.log("All ICE candidates gathered.");
+      }
+    };
+
+    peer.on("error", (err) => {
+      console.error("Peer error:", err);
+      // Reconnect logic here
     });
 
     peer.on("signal", (signal) => {
@@ -677,7 +692,7 @@ const Room = (props) => {
             )}
             {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
-          <button onClick={toggleModal}>Close</button>
+          {/* <button onClick={toggleModal}>Close</button> */}
         </ModalContent>
       </ModalContainer>
 
@@ -762,7 +777,7 @@ const Room = (props) => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "rgba(0, 0, 0, 0.1)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -771,7 +786,7 @@ const Room = (props) => {
         >
           <div
             style={{
-              backgroundColor: "white",
+              backgroundColor: "rgba(200, 200, 255, 0.1)", // Change the opacity value to 0.1
               padding: 20,
               borderRadius: 10,
               display: "flex",
