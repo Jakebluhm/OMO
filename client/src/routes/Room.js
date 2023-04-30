@@ -574,13 +574,13 @@ const Room = (props) => {
     });
 
     // Log ICE candidates
-    // peer._pc.onicecandidate = (event) => {
-    //   if (event.candidate) {
-    //     console.log("ICE candidate:", event.candidate);
-    //   } else {
-    //     console.log("All ICE candidates gathered.");
-    //   }
-    // };
+    peer._pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("ICE candidate:", event.candidate);
+      } else {
+        console.log("All ICE candidates gathered.");
+      }
+    };
 
     // peer.on("error", (err) => {
     //   console.error("Peer error:", err);
