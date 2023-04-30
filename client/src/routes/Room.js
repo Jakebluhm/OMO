@@ -71,6 +71,17 @@ const Video = (props) => {
     });
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (ref.current) {
+        console.log("Video readyState:", ref.current.readyState);
+      }
+    }, 5000); // Log the readyState every 5 seconds
+
+    // Cleanup function to clear the interval when the component is unmounted
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <StyledVideo
       playsInline
@@ -569,11 +580,8 @@ const Room = (props) => {
     console.log("------Inside addPeer()-----");
     const peer = new Peer({
       initiator: false,
-      trickle: true, // Enable trickle ICE
+      trickle: false,
       stream,
-      config: {
-        iceTransportPolicy: "relay", // Use only TURN servers, which may help with connectivity issues
-      },
     });
 
     // Log ICE candidates - Breaking change
