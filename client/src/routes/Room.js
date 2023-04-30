@@ -66,10 +66,32 @@ const Video = (props) => {
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
+      console.log("Stream ID:", stream.id);
+      console.log("Stream active:", stream.active);
+      console.log("Stream tracks:", stream.getTracks());
 
       ref.current.srcObject = stream;
     });
   }, []);
+
+  // Debug stream
+  useEffect(() => {
+    if (ref.current && ref.current.srcObject) {
+      ref.current.srcObject.onaddtrack = (event) => {
+        console.log("Track added to stream:", event.track);
+      };
+
+      ref.current.srcObject.onremovetrack = (event) => {
+        console.log("Track removed from stream:", event.track);
+      };
+
+      ref.current.srcObject.getTracks().forEach((track) => {
+        track.onended = (event) => {
+          console.log("Track ended:", event.target);
+        };
+      });
+    }
+  }, [ref.current?.srcObject]);
 
   useEffect(() => {
     const interval = setInterval(() => {
