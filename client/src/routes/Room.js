@@ -569,11 +569,14 @@ const Room = (props) => {
     console.log("------Inside addPeer()-----");
     const peer = new Peer({
       initiator: false,
-      trickle: false,
+      trickle: true, // Enable trickle ICE
       stream,
+      config: {
+        iceTransportPolicy: "relay", // Use only TURN servers, which may help with connectivity issues
+      },
     });
 
-    // Log ICE candidates
+    // Log ICE candidates - Breaking change
     // peer._pc.onicecandidate = (event) => {
     //   if (event.candidate) {
     //     console.log("ICE candidate:", event.candidate);
