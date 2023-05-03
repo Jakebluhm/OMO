@@ -602,6 +602,42 @@ const Room = (props) => {
     return peer;
   }
 
+  function getVideoCodec(sdp) {
+    const sdpLines = sdp.split("\r\n");
+    const videoMLineIndex = sdpLines.findIndex((line) =>
+      line.startsWith("m=video")
+    );
+
+    if (videoMLineIndex === -1) {
+      console.log("No video m-line found");
+      return "No video m-line found";
+    }
+
+    const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
+    const videoPayloadType = videoMLineParts[3];
+    const videoCodecLine = sdpLines.find((line) =>
+      line.startsWith(`a=rtpmap:${videoPayloadType}`)
+    );
+
+    if (videoCodecLine) {
+      const videoCodec = videoCodecLine.split(" ")[1];
+      console.log("Video codec found:", videoCodec);
+      return videoCodec;
+    } else {
+      console.log("No video codec found");
+      return "No video codec found";
+    }
+  }
+
+  function printVideoCodec(peer) {
+    if (peer._pc && peer._pc.localDescription) {
+      const videoCodec = getVideoCodec(peer._pc.localDescription.sdp);
+      console.log(`Video codec: ${videoCodec}`);
+    } else {
+      console.error("Local description is not set yet.");
+    }
+  }
+
   //  Add new player to current call that this user is already in
   function addPeer(incomingSignal, callerID, stream, userName) {
     console.log("------Inside addPeer()-----");
@@ -638,6 +674,7 @@ const Room = (props) => {
     peer.on("signal", (signal) => {
       console.log("--------------signal addPeer---------------");
       socketRef.current.emit("returning signal", { signal, callerID, name });
+      printVideoCodec(peer);
     });
 
     peer.signal(incomingSignal);
