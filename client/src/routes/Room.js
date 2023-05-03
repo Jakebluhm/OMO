@@ -606,14 +606,17 @@ const Room = (props) => {
       stream,
     });
 
-    // Log ICE candidates - Breaking change
-    // peer._pc.onicecandidate = (event) => {
-    //   if (event.candidate) {
-    //     console.log("ICE candidate:", event.candidate);
-    //   } else {
-    //     console.log("All ICE candidates gathered.");
-    //   }
-    // };
+    // Add the event listeners for icecandidate and iceconnectionstatechange
+    peer._pc.addEventListener("icecandidate", (event) => {
+      const candidate = event.candidate;
+      if (candidate) {
+        console.log("ICE candidate:", candidate.type, candidate.candidate);
+      }
+    });
+
+    peer._pc.addEventListener("iceconnectionstatechange", () => {
+      console.log("ICE connection state:", peer._pc.iceConnectionState);
+    });
 
     peer.on("error", (err) => {
       console.error("Peer error:", err);
