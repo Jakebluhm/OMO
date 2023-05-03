@@ -671,10 +671,18 @@ const Room = (props) => {
   //  Add new player to current call that this user is already in
   function addPeer(incomingSignal, callerID, stream, userName) {
     console.log("------Inside addPeer()-----");
+
+    const config = {
+      sdpTransform: (sdp) => {
+        return setPreferredCodec(sdp, "H264");
+      },
+    };
+
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream,
+      config,
     });
 
     // Add the event listeners for icecandidate and iceconnectionstatechange
@@ -703,10 +711,6 @@ const Room = (props) => {
 
     peer.on("signal", (signal) => {
       console.log("--------------signal addPeer---------------");
-
-      if (signal.type === "offer") {
-        signal.sdp = setPreferredCodec(signal.sdp, "H264");
-      }
 
       socketRef.current.emit("returning signal", { signal, callerID, name });
       printVideoCodec(peer, userName);
