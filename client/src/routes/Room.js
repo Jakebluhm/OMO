@@ -616,7 +616,7 @@ const Room = (props) => {
       const candidate = event.candidate;
       if (candidate) {
         console.log(
-          "[${userName}] ICE candidate:",
+          userName + "ICE candidate:",
           candidate.type,
           candidate.candidate
         );
@@ -625,7 +625,7 @@ const Room = (props) => {
 
     peer._pc.addEventListener("iceconnectionstatechange", () => {
       console.log(
-        "[${userName}] ICE connection state:",
+        userName + "ICE connection state:",
         peer._pc.iceConnectionState
       );
     });
