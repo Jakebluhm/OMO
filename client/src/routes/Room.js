@@ -629,10 +629,10 @@ const Room = (props) => {
     }
   }
 
-  function printVideoCodec(peer) {
+  function printVideoCodec(peer, userName) {
     if (peer._pc && peer._pc.localDescription) {
       const videoCodec = getVideoCodec(peer._pc.localDescription.sdp);
-      console.log(`Video codec: ${videoCodec}`);
+      console.log(`Video codec: ${userName} ${videoCodec}`);
     } else {
       console.error("Local description is not set yet.");
     }
@@ -674,7 +674,7 @@ const Room = (props) => {
     peer.on("signal", (signal) => {
       console.log("--------------signal addPeer---------------");
       socketRef.current.emit("returning signal", { signal, callerID, name });
-      printVideoCodec(peer);
+      printVideoCodec(peer, userName);
     });
 
     peer.signal(incomingSignal);
