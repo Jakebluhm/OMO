@@ -466,7 +466,12 @@ const Room = (props) => {
 
         socketRef.current.on("user joined", (payload) => {
           //console.log("--------------user joined---------------");
-          const peer = addPeer(payload.signal, payload.callerID, stream);
+          const peer = addPeer(
+            payload.signal,
+            payload.callerID,
+            stream,
+            payload.userName.playerName
+          );
 
           peersRef.current.push({
             peerID: payload.callerID,
@@ -598,7 +603,7 @@ const Room = (props) => {
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream) {
+  function addPeer(incomingSignal, callerID, stream, userName) {
     console.log("------Inside addPeer()-----");
     const peer = new Peer({
       initiator: false,
@@ -610,12 +615,19 @@ const Room = (props) => {
     peer._pc.addEventListener("icecandidate", (event) => {
       const candidate = event.candidate;
       if (candidate) {
-        console.log("ICE candidate:", candidate.type, candidate.candidate);
+        console.log(
+          "[${userName}] ICE candidate:",
+          candidate.type,
+          candidate.candidate
+        );
       }
     });
 
     peer._pc.addEventListener("iceconnectionstatechange", () => {
-      console.log("ICE connection state:", peer._pc.iceConnectionState);
+      console.log(
+        "[${userName}] ICE connection state:",
+        peer._pc.iceConnectionState
+      );
     });
 
     peer.on("error", (err) => {
