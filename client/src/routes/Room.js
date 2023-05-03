@@ -638,6 +638,36 @@ const Room = (props) => {
     }
   }
 
+  function setPreferredCodec(sdp, codec) {
+    let sdpLines = sdp.split("\r\n");
+    const videoMLineIndex = sdpLines.findIndex((line) =>
+      line.startsWith("m=video")
+    );
+
+    if (videoMLineIndex === -1) {
+      console.log("No video m-line found");
+      return sdp;
+    }
+
+    const codecIndex = sdpLines.findIndex((line) => line.includes(codec));
+
+    if (codecIndex === -1) {
+      console.log("No desired codec found");
+      return sdp;
+    }
+
+    const payloadType = sdpLines[codecIndex].split(" ")[0].split(":")[1];
+    const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
+
+    sdpLines[videoMLineIndex] = videoMLineParts
+      .filter((part, index) => index < 4 || part !== payloadType)
+      .join(" ");
+
+    sdpLines.splice(videoMLineIndex + 1, 0, payloadType);
+
+    return sdpLines.join("\r\n");
+  }
+
   //  Add new player to current call that this user is already in
   function addPeer(incomingSignal, callerID, stream, userName) {
     console.log("------Inside addPeer()-----");
@@ -673,6 +703,11 @@ const Room = (props) => {
 
     peer.on("signal", (signal) => {
       console.log("--------------signal addPeer---------------");
+
+      if (signal.type === "offer") {
+        signal.sdp = setPreferredCodec(signal.sdp, "H264");
+      }
+
       socketRef.current.emit("returning signal", { signal, callerID, name });
       printVideoCodec(peer, userName);
     });
