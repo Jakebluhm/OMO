@@ -639,6 +639,8 @@ const Room = (props) => {
   }
 
   function setPreferredCodec(sdp, codec) {
+    console.log("SDP before changes:", sdp);
+
     let sdpLines = sdp.split("\r\n");
     const videoMLineIndex = sdpLines.findIndex((line) =>
       line.startsWith("m=video")
@@ -665,7 +667,35 @@ const Room = (props) => {
 
     sdpLines.splice(videoMLineIndex + 1, 0, payloadType);
 
-    return sdpLines.join("\r\n");
+    const updatedSdp = sdpLines.join("\r\n");
+    console.log("SDP after changes:", updatedSdp);
+
+    return updatedSdp;
+  }
+
+  function printAvailableVideoCodecs(peer) {
+    if (peer._pc && peer._pc.localDescription) {
+      const sdpLines = peer._pc.localDescription.sdp.split("\r\n");
+      const videoMLineIndex = sdpLines.findIndex((line) =>
+        line.startsWith("m=video")
+      );
+
+      if (videoMLineIndex === -1) {
+        console.log("No video m-line found");
+        return;
+      }
+
+      const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
+      const codecPayloadTypes = videoMLineParts.slice(3);
+      const codecLines = sdpLines.filter((line) =>
+        codecPayloadTypes.some((pt) => line.startsWith(`a=rtpmap:${pt}`))
+      );
+      const codecs = codecLines.map((line) => line.split(" ")[1]);
+
+      console.log("Available video codecs:", codecs.join(", "));
+    } else {
+      console.error("Local description is not set yet.");
+    }
   }
 
   //  Add new player to current call that this user is already in
@@ -714,6 +744,7 @@ const Room = (props) => {
 
       socketRef.current.emit("returning signal", { signal, callerID, name });
       printVideoCodec(peer, userName);
+      printAvailableVideoCodecs(peer);
     });
 
     peer.signal(incomingSignal);
