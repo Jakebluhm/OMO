@@ -145,12 +145,12 @@ const Room = (props) => {
   const [voteResult, setVoteResult] = useState(null);
   const [isRevote, setIsRevote] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
-  const [countdown, setCountdown] = useState(null);
+  const [countdown, setCountdown] = useState(10);
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [redirectCount, setRedirectCount] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(35);
+  const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
 
   const socketRef = useRef();
@@ -215,6 +215,7 @@ const Room = (props) => {
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
     if (videosReady >= 2) {
+      startTimer();
       setGameReady(true);
     }
   }, [videosReady, peers]);
@@ -327,8 +328,7 @@ const Room = (props) => {
 
   useEffect(() => {
     if (voteComplete) {
-      //console.log("Voting complete, starting countdown...");
-      setCountdown(10);
+      console.log("Voting complete, starting countdown...");
 
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
@@ -340,13 +340,15 @@ const Room = (props) => {
 
         // If it's a tie, reset the state variables and start a new vote
         if (voteResult === "tie") {
-          //console.log("Vote ended in a tie, resetting the vote...");
+          console.log(
+            "Vote ended in a tie, resetting the vote... and setting coutdown to 10"
+          );
 
           setIsRevote(true); // Update the isRevote state
 
           // Reset all relevant state variables
           setVoteCounts({});
-          setCountdown(null);
+          setCountdown(10);
           setVoteComplete(false);
           setVoteResult(null);
           setSelectedUser(null);
@@ -409,8 +411,6 @@ const Room = (props) => {
   // Component mounts aka displays to screen
 
   useEffect(() => {
-    startTimer();
-
     //console.log("Getting all users currently in room");
     socketRef.current = io.connect("/");
     navigator.mediaDevices
