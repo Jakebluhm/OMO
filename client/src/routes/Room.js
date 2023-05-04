@@ -579,13 +579,54 @@ const Room = (props) => {
     //localStorage.clear();
   };
 
+  function setPreferredCodec(sdp, codec) {
+    console.log("SDP before changes:", sdp);
+
+    let sdpLines = sdp.split("\r\n");
+    const videoMLineIndex = sdpLines.findIndex((line) =>
+      line.startsWith("m=video")
+    );
+
+    if (videoMLineIndex === -1) {
+      console.log("No video m-line found");
+      return sdp;
+    }
+
+    const codecIndex = sdpLines.findIndex((line) => line.includes(codec));
+
+    if (codecIndex === -1) {
+      console.log("No desired codec found");
+      return sdp;
+    }
+
+    const payloadType = sdpLines[codecIndex].split(" ")[0].split(":")[1];
+    const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
+
+    sdpLines[videoMLineIndex] = videoMLineParts
+      .filter((part, index) => index < 4 || part !== payloadType)
+      .join(" ");
+
+    sdpLines.splice(videoMLineIndex + 1, 0, payloadType);
+
+    const updatedSdp = sdpLines.join("\r\n");
+    console.log("SDP after changes:", updatedSdp);
+
+    return updatedSdp;
+  }
+
   //  called when joining a room with players already in room. Called in useEffect to make list of players
   function createPeer(userToSignal, callerID, stream) {
+    const config = {
+      sdpTransform: (sdp) => {
+        return setPreferredCodec(sdp, "H264");
+      },
+    };
+
     const peer = new Peer({
-      // Peer is from third party NPM module called simple-peer
       initiator: true,
-      trickle: false, //false,
+      trickle: false,
       stream,
+      config, // Add the config object here
     });
 
     peer.on("signal", (signal) => {
@@ -636,41 +677,6 @@ const Room = (props) => {
     } else {
       console.error("Local description is not set yet.");
     }
-  }
-
-  function setPreferredCodec(sdp, codec) {
-    console.log("SDP before changes:", sdp);
-
-    let sdpLines = sdp.split("\r\n");
-    const videoMLineIndex = sdpLines.findIndex((line) =>
-      line.startsWith("m=video")
-    );
-
-    if (videoMLineIndex === -1) {
-      console.log("No video m-line found");
-      return sdp;
-    }
-
-    const codecIndex = sdpLines.findIndex((line) => line.includes(codec));
-
-    if (codecIndex === -1) {
-      console.log("No desired codec found");
-      return sdp;
-    }
-
-    const payloadType = sdpLines[codecIndex].split(" ")[0].split(":")[1];
-    const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
-
-    sdpLines[videoMLineIndex] = videoMLineParts
-      .filter((part, index) => index < 4 || part !== payloadType)
-      .join(" ");
-
-    sdpLines.splice(videoMLineIndex + 1, 0, payloadType);
-
-    const updatedSdp = sdpLines.join("\r\n");
-    console.log("SDP after changes:", updatedSdp);
-
-    return updatedSdp;
   }
 
   function printAvailableVideoCodecs(peer) {
