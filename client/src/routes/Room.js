@@ -508,7 +508,12 @@ const Room = (props) => {
 
         socketRef.current.on("receiving returned signal", (payload) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
-          item.peer.signal(payload.signal);
+          if (item) {
+            console.log(`Processing received signal from ${payload.id}`);
+            item.peer.signal(payload.signal);
+          } else {
+            console.log(`Could not find a matching peer for ${payload.id}`);
+          }
         });
 
         socketRef.current.on("vote update", (payload) => {
@@ -749,7 +754,7 @@ const Room = (props) => {
       console.log("--------------signal addPeer---------------");
 
       socketRef.current.emit("returning signal", { signal, callerID, name });
-      printVideoCodec(peer, userName);
+      printVideoCodec(peer, userName); // Is this after setPreferredCodec(sdp, "H264")? if so it is not setting it properly
       printAvailableVideoCodecs(peer);
     });
 
