@@ -585,54 +585,12 @@ const Room = (props) => {
     //localStorage.clear();
   };
 
-  function setPreferredCodec(sdp, codec) {
-    console.log("SDP before changes:", sdp);
-
-    let sdpLines = sdp.split("\r\n");
-    const videoMLineIndex = sdpLines.findIndex((line) =>
-      line.startsWith("m=video")
-    );
-
-    if (videoMLineIndex === -1) {
-      console.log("No video m-line found");
-      return sdp;
-    }
-
-    const codecIndex = sdpLines.findIndex((line) => line.includes(codec));
-
-    if (codecIndex === -1) {
-      console.log("No desired codec found");
-      return sdp;
-    }
-
-    const payloadType = sdpLines[codecIndex].split(" ")[0].split(":")[1];
-    const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
-
-    sdpLines[videoMLineIndex] = videoMLineParts
-      .filter((part, index) => index < 4 || part !== payloadType)
-      .join(" ");
-
-    sdpLines.splice(videoMLineIndex + 1, 0, payloadType);
-
-    const updatedSdp = sdpLines.join("\r\n");
-    console.log("SDP after changes:", updatedSdp);
-
-    return updatedSdp;
-  }
-
   //  called when joining a room with players already in room. Called in useEffect to make list of players
   function createPeer(userToSignal, callerID, stream) {
-    const config = {
-      sdpTransform: (sdp) => {
-        return setPreferredCodec(sdp, "H264");
-      },
-    };
-
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream,
-      config, // Add the config object here
     });
 
     peer.on("signal", (signal) => {
@@ -649,82 +607,14 @@ const Room = (props) => {
     return peer;
   }
 
-  function getVideoCodec(sdp) {
-    const sdpLines = sdp.split("\r\n");
-    const videoMLineIndex = sdpLines.findIndex((line) =>
-      line.startsWith("m=video")
-    );
-
-    if (videoMLineIndex === -1) {
-      console.log("No video m-line found");
-      return "No video m-line found";
-    }
-
-    const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
-    const videoPayloadType = videoMLineParts[3];
-    const videoCodecLine = sdpLines.find((line) =>
-      line.startsWith(`a=rtpmap:${videoPayloadType}`)
-    );
-
-    if (videoCodecLine) {
-      const videoCodec = videoCodecLine.split(" ")[1];
-      console.log("Video codec found:", videoCodec);
-      return videoCodec;
-    } else {
-      console.log("No video codec found");
-      return "No video codec found";
-    }
-  }
-
-  function printVideoCodec(peer, userName) {
-    if (peer._pc && peer._pc.localDescription) {
-      const videoCodec = getVideoCodec(peer._pc.localDescription.sdp);
-      console.log(`Video codec: ${userName} ${videoCodec}`);
-    } else {
-      console.error("Local description is not set yet.");
-    }
-  }
-
-  function printAvailableVideoCodecs(peer) {
-    if (peer._pc && peer._pc.localDescription) {
-      const sdpLines = peer._pc.localDescription.sdp.split("\r\n");
-      const videoMLineIndex = sdpLines.findIndex((line) =>
-        line.startsWith("m=video")
-      );
-
-      if (videoMLineIndex === -1) {
-        console.log("No video m-line found");
-        return;
-      }
-
-      const videoMLineParts = sdpLines[videoMLineIndex].split(" ");
-      const codecPayloadTypes = videoMLineParts.slice(3);
-      const codecLines = sdpLines.filter((line) =>
-        codecPayloadTypes.some((pt) => line.startsWith(`a=rtpmap:${pt}`))
-      );
-      const codecs = codecLines.map((line) => line.split(" ")[1]);
-
-      console.log("Available video codecs:", codecs.join(", "));
-    } else {
-      console.error("Local description is not set yet.");
-    }
-  }
-
   //  Add new player to current call that this user is already in
   function addPeer(incomingSignal, callerID, stream, userName) {
     console.log("------Inside addPeer()-----");
-
-    const config = {
-      sdpTransform: (sdp) => {
-        return setPreferredCodec(sdp, "H264");
-      },
-    };
 
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream,
-      config,
     });
 
     // Add the event listeners for icecandidate and iceconnectionstatechange
@@ -755,8 +645,6 @@ const Room = (props) => {
       console.log("--------------signal addPeer---------------");
 
       socketRef.current.emit("returning signal", { signal, callerID, name });
-      printVideoCodec(peer, userName); // Is this after setPreferredCodec(sdp, "H264")? if so it is not setting it properly
-      printAvailableVideoCodecs(peer);
     });
 
     peer.signal(incomingSignal);
