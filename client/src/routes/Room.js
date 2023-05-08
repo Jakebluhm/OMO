@@ -61,10 +61,10 @@ const VoteButton = styled.button`
   cursor: pointer;
 `;
 
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
 const Video = (props) => {
   const ref = useRef();
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
