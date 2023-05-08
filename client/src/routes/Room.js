@@ -61,6 +61,8 @@ const VoteButton = styled.button`
   cursor: pointer;
 `;
 
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
 const Video = (props) => {
   const ref = useRef();
   useEffect(() => {
@@ -69,6 +71,8 @@ const Video = (props) => {
       console.log("Stream ID:", stream.id);
       console.log("Stream active:", stream.active);
       console.log("Stream tracks:", stream.getTracks());
+      console.log("navigator.userAgent");
+      console.log(navigator.userAgent);
 
       ref.current.srcObject = stream;
     });
@@ -108,7 +112,7 @@ const Video = (props) => {
     <StyledVideo
       playsInline
       autoPlay
-      muted
+      muted={isIOS}
       ref={ref}
       onLoadedMetadata={props.onVideoReady}
     />
