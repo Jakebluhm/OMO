@@ -157,7 +157,7 @@ const Room = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [redirectCount, setRedirectCount] = useState(120);
+  const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
 
   const socketRef = useRef();
