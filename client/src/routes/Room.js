@@ -156,7 +156,7 @@ const Room = (props) => {
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(120);
   const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
 
@@ -227,6 +227,7 @@ const Room = (props) => {
   useEffect(() => {
     if (videosReady >= 2) {
       setGameReady(true);
+      startTimer();
     }
   }, [videosReady, peers]);
 
@@ -439,8 +440,6 @@ const Room = (props) => {
   // Component mounts aka displays to screen
 
   useEffect(() => {
-    startTimer();
-
     //console.log("Getting all users currently in room");
     socketRef.current = io.connect("/");
     navigator.mediaDevices
