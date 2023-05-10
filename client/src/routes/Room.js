@@ -112,7 +112,7 @@ const Video = (props) => {
     <StyledVideo
       playsInline
       autoPlay
-      muted={isIOS}
+      muted
       ref={ref}
       onLoadedMetadata={props.onVideoReady}
     />
