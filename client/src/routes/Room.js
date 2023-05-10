@@ -63,18 +63,58 @@ const VoteButton = styled.button`
 
 const Video = (props) => {
   const ref = useRef();
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
+      console.log("Stream ID:", stream.id);
+      console.log("Stream active:", stream.active);
+      console.log("Stream tracks:", stream.getTracks());
+      console.log("navigator.userAgent");
+      console.log(navigator.userAgent);
 
       ref.current.srcObject = stream;
     });
+  }, []);
+
+  // Debug stream
+  useEffect(() => {
+    if (ref.current && ref.current.srcObject) {
+      ref.current.srcObject.onaddtrack = (event) => {
+        console.log("Track added to stream:", event.track);
+      };
+
+      ref.current.srcObject.onremovetrack = (event) => {
+        console.log("Track removed from stream:", event.track);
+      };
+
+      ref.current.srcObject.getTracks().forEach((track) => {
+        track.onended = (event) => {
+          console.log("Track ended:", event.target);
+        };
+      });
+    }
+  }, [ref.current?.srcObject]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (ref.current) {
+        console.log("Video readyState:", ref.current.readyState);
+      }
+    }, 5000); // Log the readyState every 5 seconds
+
+    // Cleanup function to clear the interval when the component is unmounted
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <StyledVideo
       playsInline
       autoPlay
+      muted={isIOS || isSafari}
       ref={ref}
       onLoadedMetadata={props.onVideoReady}
     />
@@ -112,12 +152,12 @@ const Room = (props) => {
   const [voteResult, setVoteResult] = useState(null);
   const [isRevote, setIsRevote] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
-  const [countdown, setCountdown] = useState(null);
+  const [countdown, setCountdown] = useState(10);
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [redirectCount, setRedirectCount] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
 
   const socketRef = useRef();
@@ -179,10 +219,15 @@ const Room = (props) => {
     setVideosReady((prevVideosReady) => prevVideosReady + 1);
   };
 
+  useEffect(() => {
+    console.log("redirectCount: ", redirectCount);
+    console.log("countdown: ", countdown);
+  }, [redirectCount, countdown]);
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
     if (videosReady >= 2) {
       setGameReady(true);
+      startTimer();
     }
   }, [videosReady, peers]);
 
@@ -195,7 +240,7 @@ const Room = (props) => {
       const timer = setTimeout(() => {
         stopMediaStream(userVideo.current.srcObject);
         socketRef.current.disconnect();
-
+        console.log("Attemting to return to home");
         history.push("/");
       }, 30000);
 
@@ -292,32 +337,38 @@ const Room = (props) => {
     }
   }, [voteCounts, peers]);
 
+  const [timerStarted, setTimerStarted] = useState(false);
+
   useEffect(() => {
-    if (voteComplete) {
-      //console.log("Voting complete, starting countdown...");
+    let timer;
+    let restartCountdown = false;
+
+    const startCountdown = () => {
       setCountdown(10);
 
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
 
       setTimeout(() => {
         clearInterval(timer);
-        //console.log("Countdown finished.");
+        setTimerStarted(false);
 
-        // If it's a tie, reset the state variables and start a new vote
         if (voteResult === "tie") {
-          //console.log("Vote ended in a tie, resetting the vote...");
+          console.log("Vote ended in a tie, resetting the vote...");
 
-          setIsRevote(true); // Update the isRevote state
+          setIsRevote(true);
 
-          // Reset all relevant state variables
           setVoteCounts({});
-          setCountdown(null);
+          setCountdown(10);
           setVoteComplete(false);
           setVoteResult(null);
           setSelectedUser(null);
+
+          restartCountdown = true;
         } else {
+          setCountdown(0);
+
           // Find the real odd man out here and update the state
           const uniquePeerIds = new Set([currentPlayer.uid]);
           const identityCounts = {
@@ -331,13 +382,9 @@ const Room = (props) => {
             }
           });
 
-          //console.log("Identity counts:", identityCounts);
-
           const minorityIdentity = Object.entries(identityCounts).find(
             ([, count]) => count === 1
           )[0];
-
-          //console.log("Minority identity:", minorityIdentity);
 
           let realOddManOutPeer;
 
@@ -351,11 +398,28 @@ const Room = (props) => {
             );
           }
 
-          //console.log("Real odd man out:", realOddManOutPeer.peerName);
           setRealOddManOut(realOddManOutPeer.peerName);
         }
       }, 10000);
+    };
+
+    if (voteComplete && !timerStarted) {
+      setTimerStarted(true);
+      startCountdown();
     }
+
+    if (restartCountdown) {
+      restartCountdown = false;
+      setTimerStarted(true);
+      startCountdown();
+    }
+
+    // Cleanup function
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
   }, [voteComplete, peers]);
 
   useEffect(() => {
@@ -376,8 +440,6 @@ const Room = (props) => {
   // Component mounts aka displays to screen
 
   useEffect(() => {
-    startTimer();
-
     //console.log("Getting all users currently in room");
     socketRef.current = io.connect("/");
     navigator.mediaDevices
@@ -433,7 +495,12 @@ const Room = (props) => {
 
         socketRef.current.on("user joined", (payload) => {
           //console.log("--------------user joined---------------");
-          const peer = addPeer(payload.signal, payload.callerID, stream);
+          const peer = addPeer(
+            payload.signal,
+            payload.callerID,
+            stream,
+            payload.userName.playerName
+          );
 
           peersRef.current.push({
             peerID: payload.callerID,
@@ -470,7 +537,12 @@ const Room = (props) => {
 
         socketRef.current.on("receiving returned signal", (payload) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
-          item.peer.signal(payload.signal);
+          if (item) {
+            console.log(`Processing received signal from ${payload.id}`);
+            item.peer.signal(payload.signal);
+          } else {
+            console.log(`Could not find a matching peer for ${payload.id}`);
+          }
         });
 
         socketRef.current.on("vote update", (payload) => {
@@ -544,9 +616,8 @@ const Room = (props) => {
   //  called when joining a room with players already in room. Called in useEffect to make list of players
   function createPeer(userToSignal, callerID, stream) {
     const peer = new Peer({
-      // Peer is from third party NPM module called simple-peer
       initiator: true,
-      trickle: false, //false,
+      trickle: false,
       stream,
     });
 
@@ -565,15 +636,42 @@ const Room = (props) => {
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream) {
+  function addPeer(incomingSignal, callerID, stream, userName) {
+    console.log("------Inside addPeer()-----");
+
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream,
     });
 
+    // Add the event listeners for icecandidate and iceconnectionstatechange
+    peer._pc.addEventListener("icecandidate", (event) => {
+      const candidate = event.candidate;
+      if (candidate) {
+        console.log(
+          userName + "ICE candidate:",
+          candidate.type,
+          candidate.candidate
+        );
+      }
+    });
+
+    peer._pc.addEventListener("iceconnectionstatechange", () => {
+      console.log(
+        userName + "ICE connection state:",
+        peer._pc.iceConnectionState
+      );
+    });
+
+    peer.on("error", (err) => {
+      console.error("Peer error:", err);
+      // Reconnect logic here
+    });
+
     peer.on("signal", (signal) => {
       console.log("--------------signal addPeer---------------");
+
       socketRef.current.emit("returning signal", { signal, callerID, name });
     });
 
@@ -677,7 +775,7 @@ const Room = (props) => {
             )}
             {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
-          <button onClick={toggleModal}>Close</button>
+          {/* <button onClick={toggleModal}>Close</button> */}
         </ModalContent>
       </ModalContainer>
 
@@ -762,7 +860,7 @@ const Room = (props) => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "rgba(0, 0, 0, 0.1)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -771,7 +869,7 @@ const Room = (props) => {
         >
           <div
             style={{
-              backgroundColor: "white",
+              backgroundColor: "rgba(200, 200, 255, 0.1)", // Change the opacity value to 0.1
               padding: 20,
               borderRadius: 10,
               display: "flex",
