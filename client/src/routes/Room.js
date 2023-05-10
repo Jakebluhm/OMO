@@ -66,6 +66,7 @@ const Video = (props) => {
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
@@ -151,7 +152,7 @@ const Room = (props) => {
   const [voteResult, setVoteResult] = useState(null);
   const [isRevote, setIsRevote] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
-  const [countdown, setCountdown] = useState(null);
+  const [countdown, setCountdown] = useState(10);
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -218,6 +219,10 @@ const Room = (props) => {
     setVideosReady((prevVideosReady) => prevVideosReady + 1);
   };
 
+  useEffect(() => {
+    console.log("redirectCount: ", redirectCount);
+    console.log("countdown: ", countdown);
+  }, [redirectCount, countdown]);
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
     if (videosReady >= 2) {
@@ -234,7 +239,7 @@ const Room = (props) => {
       const timer = setTimeout(() => {
         stopMediaStream(userVideo.current.srcObject);
         socketRef.current.disconnect();
-
+        console.log("Attemting to return to home");
         history.push("/");
       }, 30000);
 
@@ -332,13 +337,19 @@ const Room = (props) => {
   }, [voteCounts, peers]);
 
   useEffect(() => {
+    let timer;
     if (voteComplete) {
       //console.log("Voting complete, starting countdown...");
-      setCountdown(10);
 
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        //console.log("Countdown finished.");
+        // Rest of your code...
+      }, 10000);
 
       setTimeout(() => {
         clearInterval(timer);
@@ -352,7 +363,7 @@ const Room = (props) => {
 
           // Reset all relevant state variables
           setVoteCounts({});
-          setCountdown(null);
+          setCountdown(10);
           setVoteComplete(false);
           setVoteResult(null);
           setSelectedUser(null);
