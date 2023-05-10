@@ -336,10 +336,14 @@ const Room = (props) => {
     }
   }, [voteCounts, peers]);
 
+  const [timerStarted, setTimerStarted] = useState(false);
+
   useEffect(() => {
     let timer;
-    if (voteComplete) {
-      //console.log("Voting complete, starting countdown...");
+    let restartCountdown = false;
+
+    const startCountdown = () => {
+      setCountdown(10);
 
       timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
@@ -347,65 +351,45 @@ const Room = (props) => {
 
       setTimeout(() => {
         clearInterval(timer);
-        //console.log("Countdown finished.");
-        // Rest of your code...
-      }, 10000);
+        setTimerStarted(false);
 
-      setTimeout(() => {
-        clearInterval(timer);
-        //console.log("Countdown finished.");
-
-        // If it's a tie, reset the state variables and start a new vote
         if (voteResult === "tie") {
-          //console.log("Vote ended in a tie, resetting the vote...");
+          console.log("Vote ended in a tie, resetting the vote...");
 
-          setIsRevote(true); // Update the isRevote state
+          setIsRevote(true);
 
-          // Reset all relevant state variables
           setVoteCounts({});
           setCountdown(10);
           setVoteComplete(false);
           setVoteResult(null);
           setSelectedUser(null);
+
+          restartCountdown = true;
         } else {
-          // Find the real odd man out here and update the state
-          const uniquePeerIds = new Set([currentPlayer.uid]);
-          const identityCounts = {
-            [currentPlayer.omo]: 1, // Initialize with the current player's identity
-          };
+          setCountdown(0);
 
-          peers.forEach((peer) => {
-            if (!uniquePeerIds.has(peer.uid)) {
-              uniquePeerIds.add(peer.uid);
-              identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
-            }
-          });
-
-          //console.log("Identity counts:", identityCounts);
-
-          const minorityIdentity = Object.entries(identityCounts).find(
-            ([, count]) => count === 1
-          )[0];
-
-          //console.log("Minority identity:", minorityIdentity);
-
-          let realOddManOutPeer;
-
-          if (currentPlayer.omo === parseInt(minorityIdentity)) {
-            realOddManOutPeer = {
-              peerName: currentPlayer.peerName,
-            };
-          } else {
-            realOddManOutPeer = peers.find(
-              (peer) => peer.omo === parseInt(minorityIdentity)
-            );
-          }
-
-          //console.log("Real odd man out:", realOddManOutPeer.peerName);
-          setRealOddManOut(realOddManOutPeer.peerName);
+          // Rest of your code...
         }
       }, 10000);
+    };
+
+    if (voteComplete && !timerStarted) {
+      setTimerStarted(true);
+      startCountdown();
     }
+
+    if (restartCountdown) {
+      restartCountdown = false;
+      setTimerStarted(true);
+      startCountdown();
+    }
+
+    // Cleanup function
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
   }, [voteComplete, peers]);
 
   useEffect(() => {
