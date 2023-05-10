@@ -65,6 +65,7 @@ const Video = (props) => {
   const ref = useRef();
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
@@ -112,7 +113,7 @@ const Video = (props) => {
     <StyledVideo
       playsInline
       autoPlay
-      muted
+      muted={isIOS || isSafari}
       ref={ref}
       onLoadedMetadata={props.onVideoReady}
     />
