@@ -125,12 +125,12 @@ io.on("connection", (socket) => {
   });
 });
 
-// app.use(express.static(__dirname + '/server-public'));
+app.use(express.static(__dirname + "/server-public"));
 
 // This was created to give a ui to the server.js file Keping it as i may need to use it later
-// app.get("/", (req, res) => {
-//   res.sendFile(__dirname + "/server-public/index.html");
-// });
+app.get("/serverui", (req, res) => {
+  res.sendFile(__dirname + "/server-public/index.html");
+});
 
 const path = require("path");
 
