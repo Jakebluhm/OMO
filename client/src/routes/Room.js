@@ -368,7 +368,36 @@ const Room = (props) => {
         } else {
           setCountdown(0);
 
-          // Rest of your code...
+          // Find the real odd man out here and update the state
+          const uniquePeerIds = new Set([currentPlayer.uid]);
+          const identityCounts = {
+            [currentPlayer.omo]: 1, // Initialize with the current player's identity
+          };
+
+          peers.forEach((peer) => {
+            if (!uniquePeerIds.has(peer.uid)) {
+              uniquePeerIds.add(peer.uid);
+              identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+            }
+          });
+
+          const minorityIdentity = Object.entries(identityCounts).find(
+            ([, count]) => count === 1
+          )[0];
+
+          let realOddManOutPeer;
+
+          if (currentPlayer.omo === parseInt(minorityIdentity)) {
+            realOddManOutPeer = {
+              peerName: currentPlayer.peerName,
+            };
+          } else {
+            realOddManOutPeer = peers.find(
+              (peer) => peer.omo === parseInt(minorityIdentity)
+            );
+          }
+
+          setRealOddManOut(realOddManOutPeer.peerName);
         }
       }, 10000);
     };
