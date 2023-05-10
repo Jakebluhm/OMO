@@ -61,11 +61,20 @@ const VoteButton = styled.button`
   cursor: pointer;
 `;
 
+const MuteUnmuteButton = styled.button`
+  /* Add your styles for the mute/unmute button */
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+`;
+
 const Video = (props) => {
   const ref = useRef();
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  const [muted, setMuted] = useState(isIOS || isSafari);
 
   useEffect(() => {
     props.peer.on("stream", (stream) => {
@@ -110,14 +119,23 @@ const Video = (props) => {
     return () => clearInterval(interval);
   }, []);
 
+  const toggleMute = () => {
+    setMuted(!muted);
+  };
+
   return (
-    <StyledVideo
-      playsInline
-      autoPlay
-      muted={isIOS || isSafari}
-      ref={ref}
-      onLoadedMetadata={props.onVideoReady}
-    />
+    <div style={{ position: "relative" }}>
+      <StyledVideo
+        playsInline
+        autoPlay
+        muted={muted}
+        ref={ref}
+        onLoadedMetadata={props.onVideoReady}
+      />
+      <MuteUnmuteButton onClick={toggleMute}>
+        {muted ? "Unmute" : "Mute"}
+      </MuteUnmuteButton>
+    </div>
   );
 };
 
