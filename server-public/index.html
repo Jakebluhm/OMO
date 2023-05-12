@@ -9,7 +9,7 @@
     <div id="users"></div>
     <script>
       console.log("inside script for index.html");
-      var socket = io.connect("https://omo.social:3000"); //PORT
+      var socket = io.connect("https://omo.social"); //PORT
       console.log("after const socket = io();");
       console.log(`Connected to server: ${socket.connected}`);
       const usersDiv = document.querySelector("#users");
