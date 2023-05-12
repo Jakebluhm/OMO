@@ -473,6 +473,7 @@ const Room = (props) => {
         }); // emits join room to server
         socketRef.current.on("all users", (users) => {
           // Return all users currently in the group video chat
+          console.log("----- RECEIVED all users !!!! ------");
           const initPeers = []; // JAKEB Create empty peers to add all existing peers
           users.forEach((userID) => {
             //JAKEB Get each peer in the chat

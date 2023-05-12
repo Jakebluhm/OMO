@@ -65,7 +65,8 @@ io.on("connection", (socket) => {
     // }
 
     //This needs to be sent to room specific socket, see above
-    socket.emit("all users", usersInThisRoom);
+    //socket.emit("all users", usersInThisRoom);
+    io.in(payload.roomID).emit("all users", usersInThisRoom);
   });
 
   socket.on("vote cast", (payload) => {
@@ -117,25 +118,24 @@ io.on("connection", (socket) => {
       room = room.filter((id) => id.socketID !== socket.id);
       users[roomID] = room;
     }
-    socket.broadcast.emit("user left", socket.id);
+    socket.broadcast.to(roomID).emit("user left", socket.id);
 
     console.log("Room after Disconnect:");
     console.log(room);
   });
 });
 
-// app.use(express.static(__dirname + '/server-public'));
-
-// This was created to give a ui to the server.js file Keping it as i may need to use it later
-// app.get("/", (req, res) => {
-//   res.sendFile(__dirname + "/server-public/index.html");
-// });
-
 const path = require("path");
 
 // This is for the server to grab the build folder after running npm run build in client
 // Add this line to serve the static files from the React build folder
 app.use(express.static(path.join(__dirname, "client/build")));
+
+// This route was created to give a UI to the server.js file
+// It's better to put it after the static files middleware, but before the catch-all route
+// app.get("/serverui", (req, res) => {
+//   res.sendFile(path.join(__dirname, "server-public", "index.html"));
+// });
 
 // Add this line to handle any other routes and serve the React app's index.html
 app.get("*", (req, res) => {
