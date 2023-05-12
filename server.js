@@ -133,9 +133,9 @@ app.use(express.static(path.join(__dirname, "client/build")));
 
 // This route was created to give a UI to the server.js file
 // It's better to put it after the static files middleware, but before the catch-all route
-app.get("/serverui", (req, res) => {
-  res.sendFile(path.join(__dirname, "server-public", "index.html"));
-});
+// app.get("/serverui", (req, res) => {
+//   res.sendFile(path.join(__dirname, "server-public", "index.html"));
+// });
 
 // Add this line to handle any other routes and serve the React app's index.html
 app.get("*", (req, res) => {
