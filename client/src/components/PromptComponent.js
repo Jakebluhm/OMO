@@ -26,6 +26,7 @@ function PromptComponent({ prompt, onButtonClick }) {
   return (
     <div style={divStyle}>
       <button
+        name={"identityA" + prompt.id}
         label={prompt.id}
         onClick={handleIdentityASelected}
         style={{ marginRight: 10, width: 150 }}
@@ -33,6 +34,7 @@ function PromptComponent({ prompt, onButtonClick }) {
         {prompt.identityA}
       </button>
       <button
+        name={"identityB" + prompt.id}
         label={prompt.id}
         onClick={handleIdentityBSelected}
         style={{ marginLeft: 10, width: 150 }}
