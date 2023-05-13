@@ -1,0 +1,29 @@
+config:
+  target: "https://omo.social"
+  phases:
+    - duration: 60
+      arrivalRate: 20
+
+scenarios:
+  - engine: "socketio"
+    flow:
+      - emit:
+          channel: "join room"
+          data:
+            roomID: "ccced6f0-ef90-11ed-8b86-5d8ea5236393"
+            name:
+              playerName: "testName"
+            OMO:
+              oddOneOut:
+                - '{"0":1}'
+                - '{"1":1}'
+                - '{"2":1}'
+            uid:
+              uid: "45c781e0-f1b9-11ed-9180-07e098c8b503"
+      - think: 5
+      - emit:
+          channel: "vote cast"
+          data:
+            voterId: "45c781e0-f1b9-11ed-9180-07e098c8b503"
+            votedUserId: "45c781e0-f1b9-11ed-9190-07e098c8b503"
+            roomId: "ccced6f0-ef90-11ed-8b86-5d8ea5236393"

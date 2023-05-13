@@ -215,6 +215,7 @@ const CreateRoom = (props) => {
           }}
           type="text"
           placeholder="name"
+          name="displayName"
           value={name}
         ></input>
         <button
