@@ -31,3 +31,5 @@ jobs:
       - run: npm run style:all
       - name: Run test
         run: node ./test/OMOUserAddedTest.js
+      - name: Run Selenium test
+        run: node ./test/SeleniumTest.js

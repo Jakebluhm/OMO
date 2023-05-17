@@ -8,7 +8,7 @@ async function simulateClient(name, identity) {
 
   let driver = await new Builder()
     .forBrowser("chrome")
-    //.setChromeOptions(options)
+    .setChromeOptions(options)
     .build();
 
   let hasQuit = false; // add a flag to keep track of whether the driver has been quit
@@ -70,7 +70,7 @@ async function simulateClient(name, identity) {
 (async function runTest() {
   await Promise.all([
     simulateClient("Tim Cook", 0),
-    simulateClient("Steve Jobs", 1),
+    simulateClient("Steve Jobs", 0),
     simulateClient("Elon Musk", 0),
   ]);
 })();
