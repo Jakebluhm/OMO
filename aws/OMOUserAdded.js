@@ -1,7 +1,7 @@
-const AWS = require("aws-sdk");
-const dynamodb = new AWS.DynamoDB();
-const docClient = new AWS.DynamoDB.DocumentClient();
-const { v1: uuid } = require("uuid");
+// const AWS = require("aws-sdk");
+// const dynamodb = new AWS.DynamoDB();
+// const docClient = new AWS.DynamoDB.DocumentClient();
+// const { v1: uuid } = require("uuid");
 
 // Add the sendURLToClient function
 async function sendURLToClient(connectionId, uuid, promptId) {
@@ -63,13 +63,13 @@ exports.handler = async (event, context) => {
           console.log(users);
 
           // Call the matchmaking function
-          const match = findMatch(user, users);
+          const match = findMatch(users);
           if (match) {
             console.log("Match found:", match);
 
             // Handle the match, send a unique URL to matched users
             // Remove matched users from the OMOUserQueue table
-            const matchedUsers = [user, ...match.matches];
+            const matchedUsers = match.matches;
             console.log("matchedUsers");
             console.log(matchedUsers);
 
@@ -105,31 +105,50 @@ exports.handler = async (event, context) => {
     console.error(error);
   }
 };
-
 // Matchmaking function
-function findMatch(user, users) {
-  const potentialMatches = [];
+function findMatch(users) {
+  console.log("----------Inside findMatch-------------");
 
-  let commonPromptId = null;
+  let promptsMap = {};
 
+  if (Array.isArray(users)) {
+    users.forEach((u) => {
+      console.log(u.prompts);
+    });
+  } else {
+    console.log("No users found");
+  }
   for (const otherUser of users) {
-    if (otherUser.user !== user.user) {
-      for (const prompt of user.prompts) {
-        const promptId = Object.keys(prompt)[0];
-        const otherUserPrompt = otherUser.prompts.find(
-          (p) => Object.keys(p)[0] === promptId
-        );
-        if (otherUserPrompt && otherUserPrompt[promptId] === prompt[promptId]) {
-          potentialMatches.push(otherUser);
-          commonPromptId = promptId;
-          break;
-        }
+    for (const promptStr of otherUser.prompts) {
+      const prompt = JSON.parse(promptStr);
+      const promptId = Object.keys(prompt)[0];
+      if (!promptsMap.hasOwnProperty(promptId)) {
+        promptsMap[promptId] = { 0: [], 1: [] };
       }
+      promptsMap[promptId][prompt[promptId]].push(otherUser);
     }
   }
 
-  if (potentialMatches.length >= 2) {
-    return { matches: potentialMatches.slice(0, 2), promptId: commonPromptId };
+  for (const [promptId, usersMap] of Object.entries(promptsMap)) {
+    if (
+      (usersMap[0].length === 1 && usersMap[1].length >= 2) ||
+      (usersMap[1].length === 1 && usersMap[0].length >= 2)
+    ) {
+      const uniqueUser =
+        usersMap[0].length === 1 ? usersMap[0][0] : usersMap[1][0];
+      const matchingUsers =
+        usersMap[0].length === 1
+          ? usersMap[1].slice(0, 2)
+          : usersMap[0].slice(0, 2);
+      return {
+        matches: [uniqueUser].concat(matchingUsers),
+        promptId: promptId,
+      };
+    }
   }
+
+  console.log("----------returning from findMatch-------------");
   return null;
 }
+
+exports.findMatch = findMatch;

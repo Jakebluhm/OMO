@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: ["master", "serverCleanup"]
+    branches: ["master", "seleniumTestScript"]
   pull_request:
     branches: ["master"]
 
@@ -29,3 +29,5 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm run style:all
+      - name: Run test
+        run: node ../test/OMOUserAddedTest.js
