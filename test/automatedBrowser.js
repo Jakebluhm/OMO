@@ -70,7 +70,7 @@ async function simulateClient(name, identity) {
 (async function runTest() {
   await Promise.all([
     simulateClient("Tim Cook", 0),
-    simulateClient("Steve Jobs", 0),
+    simulateClient("Steve Jobs", 1),
     simulateClient("Elon Musk", 0),
   ]);
 })();
