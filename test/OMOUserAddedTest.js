@@ -1,13 +1,6 @@
-const exp = require("constants");
 const { findMatch } = require("../aws/OMOUserAdded");
 
 (function runTest() {
-  const user = {
-    user: "31eb15f0-f44e-11ed-aa47-d7f63467c0b0",
-    connectionId: "FCsOHdWrIAMCLyg=",
-    prompts: ['{"0":0}', '{"1":0}', '{"2":0}'],
-  };
-
   const testUsers = [
     [
       {

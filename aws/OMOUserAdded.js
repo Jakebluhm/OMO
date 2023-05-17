@@ -4,107 +4,107 @@
 // const { v1: uuid } = require("uuid");
 
 // Add the sendURLToClient function
-async function sendURLToClient(connectionId, uuid, promptId) {
-  console.log("------ sendURLToClient");
-  console.log("connectionId");
-  console.log(connectionId);
-  const apiGateway = new AWS.ApiGatewayManagementApi({
-    apiVersion: "2018-11-29",
-    endpoint:
-      "https://1myegfct68.execute-api.us-east-1.amazonaws.com/production",
-  });
-  try {
-    await apiGateway
-      .postToConnection({
-        ConnectionId: connectionId,
-        Data: JSON.stringify({ action: "sendURL", uuid, promptId }),
-      })
-      .promise();
-  } catch (error) {
-    console.error("Error sending URL to client:", error);
-  }
-}
+// async function sendURLToClient(connectionId, uuid, promptId) {
+//   console.log("------ sendURLToClient");
+//   console.log("connectionId");
+//   console.log(connectionId);
+//   const apiGateway = new AWS.ApiGatewayManagementApi({
+//     apiVersion: "2018-11-29",
+//     endpoint:
+//       "https://1myegfct68.execute-api.us-east-1.amazonaws.com/production",
+//   });
+//   try {
+//     await apiGateway
+//       .postToConnection({
+//         ConnectionId: connectionId,
+//         Data: JSON.stringify({ action: "sendURL", uuid, promptId }),
+//       })
+//       .promise();
+//   } catch (error) {
+//     console.error("Error sending URL to client:", error);
+//   }
+// }
 
-exports.handler = async (event, context) => {
-  const tableName = "OMOUserQueue";
-  console.log("event");
-  console.log(event);
-  console.log("context");
-  console.log(context);
+// exports.handler = async (event, context) => {
+//   const tableName = "OMOUserQueue";
+//   console.log("event");
+//   console.log(event);
+//   console.log("context");
+//   console.log(context);
 
-  try {
-    for (const record of event.Records) {
-      try {
-        const scanParams = {
-          TableName: tableName,
-        };
-        const allUsers = await docClient.scan(scanParams).promise();
-        const users = allUsers.Items;
+//   try {
+//     for (const record of event.Records) {
+//       try {
+//         const scanParams = {
+//           TableName: tableName,
+//         };
+//         const allUsers = await docClient.scan(scanParams).promise();
+//         const users = allUsers.Items;
 
-        // Get the item from the DynamoDB stream record
-        const keys = record.dynamodb.Keys;
-        const getItemParams = {
-          TableName: tableName,
-          Key: keys,
-        };
-        const item = await dynamodb.getItem(getItemParams).promise();
+//         // Get the item from the DynamoDB stream record
+//         const keys = record.dynamodb.Keys;
+//         const getItemParams = {
+//           TableName: tableName,
+//           Key: keys,
+//         };
+//         const item = await dynamodb.getItem(getItemParams).promise();
 
-        console.log("item");
-        console.log(item);
+//         console.log("item");
+//         console.log(item);
 
-        if (item) {
-          console.log("Item retrieved:", item);
-          const user = AWS.DynamoDB.Converter.unmarshall(item.Item);
+//         if (item) {
+//           console.log("Item retrieved:", item);
+//           const user = AWS.DynamoDB.Converter.unmarshall(item.Item);
 
-          console.log("user");
-          console.log(user);
+//           console.log("user");
+//           console.log(user);
 
-          console.log("users");
-          console.log(users);
+//           console.log("users");
+//           console.log(users);
 
-          // Call the matchmaking function
-          const match = findMatch(users);
-          if (match) {
-            console.log("Match found:", match);
+//           // Call the matchmaking function
+//           const match = findMatch(users);
+//           if (match) {
+//             console.log("Match found:", match);
 
-            // Handle the match, send a unique URL to matched users
-            // Remove matched users from the OMOUserQueue table
-            const matchedUsers = match.matches;
-            console.log("matchedUsers");
-            console.log(matchedUsers);
+//             // Handle the match, send a unique URL to matched users
+//             // Remove matched users from the OMOUserQueue table
+//             const matchedUsers = match.matches;
+//             console.log("matchedUsers");
+//             console.log(matchedUsers);
 
-            // Payload
-            const promptId = match.promptId;
-            const uniqueUUID = `${uuid()}`;
+//             // Payload
+//             const promptId = match.promptId;
+//             const uniqueUUID = `${uuid()}`;
 
-            for (const matchedUser of matchedUsers) {
-              // Remove user from the OMOUserQueue table
-              const deleteParams = {
-                TableName: tableName,
-                Key: { user: matchedUser.user },
-              };
+//             for (const matchedUser of matchedUsers) {
+//               // Remove user from the OMOUserQueue table
+//               const deleteParams = {
+//                 TableName: tableName,
+//                 Key: { user: matchedUser.user },
+//               };
 
-              // Send signal with unique URL to each matched user
-              await sendURLToClient(
-                matchedUser.connectionId,
-                uniqueUUID,
-                promptId
-              );
+//               // Send signal with unique URL to each matched user
+//               await sendURLToClient(
+//                 matchedUser.connectionId,
+//                 uniqueUUID,
+//                 promptId
+//               );
 
-              await docClient.delete(deleteParams).promise();
-            }
-          }
-        } else {
-          console.log("Item not found");
-        }
-      } catch (err) {
-        console.error("Error handling stream record:", err);
-      }
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
+//               await docClient.delete(deleteParams).promise();
+//             }
+//           }
+//         } else {
+//           console.log("Item not found");
+//         }
+//       } catch (err) {
+//         console.error("Error handling stream record:", err);
+//       }
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 // Matchmaking function
 function findMatch(users) {
   console.log("----------Inside findMatch-------------");
