@@ -41,9 +41,7 @@ async function simulateClient(name, identity) {
       await driver.wait(until.urlContains(urlSubstring), 10000);
     } catch (e) {
       if (e.name === "TimeoutError") {
-        throw new Error(
-          `Page did not redirect to ${urlSubstring} within 10 seconds`
-        );
+        throw new Error(`Page did not redirect to room within 10 seconds`);
       } else {
         throw e; // rethrow any other error
       }
