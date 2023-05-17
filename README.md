@@ -1,5 +1,5 @@
-
 ## URL: https://omo.social/
+
 <br><br><br># Steps to build and run locally
 
 Clone this repo
@@ -18,10 +18,7 @@ run "npm start" again to run website code
 
 Should open browser window
 
-
-
 # Lightsail details
-
 
 Public static IP address
 This static IP is available for public connection worldwide.
@@ -29,12 +26,19 @@ This static IP is available for public connection worldwide.
 3.136.49.106
 Attach to an instance
 Attaching a static IP replaces that instance's dynamic IP address.
- 
+
 OMOServer
 
 Detach
 512 MB RAM, 1 vCPU, 20 GB SSD
 
 # Build in lightsail
+
 NODE_OPTIONS="--max-old-space-size=4096" npm run build
-<br><br>or<br><br>cd htdocs/OMO<br>./deploy 
+<br><br>or<br><br>cd htdocs/OMO<br>./deploy
+
+# Tests
+
+Selenium launches 3 browsers and attempts to connect the 3 users confirming the operation of aws
+
+OMOUserAdded Lambda matchmaking function test
