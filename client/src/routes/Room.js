@@ -651,7 +651,6 @@ const Room = (props) => {
           }
           return response.json();
         })
-        .then((response) => response.json())
         .then((turnCredentials) => {
           const configuration = {
             iceServers: [
