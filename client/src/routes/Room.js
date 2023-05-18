@@ -483,6 +483,7 @@ const Room = (props) => {
               stream
             )
               .then((peer) => {
+                console.log("After creating Peer with createPeer 486: " + peer);
                 peersRef.current.push({
                   // Pushing a new player into array of players -
                   peerID: userID.socketID,
@@ -526,6 +527,7 @@ const Room = (props) => {
             payload.userName.playerName
           )
             .then((peer) => {
+              console.log("After creating Peer with addPeer 529: " + peer);
               peersRef.current.push({
                 peerID: payload.callerID,
                 peerName: payload.userName.playerName,
@@ -652,6 +654,7 @@ const Room = (props) => {
           return response.json();
         })
         .then((turnCredentials) => {
+          console.log("In createPeer using turn configuration");
           const configuration = {
             iceServers: [
               {
@@ -686,6 +689,7 @@ const Room = (props) => {
           resolve(peer);
         })
         .catch((error) => {
+          console.log("In createPeer using NON turn configuration");
           console.error("Error fetching TURN credentials:", error);
           // fallback: create a peer without TURN server credentials
 
@@ -724,6 +728,7 @@ const Room = (props) => {
           return response.json();
         })
         .then((turnCredentials) => {
+          console.log("In addPeer using turn configuration");
           const configuration = {
             iceServers: [
               {
@@ -783,6 +788,7 @@ const Room = (props) => {
           resolve(peer);
         })
         .catch((error) => {
+          console.log("In addPeer using NON turn configuration");
           const peer = new Peer({
             initiator: false,
             trickle: false,
