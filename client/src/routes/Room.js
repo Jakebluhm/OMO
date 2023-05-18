@@ -645,6 +645,12 @@ const Room = (props) => {
   function createPeer(userToSignal, callerID, stream) {
     return new Promise((resolve, reject) => {
       fetch("/turn-credentials")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+          }
+          return response.json();
+        })
         .then((response) => response.json())
         .then((turnCredentials) => {
           const configuration = {
@@ -712,7 +718,12 @@ const Room = (props) => {
       console.log("------Inside addPeer()-----");
 
       fetch("/turn-credentials")
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+          }
+          return response.json();
+        })
         .then((turnCredentials) => {
           const configuration = {
             iceServers: [

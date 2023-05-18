@@ -163,7 +163,7 @@ app.get("/turn-credentials", (req, res) => {
     })
     .catch((err) => {
       console.error("Error while generating TURN credentials: ", err);
-      res.status(500).send(err);
+      res.status(500).json({ error: err.toString() });
     });
 });
 
