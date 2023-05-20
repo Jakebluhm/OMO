@@ -77,6 +77,18 @@ const Video = (props) => {
   const [muted, setMuted] = useState(isIOS || isSafari);
 
   useEffect(() => {
+    const setStream = (stream, retryCount = 0) => {
+      if (ref.current) {
+        ref.current.srcObject = stream;
+      } else if (retryCount < 10) {
+        // Stop retrying after 10 attempts
+        // Retry after 100ms if ref.current is not available
+        setTimeout(() => setStream(stream, retryCount + 1), 100);
+      } else {
+        throw Error("Unable to set ref.cuurent.srcObject in Video");
+      }
+    };
+
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
       console.log("Stream ID:", stream.id);
@@ -85,7 +97,7 @@ const Video = (props) => {
       console.log("navigator.userAgent");
       console.log(navigator.userAgent);
 
-      ref.current.srcObject = stream;
+      setStream(stream);
     });
   }, []);
 
@@ -177,6 +189,7 @@ const Room = (props) => {
   const [timeLeft, setTimeLeft] = useState(120);
   const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
+  const [turnCredentials, setTurnCredentials] = useState(null);
 
   const socketRef = useRef();
   const userVideo = useRef();
@@ -456,135 +469,185 @@ const Room = (props) => {
   // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
   // of function change value. In this case no variables are specified so it runs when this
   // Component mounts aka displays to screen
+  // useEffect(() => {
+  //   // Fetch TURN credentials as soon as the socket connection is established
+  //   fetch("/turn-credentials")
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("HTTP error " + response.status);
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((credentials) => {
+  //       setTurnCredentials(credentials);
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error fetching TURN credentials:", error);
+  //     });
+  // }, []);
 
   useEffect(() => {
-    //console.log("Getting all users currently in room");
-    socketRef.current = io.connect("/");
-    navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
-      .then((stream) => {
-        //console.log("inside then----getUserMedia");
-        userVideo.current.srcObject = stream; //JAKEB this is video data
-        socketRef.current.emit("join room", {
-          roomID: roomID,
-          name: name,
-          OMO: oddOneOut,
-          uid: uid,
-        }); // emits join room to server
-        socketRef.current.on("all users", (users) => {
-          // Return all users currently in the group video chat
-          console.log("----- RECEIVED all users !!!! ------");
-          const initPeers = []; // JAKEB Create empty peers to add all existing peers
-          users.forEach((userID) => {
-            //JAKEB Get each peer in the chat
-            const peer = createPeer(
-              userID.socketID,
-              socketRef.current.id,
-              stream
-            );
-            peersRef.current.push({
-              // Pushing a new player into array of players -
-              peerID: userID.socketID,
-              peerName: userID.name,
-              uid: userID.uid,
-              omo: userID.omo,
-              peer,
+    // Start by fetching the TURN credentials
+    fetch("/turn-credentials")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+      })
+      .then((credentials) => {
+        socketRef.current = io.connect("/");
+        navigator.mediaDevices
+          .getUserMedia({ video: videoConstraints, audio: true })
+          .then((stream) => {
+            //console.log("inside then----getUserMedia");
+            userVideo.current.srcObject = stream; //JAKEB this is video data
+            socketRef.current.emit("join room", {
+              roomID: roomID,
+              name: name,
+              OMO: oddOneOut,
+              uid: uid,
+            }); // emits join room to server
+            socketRef.current.on("all users", (users) => {
+              // Return all users currently in the group video chat
+              console.log("----- RECEIVED all users !!!! ------");
+              const initPeers = []; // JAKEB Create empty peers to add all existing peers
+              users.forEach((userID) => {
+                // Prevent self from joining
+                console.log(
+                  `Comparing uid: ${userID.uid} with current player uid: ${currentPlayer.uid}`
+                );
+
+                if (userID.uid === currentPlayer.uid) {
+                  console.log("Skipping current user in all users list");
+                  return; // This return will skip the current iteration of the loop
+                }
+                //JAKEB Get each peer in the chat
+                const peer = createPeer(
+                  userID.socketID,
+                  socketRef.current.id,
+                  stream,
+                  credentials
+                );
+                peersRef.current.push({
+                  // Pushing a new player into array of players -
+                  peerID: userID.socketID,
+                  peerName: userID.name,
+                  uid: userID.uid,
+                  omo: userID.omo,
+                  peer,
+                });
+                initPeers.push({
+                  peerID: userID.socketID,
+                  peerName: userID.name,
+                  uid: userID.uid,
+                  omo: userID.omo,
+                  peer: peer,
+                });
+              });
+
+              if (initPeers.length > 0) {
+                console.log("all users - setPeers:");
+                console.log(initPeers);
+                setPeers(initPeers); // JAKE Set peersRef state variable
+              }
             });
-            initPeers.push({
-              peerID: userID.socketID,
-              peerName: userID.name,
-              uid: userID.uid,
-              omo: userID.omo,
-              peer: peer,
+
+            socketRef.current.on("room full", (users) => {
+              setIsRoomFull(true);
             });
+
+            //------------------ Callbacks--------------------
+
+            socketRef.current.on("user joined", (payload) => {
+              //console.log("--------------user joined---------------");
+
+              // Prevent self from joining
+
+              console.log(
+                `Comparing uid: ${payload.uid} with current player uid: ${currentPlayer.uid}`
+              );
+              if (payload.uid === currentPlayer.uid) {
+                console.log(
+                  "Received user joined from current client, ignore this"
+                );
+                return;
+              }
+
+              const peer = addPeer(
+                payload.signal,
+                payload.callerID,
+                stream,
+                payload.userName.playerName,
+                credentials
+              );
+
+              peersRef.current.push({
+                peerID: payload.callerID,
+                peerName: payload.userName.playerName,
+                uid: payload.uid,
+                omo: payload.omo,
+                peer,
+              });
+
+              const tempPeer = {
+                peerID: payload.callerID,
+                peerName: payload.userName.playerName,
+                uid: payload.uid,
+                omo: payload.omo,
+                peer: peer,
+              };
+
+              console.log("user joined - setPeers:");
+              console.log(tempPeer);
+              setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
+            });
+
+            socketRef.current.on("user left", (id) => {
+              const peerObj = peersRef.current.find((p) => p.peerID === id);
+              if (peerObj) {
+                peerObj.peer.destroy();
+              }
+
+              const peers = peersRef.current.filter((p) => p.peerID !== id);
+              peersRef.current = peers;
+
+              setPeers(peers);
+            });
+
+            socketRef.current.on("receiving returned signal", (payload) => {
+              const item = peersRef.current.find(
+                (p) => p.peerID === payload.id
+              );
+              if (item) {
+                console.log(`Processing received signal from ${payload.id}`);
+                item.peer.signal(payload.signal);
+              } else {
+                console.log(`Could not find a matching peer for ${payload.id}`);
+              }
+            });
+
+            socketRef.current.on("vote update", (payload) => {
+              const { voterId, votedUserId } = payload;
+
+              setVoteCounts((prevVoteCounts) => {
+                const updatedVoteCounts = { ...prevVoteCounts };
+                if (updatedVoteCounts[votedUserId]) {
+                  updatedVoteCounts[votedUserId] += 1;
+                } else {
+                  updatedVoteCounts[votedUserId] = 1;
+                }
+                return updatedVoteCounts;
+              });
+            });
+          })
+          .catch((error) => {
+            console.error("error: " + error);
           });
-
-          if (initPeers.length > 0) {
-            console.log("all users - setPeers:");
-            console.log(initPeers);
-            setPeers(initPeers); // JAKE Set peersRef state variable
-          }
-        });
-
-        socketRef.current.on("room full", (users) => {
-          setIsRoomFull(true);
-        });
-
-        //------------------ Callbacks--------------------
-
-        socketRef.current.on("user joined", (payload) => {
-          //console.log("--------------user joined---------------");
-          const peer = addPeer(
-            payload.signal,
-            payload.callerID,
-            stream,
-            payload.userName.playerName
-          );
-
-          peersRef.current.push({
-            peerID: payload.callerID,
-            peerName: payload.userName.playerName,
-            uid: payload.uid,
-            omo: payload.omo,
-            peer,
-          });
-
-          const tempPeer = {
-            peerID: payload.callerID,
-            peerName: payload.userName.playerName,
-            uid: payload.uid,
-            omo: payload.omo,
-            peer: peer,
-          };
-
-          console.log("user joined - setPeers:");
-          console.log(tempPeer);
-          setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
-        });
-
-        socketRef.current.on("user left", (id) => {
-          const peerObj = peersRef.current.find((p) => p.peerID === id);
-          if (peerObj) {
-            peerObj.peer.destroy();
-          }
-
-          const peers = peersRef.current.filter((p) => p.peerID !== id);
-          peersRef.current = peers;
-
-          setPeers(peers);
-        });
-
-        socketRef.current.on("receiving returned signal", (payload) => {
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
-          if (item) {
-            console.log(`Processing received signal from ${payload.id}`);
-            item.peer.signal(payload.signal);
-          } else {
-            console.log(`Could not find a matching peer for ${payload.id}`);
-          }
-        });
-
-        socketRef.current.on("vote update", (payload) => {
-          const { voterId, votedUserId } = payload;
-          //console.log("vote update received!");
-          //console.log("payload");
-          //console.log(payload);
-          // Update the UI or process the vote information as needed
-          setVoteCounts((prevVoteCounts) => {
-            const updatedVoteCounts = { ...prevVoteCounts };
-            if (updatedVoteCounts[votedUserId]) {
-              updatedVoteCounts[votedUserId] += 1;
-            } else {
-              updatedVoteCounts[votedUserId] = 1;
-            }
-            return updatedVoteCounts;
-          });
-        });
       })
       .catch((error) => {
-        console.error("error: " + error);
+        console.log("Error fetching TURN credentials:", error);
       });
-
     return () => {
       // Cleanup function
       console.log("Cleaning up Peers");
@@ -633,70 +696,175 @@ const Room = (props) => {
   };
 
   //  called when joining a room with players already in room. Called in useEffect to make list of players
-  function createPeer(userToSignal, callerID, stream) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
+  function createPeer(userToSignal, callerID, stream, turnCreds) {
+    if (turnCreds != null) {
+      console.log("In createPeer using turn configuration");
+      const configuration = {
+        iceServers: [
+          {
+            urls: "stun:stun.l.google.com:19302",
+          },
+          {
+            urls: "stun:global.stun.twilio.com:3478",
+          },
+          ...turnCreds.iceServers,
+        ],
+        sdpSemantics: "unified-plan",
+      };
 
-    peer.on("signal", (signal) => {
-      socketRef.current.emit("sending signal", {
-        userToSignal,
-        callerID,
-        signal,
-        name,
-        uid,
-        oddOneOut,
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream,
+        config: configuration,
       });
-    });
 
-    return peer;
+      peer.on("signal", (signal) => {
+        socketRef.current.emit("sending signal", {
+          userToSignal,
+          callerID,
+          signal,
+          name,
+          uid,
+          oddOneOut,
+        });
+      });
+
+      return peer;
+    } else {
+      console.log("In createPeer using NON turn configuration");
+      // fallback: create a peer without TURN server credentials
+
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream,
+      });
+
+      peer.on("signal", (signal) => {
+        socketRef.current.emit("sending signal", {
+          userToSignal,
+          callerID,
+          signal,
+          name,
+          uid,
+          oddOneOut,
+        });
+      });
+
+      return peer;
+    }
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream, userName) {
+  function addPeer(incomingSignal, callerID, stream, userName, turnCreds) {
     console.log("------Inside addPeer()-----");
 
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
+    if (turnCreds != null) {
+      console.log("In addPeer using turn configuration");
+      const configuration = {
+        iceServers: [
+          {
+            urls: "stun:stun.l.google.com:19302",
+          },
+          {
+            urls: "stun:global.stun.twilio.com:3478",
+          },
+          ...turnCreds.iceServers,
+        ],
+        sdpSemantics: "unified-plan",
+      };
 
-    // Add the event listeners for icecandidate and iceconnectionstatechange
-    peer._pc.addEventListener("icecandidate", (event) => {
-      const candidate = event.candidate;
-      if (candidate) {
+      const peer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream,
+        config: configuration,
+      });
+
+      // Add the event listeners for icecandidate and iceconnectionstatechange
+      peer._pc.addEventListener("icecandidate", (event) => {
+        const candidate = event.candidate;
+        if (candidate) {
+          console.log(
+            userName + "ICE candidate:",
+            candidate.type,
+            candidate.candidate
+          );
+        }
+      });
+
+      peer._pc.addEventListener("iceconnectionstatechange", () => {
         console.log(
-          userName + "ICE candidate:",
-          candidate.type,
-          candidate.candidate
+          userName + "ICE connection state:",
+          peer._pc.iceConnectionState
         );
-      }
-    });
+      });
 
-    peer._pc.addEventListener("iceconnectionstatechange", () => {
-      console.log(
-        userName + "ICE connection state:",
-        peer._pc.iceConnectionState
-      );
-    });
+      peer.on("error", (err) => {
+        console.error("Peer error:", err);
+        // Reconnect logic here
+      });
 
-    peer.on("error", (err) => {
-      console.error("Peer error:", err);
-      // Reconnect logic here
-    });
+      peer.on("signal", (signal) => {
+        console.log("--------------signal addPeer---------------");
 
-    peer.on("signal", (signal) => {
-      console.log("--------------signal addPeer---------------");
+        socketRef.current.emit("returning signal", {
+          signal,
+          callerID,
+          name,
+        });
+      });
 
-      socketRef.current.emit("returning signal", { signal, callerID, name });
-    });
+      peer.signal(incomingSignal);
 
-    peer.signal(incomingSignal);
+      return peer;
+    } else {
+      console.log("In addPeer using NON turn configuration");
+      const peer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream,
+      });
 
-    return peer;
+      // Add the event listeners for icecandidate and iceconnectionstatechange
+      peer._pc.addEventListener("icecandidate", (event) => {
+        const candidate = event.candidate;
+        if (candidate) {
+          console.log(
+            userName + "ICE candidate:",
+            candidate.type,
+            candidate.candidate
+          );
+        }
+      });
+
+      peer._pc.addEventListener("iceconnectionstatechange", () => {
+        console.log(
+          userName + "ICE connection state:",
+          peer._pc.iceConnectionState
+        );
+      });
+
+      peer.on("error", (err) => {
+        console.error("Peer error:", err);
+        // Reconnect logic here
+      });
+
+      peer.on("signal", (signal) => {
+        console.log("--------------signal addPeer---------------");
+
+        socketRef.current.emit("returning signal", {
+          signal,
+          callerID,
+          name,
+        });
+      });
+
+      peer.signal(incomingSignal);
+
+      return peer;
+    }
   }
 
   const uniqueIds = [];
@@ -817,7 +985,7 @@ const Room = (props) => {
               alignItems: "center",
               height: "400px",
               width: "400px",
-              border: "0px solid rgba(255, 0, 0, 1)",
+              border: "3px solid rgba(255, 0, 0, 1)",
             }}
           >
             <StyledVideo
