@@ -540,6 +540,15 @@ const Room = (props) => {
 
             socketRef.current.on("user joined", (payload) => {
               //console.log("--------------user joined---------------");
+
+              // Prevent self from joining
+              if (payload.uid === currentPlayer.uid) {
+                console.log(
+                  "Received user joined from current client, ignore this"
+                );
+                return;
+              }
+
               const peer = addPeer(
                 payload.signal,
                 payload.callerID,
