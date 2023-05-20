@@ -705,7 +705,7 @@ const Room = (props) => {
           {
             urls: "stun:global.stun.twilio.com:3478",
           },
-          ...turnCreds.iceServers,
+          //...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
       };
@@ -768,7 +768,7 @@ const Room = (props) => {
           {
             urls: "stun:global.stun.twilio.com:3478",
           },
-          ...turnCreds.iceServers,
+          //...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
       };
