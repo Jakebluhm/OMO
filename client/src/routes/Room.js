@@ -177,6 +177,7 @@ const Room = (props) => {
   const [timeLeft, setTimeLeft] = useState(120);
   const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
+  const [turnCredentials, setTurnCredentials] = useState(null);
 
   const socketRef = useRef();
   const userVideo = useRef();
@@ -456,6 +457,22 @@ const Room = (props) => {
   // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
   // of function change value. In this case no variables are specified so it runs when this
   // Component mounts aka displays to screen
+  useEffect(() => {
+    // Fetch TURN credentials as soon as the socket connection is established
+    fetch("/turn-credentials")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+      })
+      .then((credentials) => {
+        setTurnCredentials(credentials);
+      })
+      .catch((error) => {
+        console.log("Error fetching TURN credentials:", error);
+      });
+  }, []);
 
   useEffect(() => {
     //console.log("Getting all users currently in room");
@@ -480,29 +497,24 @@ const Room = (props) => {
             const peer = createPeer(
               userID.socketID,
               socketRef.current.id,
-              stream
-            )
-              .then((peer) => {
-                console.log("After creating Peer with createPeer 486: " + peer);
-                peersRef.current.push({
-                  // Pushing a new player into array of players -
-                  peerID: userID.socketID,
-                  peerName: userID.name,
-                  uid: userID.uid,
-                  omo: userID.omo,
-                  peer,
-                });
-                initPeers.push({
-                  peerID: userID.socketID,
-                  peerName: userID.name,
-                  uid: userID.uid,
-                  omo: userID.omo,
-                  peer: peer,
-                });
-              })
-              .catch((err) => {
-                console.error("Error creating peer:", err);
-              });
+              stream,
+              turnCredentials
+            );
+            peersRef.current.push({
+              // Pushing a new player into array of players -
+              peerID: userID.socketID,
+              peerName: userID.name,
+              uid: userID.uid,
+              omo: userID.omo,
+              peer,
+            });
+            initPeers.push({
+              peerID: userID.socketID,
+              peerName: userID.name,
+              uid: userID.uid,
+              omo: userID.omo,
+              peer: peer,
+            });
           });
 
           if (initPeers.length > 0) {
@@ -524,33 +536,29 @@ const Room = (props) => {
             payload.signal,
             payload.callerID,
             stream,
-            payload.userName.playerName
-          )
-            .then((peer) => {
-              console.log("After creating Peer with addPeer 529: " + peer);
-              peersRef.current.push({
-                peerID: payload.callerID,
-                peerName: payload.userName.playerName,
-                uid: payload.uid,
-                omo: payload.omo,
-                peer,
-              });
+            payload.userName.playerName,
+            turnCredentials
+          );
 
-              const tempPeer = {
-                peerID: payload.callerID,
-                peerName: payload.userName.playerName,
-                uid: payload.uid,
-                omo: payload.omo,
-                peer: peer,
-              };
+          peersRef.current.push({
+            peerID: payload.callerID,
+            peerName: payload.userName.playerName,
+            uid: payload.uid,
+            omo: payload.omo,
+            peer,
+          });
 
-              console.log("user joined - setPeers:");
-              console.log(tempPeer);
-              setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
-            })
-            .catch((err) => {
-              console.error("Error creating peer:", err);
-            });
+          const tempPeer = {
+            peerID: payload.callerID,
+            peerName: payload.userName.playerName,
+            uid: payload.uid,
+            omo: payload.omo,
+            peer: peer,
+          };
+
+          console.log("user joined - setPeers:");
+          console.log(tempPeer);
+          setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
         });
 
         socketRef.current.on("user left", (id) => {
@@ -605,7 +613,7 @@ const Room = (props) => {
         }
       });
     };
-  }, []);
+  }, [turnCredentials]);
 
   function stopMediaStream(stream) {
     if (stream) {
@@ -644,196 +652,175 @@ const Room = (props) => {
   };
 
   //  called when joining a room with players already in room. Called in useEffect to make list of players
-  function createPeer(userToSignal, callerID, stream) {
-    return new Promise((resolve, reject) => {
-      fetch("/turn-credentials")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-          }
-          return response.json();
-        })
-        .then((turnCredentials) => {
-          console.log("In createPeer using turn configuration");
-          const configuration = {
-            iceServers: [
-              {
-                urls: "stun:stun.l.google.com:19302",
-              },
-              {
-                urls: "stun:global.stun.twilio.com:3478",
-              },
-              ...turnCredentials.iceServers,
-            ],
-            sdpSemantics: "unified-plan",
-          };
+  function createPeer(userToSignal, callerID, stream, turnCreds) {
+    if (turnCreds != null) {
+      console.log("In createPeer using turn configuration");
+      const configuration = {
+        iceServers: [
+          {
+            urls: "stun:stun.l.google.com:19302",
+          },
+          {
+            urls: "stun:global.stun.twilio.com:3478",
+          },
+          ...turnCredentials.iceServers,
+        ],
+        sdpSemantics: "unified-plan",
+      };
 
-          const peer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream,
-            config: configuration,
-          });
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream,
+        config: configuration,
+      });
 
-          peer.on("signal", (signal) => {
-            socketRef.current.emit("sending signal", {
-              userToSignal,
-              callerID,
-              signal,
-              name,
-              uid,
-              oddOneOut,
-            });
-          });
-
-          resolve(peer);
-        })
-        .catch((error) => {
-          console.log("In createPeer using NON turn configuration");
-          console.error("Error fetching TURN credentials:", error);
-          // fallback: create a peer without TURN server credentials
-
-          const peer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream,
-          });
-
-          peer.on("signal", (signal) => {
-            socketRef.current.emit("sending signal", {
-              userToSignal,
-              callerID,
-              signal,
-              name,
-              uid,
-              oddOneOut,
-            });
-          });
-
-          resolve(peer);
+      peer.on("signal", (signal) => {
+        socketRef.current.emit("sending signal", {
+          userToSignal,
+          callerID,
+          signal,
+          name,
+          uid,
+          oddOneOut,
         });
-    });
+      });
+
+      return peer;
+    } else {
+      console.log("In createPeer using NON turn configuration");
+      // fallback: create a peer without TURN server credentials
+
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream,
+      });
+
+      peer.on("signal", (signal) => {
+        socketRef.current.emit("sending signal", {
+          userToSignal,
+          callerID,
+          signal,
+          name,
+          uid,
+          oddOneOut,
+        });
+      });
+
+      return peer;
+    }
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream, userName) {
-    return new Promise((resolve, reject) => {
-      console.log("------Inside addPeer()-----");
+  function addPeer(incomingSignal, callerID, stream, userName, turnCreds) {
+    console.log("------Inside addPeer()-----");
 
-      fetch("/turn-credentials")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-          }
-          return response.json();
-        })
-        .then((turnCredentials) => {
-          console.log("In addPeer using turn configuration");
-          const configuration = {
-            iceServers: [
-              {
-                urls: "stun:stun.l.google.com:19302",
-              },
-              {
-                urls: "stun:global.stun.twilio.com:3478",
-              },
-              ...turnCredentials.iceServers,
-            ],
-            sdpSemantics: "unified-plan",
-          };
+    if (turnCreds != null) {
+      console.log("In addPeer using turn configuration");
+      const configuration = {
+        iceServers: [
+          {
+            urls: "stun:stun.l.google.com:19302",
+          },
+          {
+            urls: "stun:global.stun.twilio.com:3478",
+          },
+          ...turnCredentials.iceServers,
+        ],
+        sdpSemantics: "unified-plan",
+      };
 
-          const peer = new Peer({
-            initiator: false,
-            trickle: false,
-            stream,
-            config: configuration,
-          });
+      const peer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream,
+        config: configuration,
+      });
 
-          // Add the event listeners for icecandidate and iceconnectionstatechange
-          peer._pc.addEventListener("icecandidate", (event) => {
-            const candidate = event.candidate;
-            if (candidate) {
-              console.log(
-                userName + "ICE candidate:",
-                candidate.type,
-                candidate.candidate
-              );
-            }
-          });
+      // Add the event listeners for icecandidate and iceconnectionstatechange
+      peer._pc.addEventListener("icecandidate", (event) => {
+        const candidate = event.candidate;
+        if (candidate) {
+          console.log(
+            userName + "ICE candidate:",
+            candidate.type,
+            candidate.candidate
+          );
+        }
+      });
 
-          peer._pc.addEventListener("iceconnectionstatechange", () => {
-            console.log(
-              userName + "ICE connection state:",
-              peer._pc.iceConnectionState
-            );
-          });
+      peer._pc.addEventListener("iceconnectionstatechange", () => {
+        console.log(
+          userName + "ICE connection state:",
+          peer._pc.iceConnectionState
+        );
+      });
 
-          peer.on("error", (err) => {
-            console.error("Peer error:", err);
-            // Reconnect logic here
-          });
+      peer.on("error", (err) => {
+        console.error("Peer error:", err);
+        // Reconnect logic here
+      });
 
-          peer.on("signal", (signal) => {
-            console.log("--------------signal addPeer---------------");
+      peer.on("signal", (signal) => {
+        console.log("--------------signal addPeer---------------");
 
-            socketRef.current.emit("returning signal", {
-              signal,
-              callerID,
-              name,
-            });
-          });
-
-          peer.signal(incomingSignal);
-
-          resolve(peer);
-        })
-        .catch((error) => {
-          console.log("In addPeer using NON turn configuration");
-          const peer = new Peer({
-            initiator: false,
-            trickle: false,
-            stream,
-          });
-
-          // Add the event listeners for icecandidate and iceconnectionstatechange
-          peer._pc.addEventListener("icecandidate", (event) => {
-            const candidate = event.candidate;
-            if (candidate) {
-              console.log(
-                userName + "ICE candidate:",
-                candidate.type,
-                candidate.candidate
-              );
-            }
-          });
-
-          peer._pc.addEventListener("iceconnectionstatechange", () => {
-            console.log(
-              userName + "ICE connection state:",
-              peer._pc.iceConnectionState
-            );
-          });
-
-          peer.on("error", (err) => {
-            console.error("Peer error:", err);
-            // Reconnect logic here
-          });
-
-          peer.on("signal", (signal) => {
-            console.log("--------------signal addPeer---------------");
-
-            socketRef.current.emit("returning signal", {
-              signal,
-              callerID,
-              name,
-            });
-          });
-
-          peer.signal(incomingSignal);
-
-          resolve(peer);
+        socketRef.current.emit("returning signal", {
+          signal,
+          callerID,
+          name,
         });
-    });
+      });
+
+      peer.signal(incomingSignal);
+
+      return peer;
+    } else {
+      console.log("In addPeer using NON turn configuration");
+      const peer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream,
+      });
+
+      // Add the event listeners for icecandidate and iceconnectionstatechange
+      peer._pc.addEventListener("icecandidate", (event) => {
+        const candidate = event.candidate;
+        if (candidate) {
+          console.log(
+            userName + "ICE candidate:",
+            candidate.type,
+            candidate.candidate
+          );
+        }
+      });
+
+      peer._pc.addEventListener("iceconnectionstatechange", () => {
+        console.log(
+          userName + "ICE connection state:",
+          peer._pc.iceConnectionState
+        );
+      });
+
+      peer.on("error", (err) => {
+        console.error("Peer error:", err);
+        // Reconnect logic here
+      });
+
+      peer.on("signal", (signal) => {
+        console.log("--------------signal addPeer---------------");
+
+        socketRef.current.emit("returning signal", {
+          signal,
+          callerID,
+          name,
+        });
+      });
+
+      peer.signal(incomingSignal);
+
+      return peer;
+    }
   }
 
   const uniqueIds = [];
