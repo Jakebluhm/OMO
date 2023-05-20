@@ -951,7 +951,7 @@ const Room = (props) => {
               alignItems: "center",
               height: "400px",
               width: "400px",
-              border: "0px solid rgba(255, 0, 0, 1)",
+              border: "3x solid rgba(255, 0, 0, 1)",
             }}
           >
             <StyledVideo
