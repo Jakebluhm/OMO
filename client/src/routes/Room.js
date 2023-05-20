@@ -501,6 +501,15 @@ const Room = (props) => {
               console.log("----- RECEIVED all users !!!! ------");
               const initPeers = []; // JAKEB Create empty peers to add all existing peers
               users.forEach((userID) => {
+                // Prevent self from joining
+                console.log(
+                  `Comparing uid: ${userID.uid} with current player uid: ${currentPlayer.uid}`
+                );
+
+                if (userID.uid === currentPlayer.uid) {
+                  console.log("Skipping current user in all users list");
+                  return; // This return will skip the current iteration of the loop
+                }
                 //JAKEB Get each peer in the chat
                 const peer = createPeer(
                   userID.socketID,
@@ -542,6 +551,10 @@ const Room = (props) => {
               //console.log("--------------user joined---------------");
 
               // Prevent self from joining
+
+              console.log(
+                `Comparing uid: ${payload.uid} with current player uid: ${currentPlayer.uid}`
+              );
               if (payload.uid === currentPlayer.uid) {
                 console.log(
                   "Received user joined from current client, ignore this"
