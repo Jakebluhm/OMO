@@ -595,10 +595,7 @@ const Room = (props) => {
 
             socketRef.current.on("vote update", (payload) => {
               const { voterId, votedUserId } = payload;
-              //console.log("vote update received!");
-              //console.log("payload");
-              //console.log(payload);
-              // Update the UI or process the vote information as needed
+
               setVoteCounts((prevVoteCounts) => {
                 const updatedVoteCounts = { ...prevVoteCounts };
                 if (updatedVoteCounts[votedUserId]) {
@@ -676,7 +673,7 @@ const Room = (props) => {
           {
             urls: "stun:global.stun.twilio.com:3478",
           },
-          ...turnCredentials.iceServers,
+          ...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
       };
@@ -739,7 +736,7 @@ const Room = (props) => {
           {
             urls: "stun:global.stun.twilio.com:3478",
           },
-          ...turnCredentials.iceServers,
+          ...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
       };
