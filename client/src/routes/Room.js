@@ -457,8 +457,25 @@ const Room = (props) => {
   // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
   // of function change value. In this case no variables are specified so it runs when this
   // Component mounts aka displays to screen
+  // useEffect(() => {
+  //   // Fetch TURN credentials as soon as the socket connection is established
+  //   fetch("/turn-credentials")
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("HTTP error " + response.status);
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((credentials) => {
+  //       setTurnCredentials(credentials);
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error fetching TURN credentials:", error);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    // Fetch TURN credentials as soon as the socket connection is established
+    // Start by fetching the TURN credentials
     fetch("/turn-credentials")
       .then((response) => {
         if (!response.ok) {
@@ -467,143 +484,139 @@ const Room = (props) => {
         return response.json();
       })
       .then((credentials) => {
-        setTurnCredentials(credentials);
+        socketRef.current = io.connect("/");
+        navigator.mediaDevices
+          .getUserMedia({ video: videoConstraints, audio: true })
+          .then((stream) => {
+            //console.log("inside then----getUserMedia");
+            userVideo.current.srcObject = stream; //JAKEB this is video data
+            socketRef.current.emit("join room", {
+              roomID: roomID,
+              name: name,
+              OMO: oddOneOut,
+              uid: uid,
+            }); // emits join room to server
+            socketRef.current.on("all users", (users) => {
+              // Return all users currently in the group video chat
+              console.log("----- RECEIVED all users !!!! ------");
+              const initPeers = []; // JAKEB Create empty peers to add all existing peers
+              users.forEach((userID) => {
+                //JAKEB Get each peer in the chat
+                const peer = createPeer(
+                  userID.socketID,
+                  socketRef.current.id,
+                  stream,
+                  credentials
+                );
+                peersRef.current.push({
+                  // Pushing a new player into array of players -
+                  peerID: userID.socketID,
+                  peerName: userID.name,
+                  uid: userID.uid,
+                  omo: userID.omo,
+                  peer,
+                });
+                initPeers.push({
+                  peerID: userID.socketID,
+                  peerName: userID.name,
+                  uid: userID.uid,
+                  omo: userID.omo,
+                  peer: peer,
+                });
+              });
+
+              if (initPeers.length > 0) {
+                console.log("all users - setPeers:");
+                console.log(initPeers);
+                setPeers(initPeers); // JAKE Set peersRef state variable
+              }
+            });
+
+            socketRef.current.on("room full", (users) => {
+              setIsRoomFull(true);
+            });
+
+            //------------------ Callbacks--------------------
+
+            socketRef.current.on("user joined", (payload) => {
+              //console.log("--------------user joined---------------");
+              const peer = addPeer(
+                payload.signal,
+                payload.callerID,
+                stream,
+                payload.userName.playerName,
+                credentials
+              );
+
+              peersRef.current.push({
+                peerID: payload.callerID,
+                peerName: payload.userName.playerName,
+                uid: payload.uid,
+                omo: payload.omo,
+                peer,
+              });
+
+              const tempPeer = {
+                peerID: payload.callerID,
+                peerName: payload.userName.playerName,
+                uid: payload.uid,
+                omo: payload.omo,
+                peer: peer,
+              };
+
+              console.log("user joined - setPeers:");
+              console.log(tempPeer);
+              setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
+            });
+
+            socketRef.current.on("user left", (id) => {
+              const peerObj = peersRef.current.find((p) => p.peerID === id);
+              if (peerObj) {
+                peerObj.peer.destroy();
+              }
+
+              const peers = peersRef.current.filter((p) => p.peerID !== id);
+              peersRef.current = peers;
+
+              setPeers(peers);
+            });
+
+            socketRef.current.on("receiving returned signal", (payload) => {
+              const item = peersRef.current.find(
+                (p) => p.peerID === payload.id
+              );
+              if (item) {
+                console.log(`Processing received signal from ${payload.id}`);
+                item.peer.signal(payload.signal);
+              } else {
+                console.log(`Could not find a matching peer for ${payload.id}`);
+              }
+            });
+
+            socketRef.current.on("vote update", (payload) => {
+              const { voterId, votedUserId } = payload;
+              //console.log("vote update received!");
+              //console.log("payload");
+              //console.log(payload);
+              // Update the UI or process the vote information as needed
+              setVoteCounts((prevVoteCounts) => {
+                const updatedVoteCounts = { ...prevVoteCounts };
+                if (updatedVoteCounts[votedUserId]) {
+                  updatedVoteCounts[votedUserId] += 1;
+                } else {
+                  updatedVoteCounts[votedUserId] = 1;
+                }
+                return updatedVoteCounts;
+              });
+            });
+          })
+          .catch((error) => {
+            console.error("error: " + error);
+          });
       })
       .catch((error) => {
         console.log("Error fetching TURN credentials:", error);
       });
-  }, []);
-
-  useEffect(() => {
-    //console.log("Getting all users currently in room");
-    socketRef.current = io.connect("/");
-    navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
-      .then((stream) => {
-        //console.log("inside then----getUserMedia");
-        userVideo.current.srcObject = stream; //JAKEB this is video data
-        socketRef.current.emit("join room", {
-          roomID: roomID,
-          name: name,
-          OMO: oddOneOut,
-          uid: uid,
-        }); // emits join room to server
-        socketRef.current.on("all users", (users) => {
-          // Return all users currently in the group video chat
-          console.log("----- RECEIVED all users !!!! ------");
-          const initPeers = []; // JAKEB Create empty peers to add all existing peers
-          users.forEach((userID) => {
-            //JAKEB Get each peer in the chat
-            const peer = createPeer(
-              userID.socketID,
-              socketRef.current.id,
-              stream,
-              turnCredentials
-            );
-            peersRef.current.push({
-              // Pushing a new player into array of players -
-              peerID: userID.socketID,
-              peerName: userID.name,
-              uid: userID.uid,
-              omo: userID.omo,
-              peer,
-            });
-            initPeers.push({
-              peerID: userID.socketID,
-              peerName: userID.name,
-              uid: userID.uid,
-              omo: userID.omo,
-              peer: peer,
-            });
-          });
-
-          if (initPeers.length > 0) {
-            console.log("all users - setPeers:");
-            console.log(initPeers);
-            setPeers(initPeers); // JAKE Set peersRef state variable
-          }
-        });
-
-        socketRef.current.on("room full", (users) => {
-          setIsRoomFull(true);
-        });
-
-        //------------------ Callbacks--------------------
-
-        socketRef.current.on("user joined", (payload) => {
-          //console.log("--------------user joined---------------");
-          const peer = addPeer(
-            payload.signal,
-            payload.callerID,
-            stream,
-            payload.userName.playerName,
-            turnCredentials
-          );
-
-          peersRef.current.push({
-            peerID: payload.callerID,
-            peerName: payload.userName.playerName,
-            uid: payload.uid,
-            omo: payload.omo,
-            peer,
-          });
-
-          const tempPeer = {
-            peerID: payload.callerID,
-            peerName: payload.userName.playerName,
-            uid: payload.uid,
-            omo: payload.omo,
-            peer: peer,
-          };
-
-          console.log("user joined - setPeers:");
-          console.log(tempPeer);
-          setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
-        });
-
-        socketRef.current.on("user left", (id) => {
-          const peerObj = peersRef.current.find((p) => p.peerID === id);
-          if (peerObj) {
-            peerObj.peer.destroy();
-          }
-
-          const peers = peersRef.current.filter((p) => p.peerID !== id);
-          peersRef.current = peers;
-
-          setPeers(peers);
-        });
-
-        socketRef.current.on("receiving returned signal", (payload) => {
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
-          if (item) {
-            console.log(`Processing received signal from ${payload.id}`);
-            item.peer.signal(payload.signal);
-          } else {
-            console.log(`Could not find a matching peer for ${payload.id}`);
-          }
-        });
-
-        socketRef.current.on("vote update", (payload) => {
-          const { voterId, votedUserId } = payload;
-          //console.log("vote update received!");
-          //console.log("payload");
-          //console.log(payload);
-          // Update the UI or process the vote information as needed
-          setVoteCounts((prevVoteCounts) => {
-            const updatedVoteCounts = { ...prevVoteCounts };
-            if (updatedVoteCounts[votedUserId]) {
-              updatedVoteCounts[votedUserId] += 1;
-            } else {
-              updatedVoteCounts[votedUserId] = 1;
-            }
-            return updatedVoteCounts;
-          });
-        });
-      })
-      .catch((error) => {
-        console.error("error: " + error);
-      });
-
     return () => {
       // Cleanup function
       console.log("Cleaning up Peers");
@@ -613,7 +626,7 @@ const Room = (props) => {
         }
       });
     };
-  }, [turnCredentials]);
+  }, []);
 
   function stopMediaStream(stream) {
     if (stream) {
