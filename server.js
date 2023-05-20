@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
 
     //This needs to be sent to room specific socket, see above
     socket.emit("all users", usersInThisRoom);
-    //io.in(payload.roomID).emit("all users", usersInThisRoom);
+    //io.in(payload.roomID).emit("all users", usersInThisRoom);< --- casues error
   });
 
   socket.on("vote cast", (payload) => {
@@ -125,8 +125,8 @@ io.on("connection", (socket) => {
       room = room.filter((id) => id.socketID !== socket.id);
       users[roomID] = room;
     }
-    socket.broadcast.emit("user left", socket.id);
-    //socket.broadcast.to(roomID).emit("user left", socket.id);
+    //socket.broadcast.emit("user left", socket.id);
+    socket.broadcast.to(roomID).emit("user left", socket.id);
 
     console.log("Room after Disconnect:");
     console.log(room);
