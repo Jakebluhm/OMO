@@ -84,6 +84,8 @@ const Video = (props) => {
         // Stop retrying after 10 attempts
         // Retry after 100ms if ref.current is not available
         setTimeout(() => setStream(stream, retryCount + 1), 100);
+      } else {
+        throw Error("Unable to set ref.cuurent.srcObject in Video");
       }
     };
 
@@ -705,7 +707,7 @@ const Room = (props) => {
           {
             urls: "stun:global.stun.twilio.com:3478",
           },
-          //...turnCreds.iceServers,
+          ...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
       };
@@ -768,7 +770,7 @@ const Room = (props) => {
           {
             urls: "stun:global.stun.twilio.com:3478",
           },
-          //...turnCreds.iceServers,
+          ...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
       };
