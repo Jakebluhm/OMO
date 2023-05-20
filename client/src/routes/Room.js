@@ -77,6 +77,16 @@ const Video = (props) => {
   const [muted, setMuted] = useState(isIOS || isSafari);
 
   useEffect(() => {
+    const setStream = (stream, retryCount = 0) => {
+      if (ref.current) {
+        ref.current.srcObject = stream;
+      } else if (retryCount < 10) {  // Stop retrying after 10 attempts
+        // Retry after 100ms if ref.current is not available
+        setTimeout(() => setStream(stream, retryCount + 1), 100);
+      }
+    };
+
+  useEffect(() => {
     props.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
       console.log("Stream ID:", stream.id);
@@ -85,7 +95,7 @@ const Video = (props) => {
       console.log("navigator.userAgent");
       console.log(navigator.userAgent);
 
-      ref.current.srcObject = stream;
+      setStream(stream);
     });
   }, []);
 
