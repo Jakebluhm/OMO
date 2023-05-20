@@ -701,12 +701,12 @@ const Room = (props) => {
       console.log("In createPeer using turn configuration");
       const configuration = {
         iceServers: [
-          {
-            urls: "stun:stun.l.google.com:19302",
-          },
-          {
-            urls: "stun:global.stun.twilio.com:3478",
-          },
+          // {
+          //   urls: "stun:stun.l.google.com:19302",
+          // },
+          // {
+          //   urls: "stun:global.stun.twilio.com:3478",
+          // },
           ...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
@@ -764,12 +764,12 @@ const Room = (props) => {
       console.log("In addPeer using turn configuration");
       const configuration = {
         iceServers: [
-          {
-            urls: "stun:stun.l.google.com:19302",
-          },
-          {
-            urls: "stun:global.stun.twilio.com:3478",
-          },
+          // {
+          //   urls: "stun:stun.l.google.com:19302",
+          // },
+          // {
+          //   urls: "stun:global.stun.twilio.com:3478",
+          // },
           ...turnCreds.iceServers,
         ],
         sdpSemantics: "unified-plan",
