@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import VideoGrid from "../components/VideoGrid";
 
 const Container = styled.div`
   padding: 20px;
@@ -68,7 +69,7 @@ const MuteUnmuteButton = styled.button`
   right: 10px;
 `;
 
-const Video = (props) => {
+export const Video = (props) => {
   const ref = useRef();
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -966,79 +967,13 @@ const Room = (props) => {
         </ModalContent>
       </ModalContainer>
 
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "0px solid rgba(0, 255, 0, 1)",
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "400px",
-              width: "400px",
-              border: "3px solid rgba(255, 0, 0, 1)",
-            }}
-          >
-            <StyledVideo
-              style={{ display: "flex", flex: 1 }}
-              muted
-              ref={userVideo}
-              autoPlay
-              playsInline
-            />
-          </div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <label style={{ padding: 5 }}>
-              {typeof name !== "undefined" && name != null
-                ? name.playerName
-                : "empty"}
-            </label>
-            {/* <label style={{ padding: 5 }}>
-              {typeof oddOneOut !== "undefined" && oddOneOut != null
-                ? oddOneOut.oddOneOut
-                : "empty"}
-            </label> */}
-          </div>
-        </div>
-        {peers.length > 0 &&
-          filteredPeers.map((peer) => {
-            return (
-              <div>
-                <div
-                  key={peer.peer._id}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "400px",
-                    width: "400px",
-                    border: "0px solid rgba(0, 255, 0, 1)",
-                  }}
-                >
-                  <Video
-                    style={{ display: "flex", flex: 1 }}
-                    key={peer.peerID}
-                    peer={peer.peer}
-                    onVideoReady={handleVideoReady}
-                  />
-                </div>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <label style={{ padding: 5 }}>{peer.peerName}</label>
-                </div>
-              </div>
-            );
-          })}
-      </div>
+      <VideoGrid
+        userVideo={userVideo}
+        filteredPeers={filteredPeers}
+        gameInfo={"gameInfo"}
+        handleVideoReady={handleVideoReady}
+      />
+
       {!gameReady && (
         <div
           style={{
