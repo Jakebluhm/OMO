@@ -114,43 +114,43 @@ const VideoGrid = ({
       <GridItem size={size}>
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
           {isModalOpen ? (
-            <>
-              <h1>Select the odd man out:</h1>
-              <div key={currentPlayer.uid}>
-                {currentPlayer.peerName} - Votes:{" "}
-                {voteCounts[currentPlayer.uid] || 0}
+            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+            <h1 style={{fontSize: 'calc(10px + 2vh)', marginBottom: '0.2vh'}}>Select the odd man out:</h1>
+            <div key={currentPlayer.uid} style={{fontSize: 'calc(8px + 1.5vh)', marginBottom: '0.1vh'}}>
+              {currentPlayer.peerName} - Votes: {voteCounts[currentPlayer.uid] || 0}
+            </div>
+            {filteredPeers.map((peer) => (
+              <div key={peer.id} style={{fontSize: 'calc(8px + 1.5vh)', marginBottom: '0.1vh'}}>
+                {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+                {selectedUser === null && (
+                  <VoteButton
+                    onClick={() => {
+                      handleUserVote(peer);
+                    }}
+                  >
+                    Vote
+                  </VoteButton>
+                )}
               </div>
-              {filteredPeers.map((peer) => (
-                <div key={peer.id}>
-                  {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
-                  {selectedUser === null && (
-                    <VoteButton
-                      onClick={() => {
-                        handleUserVote(peer);
-                      }}
-                    >
-                      Vote
-                    </VoteButton>
-                  )}
-                </div>
-              ))}
-              {isRevote && (
-                <h2>Revote is happening due to a tie. Please vote again.</h2>
-              )}
-              {voteComplete && (
-                <div>
-                  <h1>Voting Complete</h1>
-                  <h2>
-                    {voteResult === "tie"
-                      ? "It's a tie!"
-                      : `Person with the most votes: ${voteResult}`}
-                  </h2>
-                  <h3>Countdown: {countdown}</h3>
-                  {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
-                </div>
-              )}
-              {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
-            </>
+            ))}
+            {isRevote && (
+              <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.1vh'}}>Revote is happening due to a tie. Please vote again.</h2>
+            )}
+            {voteComplete && (
+              <div>
+                <h1 style={{fontSize: 'calc(10px + 2vh)', marginBottom: '0.2vh'}}>Voting Complete</h1>
+                <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.1vh'}}>
+                  {voteResult === "tie"
+                    ? "It's a tie!"
+                    : `Person with the most votes: ${voteResult}`}
+                </h2>
+                <h3 style={{fontSize: 'calc(10px + 1.6vh)', marginBottom: '0.1vh'}}>Countdown: {countdown}</h3>
+                {countdown === 0 && <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.1vh'}}>Real odd man out: {realOddManOut}</h2>}
+              </div>
+            )}
+            {gameComplete && <h3 style={{fontSize: 'calc(10px + 1.6vh)', marginBottom: '0.1vh'}}>Redirecting in {redirectCount} seconds...</h3>}
+          </div>
+          
           ) : (
             <>
               <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.1vh'}}>{"Find the odd man out:"}</h2>
