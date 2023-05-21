@@ -7,38 +7,21 @@ const GridContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 10px;
+  height: 100vh; /* adjust as needed */
+  width: 100vw; /* adjust as needed */
 `;
 
 const GridItem = styled.div`
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%; // Add this line to make GridItem a square
   border: 1px solid black;
-  flex: 0.5;
-`;
-
-const GridItemContent = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
+
 // Also, let's define StyledVideo
 const StyledVideo = styled.video`
   display: flex;
   flex: 1;
-`;
-
-const LabelContainer = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 20%; // Add this new div with 20% height for label
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 const VideoGrid = ({
@@ -50,36 +33,40 @@ const VideoGrid = ({
   return (
     <GridContainer>
       <GridItem>
-        <GridItemContent>
-          <StyledVideo muted ref={userVideo} autoPlay playsInline />
-        </GridItemContent>
+        <StyledVideo muted ref={userVideo} autoPlay playsInline />
       </GridItem>
       {filteredPeers.map((peer, index) => {
         if (index < 2) {
           // Only take the first two peers
           return (
             <GridItem key={peer.peerID}>
-              <GridItemContent>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                  border: "3px solid rgba(0, 255, 0, 1)",
+                }}
+              >
                 <Video
                   style={{ display: "flex", flex: 1 }}
                   key={peer.peerID}
                   peer={peer.peer}
                   onVideoReady={handleVideoReady}
                 />
-              </GridItemContent>
-              <LabelContainer>
                 <label style={{ padding: 5 }}>{peer.peerName}</label>
-              </LabelContainer>
+              </div>
             </GridItem>
           );
         }
       })}
       <GridItem>
-        <GridItemContent>
-          <p>{gameInfo}</p>
-        </GridItemContent>
+        <p>{gameInfo}</p>
       </GridItem>
     </GridContainer>
   );
 };
+
 export default VideoGrid;
