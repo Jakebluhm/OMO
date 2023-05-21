@@ -87,14 +87,15 @@ const VideoGrid = ({
           );
         }
       })}
-      <GridItem size={size}>
-        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-          <h2 style={{fontSize: '2vw', marginBottom: '0.5vw'}}>{"Find the odd man out:"}</h2>
-          <p style={{fontSize: '1.5vw', marginBottom: '2vw'}}>{gameInfo.omoIdentity}</p>
-          <p style={{fontSize: '1.5vw', marginBottom: '0.5vw'}}>{gameInfo.time}</p>
-          <p style={{fontSize: '1.5vw'}}>{"Remaining"}</p>
-        </div>
-      </GridItem> 
+<GridItem size={size}>
+  <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+    <h2 style={{fontSize: 'calc(16px + 2vw)', marginBottom: '0.2vw'}}>{"Find the odd man out:"}</h2>
+    <p style={{fontSize: 'calc(14px + 1.5vw)', marginBottom: '2vw'}}>{gameInfo.omoIdentity}</p>
+    <p style={{fontSize: 'calc(16px + 1.5vw)', marginBottom: '0.2vw'}}>{gameInfo.time}</p>
+    <p style={{fontSize: 'calc(14px + 1.5vw)'}}>{"Remaining"}</p>
+  </div>
+</GridItem>
+
     </GridContainer>
   );
 };
