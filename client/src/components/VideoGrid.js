@@ -14,8 +14,10 @@ const GridContainer = styled.div`
   width: 100vw;
 `;
 const VoteButton = styled.button`
-  height: ${(props) => props.size / 3}px;
-  width: ${(props) => props.size / 3}px;
+  width: ${(props) => props.size / 4}px; // adjust these fractions as necessary
+  height: ${(props) => props.size / 8}px; // half of the width to keep 2:1 ratio
+  font-size: ${(props) =>
+    props.size / 24}px; // adjust this fraction as necessary
   background-color: #4caf50;
   border: none;
   color: white;
@@ -23,7 +25,6 @@ const VoteButton = styled.button`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
   margin: 10px 2px;
   cursor: pointer;
 `;
@@ -148,7 +149,7 @@ const VideoGrid = ({
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
+                      flexDirection: "row",
                       alignItems: "center",
                       fontSize: "calc(8px + 1.5vh)",
                       marginBottom: "0.1vh",
