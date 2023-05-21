@@ -49,8 +49,6 @@ const ModalContent = styled.div`
   text-align: center;
 `;
 
-
-
 const MuteUnmuteButton = styled.button`
   /* Add your styles for the mute/unmute button */
   position: absolute;
@@ -891,12 +889,17 @@ const Room = (props) => {
 
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
-      <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <h3>
-          {identityATally} {prompt.prompt.identityA} - {identityBTally}
+          {identityATally} {prompt.prompt.identityA} - {identityBTally}{" "}
           {prompt.prompt.identityB}
         </h3>
-        <h4>Find the Odd Man Out</h4>
       </div>
       <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
@@ -972,8 +975,8 @@ const Room = (props) => {
             {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
           {/* <button onClick={toggleModal}>Close</button> */}
-        {/* </ModalContent>
-      </ModalContainer> */} 
+      {/* </ModalContent>
+      </ModalContainer> */}
 
       <VideoGrid
         userVideo={userVideo}
@@ -983,9 +986,6 @@ const Room = (props) => {
           omoIdentity: oddManOutIdentity,
         }}
         handleVideoReady={handleVideoReady}
-
-
-              
         // Add new props
         isModalOpen={isModalOpen}
         currentPlayer={currentPlayer}
@@ -997,7 +997,7 @@ const Room = (props) => {
         countdown={countdown}
         realOddManOut={realOddManOut}
         gameComplete={gameComplete}
-        redirectCount={redirectCount} 
+        redirectCount={redirectCount}
         selectedUser={selectedUser}
       />
 
