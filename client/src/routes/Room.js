@@ -15,8 +15,8 @@ const Container = styled.div`
 `;
 
 const StyledVideo = styled.video`
-  height: 100%;
-  width: 100%;
+  display: flex;
+  flex: 1;
 `;
 
 const Timer = styled.div`
