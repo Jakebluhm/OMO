@@ -192,6 +192,10 @@ const VideoGrid = ({
                   </h1>
                   <h2
                     style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
                       fontSize: "calc(10px + 1.8vh)",
                       marginBottom: "0.1vh",
                     }}
