@@ -88,10 +88,12 @@ const VideoGrid = ({
         }
       })}
       <GridItem size={size}>
-        <p>{"Find the odd man out:"}</p>
-        <p>{gameInfo.omoIdentity}</p>
-        <p>{gameInfo.time}</p>
-        <p>{"Remaining"}</p>
+        <div style={{display: 'flex', flex:1, flexDirection:'column'}}>
+          <h2>{"Find the odd man out:"}</h2>
+          <p style={{marginBottom: '20px'}}>{gameInfo.omoIdentity}</p>
+          <p>{gameInfo.time}</p>
+          <p>{"Remaining"}</p>
+        </div>
       </GridItem>
     </GridContainer>
   );
