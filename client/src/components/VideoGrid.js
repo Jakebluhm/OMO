@@ -14,8 +14,9 @@ const GridContainer = styled.div`
   width: 100vw;
 `;
 const VoteButton = styled.button`
-  width: ${(props) => props.size / 4}px; // adjust these fractions as necessary
-  height: ${(props) => props.size / 8}px; // half of the width to keep 2:1 ratio
+  width: ${(props) => props.size / 6}px; // adjust these fractions as necessary
+  height: ${(props) =>
+    props.size / 12}px; // half of the width to keep 2:1 ratio
   font-size: ${(props) =>
     props.size / 24}px; // adjust this fraction as necessary
   background-color: #4caf50;
@@ -25,7 +26,7 @@ const VoteButton = styled.button`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  margin: 10px 2px;
+  margin: 10px 10px;
   cursor: pointer;
 `;
 const GridItem = styled.div`

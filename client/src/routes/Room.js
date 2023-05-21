@@ -896,12 +896,11 @@ const Room = (props) => {
           alignItems: "center",
         }}
       >
-        <h3>
+        <h2 style={{ textAlign: "center" }}>
           {identityATally} {prompt.prompt.identityA} - {identityBTally}{" "}
           {prompt.prompt.identityB}
-        </h3>
+        </h2>
       </div>
-      <Timer>{formatTime(timeLeft)}</Timer>
       {isRoomFull && (
         <div
           style={{
