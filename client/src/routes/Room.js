@@ -137,7 +137,7 @@ export const Video = (props) => {
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", display: "flex", flex: 1 }}>
       <StyledVideo
         playsInline
         autoPlay
