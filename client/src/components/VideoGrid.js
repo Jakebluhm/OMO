@@ -13,7 +13,18 @@ const GridContainer = styled.div`
   height: 100vh;
   width: 100vw;
 `;
-
+const VoteButton = styled.button`
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 2px;
+  cursor: pointer;
+`;
 const GridItem = styled.div`
   height: ${(props) => props.size}px;
   width: ${(props) => props.size}px;
@@ -46,6 +57,7 @@ const VideoGrid = ({
   realOddManOut,
   gameComplete,
   redirectCount,
+  selectedUser,
 }) => {
   const [size, setSize] = useState(BASE_SIZE);
 

@@ -49,18 +49,7 @@ const ModalContent = styled.div`
   text-align: center;
 `;
 
-const VoteButton = styled.button`
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 2px;
-  cursor: pointer;
-`;
+
 
 const MuteUnmuteButton = styled.button`
   /* Add your styles for the mute/unmute button */
@@ -941,7 +930,7 @@ const Room = (props) => {
         </div>
       )}
 
-      <ModalContainer isOpen={isModalOpen}>
+      {/* <ModalContainer isOpen={isModalOpen}>
         <ModalContent>
           <>
             <h1>Select the odd man out:</h1>
@@ -983,8 +972,8 @@ const Room = (props) => {
             {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
           </>
           {/* <button onClick={toggleModal}>Close</button> */}
-        </ModalContent>
-      </ModalContainer>
+        {/* </ModalContent>
+      </ModalContainer> */} 
 
       <VideoGrid
         userVideo={userVideo}
@@ -1008,7 +997,8 @@ const Room = (props) => {
         countdown={countdown}
         realOddManOut={realOddManOut}
         gameComplete={gameComplete}
-        redirectCount={redirectCount}
+        redirectCount={redirectCount} 
+        selectedUser={selectedUser}
       />
 
       {!gameReady && (
