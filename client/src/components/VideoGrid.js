@@ -89,9 +89,9 @@ const VideoGrid = ({
       })}
       <GridItem size={size}>
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-          <h2 style={{fontSize: 'calc(12px + 2vh)', marginBottom: '0.5vh'}}>{"Find the odd man out:"}</h2>
+          <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.2vh'}}>{"Find the odd man out:"}</h2>
           <p style={{fontSize: 'calc(10px + 1.5vh)', marginBottom: '2vh'}}>{gameInfo.omoIdentity}</p>
-          <p style={{fontSize: 'calc(10px + 1.5vh)', marginBottom: '0.5vh'}}>{gameInfo.time}</p>
+          <p style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.2vh'}}>{gameInfo.time}</p>
           <p style={{fontSize: 'calc(10px + 1.5vh)'}}>{"Remaining"}</p>
         </div>
       </GridItem> 
