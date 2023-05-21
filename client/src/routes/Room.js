@@ -165,6 +165,7 @@ const Room = (props) => {
   const oddOneOut = { oddOneOut: playerInfo.oddOneOut };
   const uid = { uid: playerInfo.uid };
   const prompt = { prompt: playerInfo.prompt };
+  //const debug = props.location.state.debug;
 
   const currentPlayer = {
     peerName: playerInfo.playerName,
@@ -970,7 +971,7 @@ const Room = (props) => {
       <VideoGrid
         userVideo={userVideo}
         filteredPeers={filteredPeers}
-        gameInfo={"gameInfo"}
+        gameInfo={formatTime(timeLeft)}
         handleVideoReady={handleVideoReady}
       />
 
