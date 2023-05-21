@@ -994,6 +994,21 @@ const Room = (props) => {
           omoIdentity: oddManOutIdentity,
         }}
         handleVideoReady={handleVideoReady}
+
+
+              
+        // Add new props
+        isModalOpen={isModalOpen}
+        currentPlayer={currentPlayer}
+        voteCounts={voteCounts}
+        handleUserVote={handleUserVote}
+        isRevote={isRevote}
+        voteComplete={voteComplete}
+        voteResult={voteResult}
+        countdown={countdown}
+        realOddManOut={realOddManOut}
+        gameComplete={gameComplete}
+        redirectCount={redirectCount}
       />
 
       {!gameReady && (

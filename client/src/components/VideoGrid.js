@@ -34,6 +34,18 @@ const VideoGrid = ({
   filteredPeers,
   gameInfo,
   handleVideoReady,
+   
+  isModalOpen,
+  currentPlayer,
+  voteCounts,
+  handleUserVote,
+  isRevote,
+  voteComplete,
+  voteResult,
+  countdown,
+  realOddManOut,
+  gameComplete,
+  redirectCount,
 }) => {
   const [size, setSize] = useState(BASE_SIZE);
 
@@ -89,12 +101,55 @@ const VideoGrid = ({
       })}
       <GridItem size={size}>
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-          <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.2vh'}}>{"Find the odd man out:"}</h2>
-          <p style={{fontSize: 'calc(10px + 1.5vh)', marginBottom: '2vh'}}>{gameInfo.omoIdentity}</p>
-          <p style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.2vh'}}>{gameInfo.time}</p>
-          <p style={{fontSize: 'calc(10px + 1.5vh)'}}>{"Remaining"}</p>
+          {isModalOpen ? (
+            <>
+              <h1>Select the odd man out:</h1>
+              <div key={currentPlayer.uid}>
+                {currentPlayer.peerName} - Votes:{" "}
+                {voteCounts[currentPlayer.uid] || 0}
+              </div>
+              {filteredPeers.map((peer) => (
+                <div key={peer.id}>
+                  {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+                  {selectedUser === null && (
+                    <VoteButton
+                      onClick={() => {
+                        handleUserVote(peer);
+                      }}
+                    >
+                      Vote
+                    </VoteButton>
+                  )}
+                </div>
+              ))}
+              {isRevote && (
+                <h2>Revote is happening due to a tie. Please vote again.</h2>
+              )}
+              {voteComplete && (
+                <div>
+                  <h1>Voting Complete</h1>
+                  <h2>
+                    {voteResult === "tie"
+                      ? "It's a tie!"
+                      : `Person with the most votes: ${voteResult}`}
+                  </h2>
+                  <h3>Countdown: {countdown}</h3>
+                  {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
+                </div>
+              )}
+              {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
+            </>
+          ) : (
+            <>
+              <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.1vh'}}>{"Find the odd man out:"}</h2>
+              <p style={{fontSize: 'calc(10px + 1.5vh)', marginBottom: '2vh'}}>{gameInfo.omoIdentity}</p>
+              <h2 style={{fontSize: 'calc(10px + 1.8vh)', marginBottom: '0.1vh'}}>{gameInfo.time}</h2>
+              <p style={{fontSize: 'calc(10px + 1.5vh)'}}>{"Remaining"}</p>
+            </>
+          )}
         </div>
-      </GridItem> 
+      </GridItem>
+
     </GridContainer>
   );
 };
