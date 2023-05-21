@@ -43,11 +43,7 @@ const VideoGrid = ({
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                  border: "3px solid rgba(0, 255, 0, 1)",
+                  flex: 1,
                 }}
               >
                 <Video
