@@ -178,6 +178,7 @@ const Room = (props) => {
   const [isRoomFull, setIsRoomFull] = useState(false);
   const [identityATally, setIdentityATally] = useState(0);
   const [identityBTally, setIdentityBTally] = useState(0);
+  const [oddManOutIdentity, setOddManOutIdentity] = useState(null);
   const [gameReady, setGameReady] = useState(false);
   const [voteCounts, setVoteCounts] = useState({});
   const [voteComplete, setVoteComplete] = useState(false);
@@ -214,6 +215,23 @@ const Room = (props) => {
         }
       }
     });
+
+    if (
+      newIdentityBTally + newIdentityATally >= 3 &&
+      oddManOutIdentity == null
+    ) {
+      if (newIdentityATally === 1) {
+        console.log(
+          "Setting odd man out identity to: " + prompt.prompt.identityA
+        );
+        setOddManOutIdentity(prompt.prompt.identityA);
+      } else {
+        console.log(
+          "Setting odd man out identity to: " + prompt.prompt.identityB
+        );
+        setOddManOutIdentity(prompt.prompt.identityB);
+      }
+    }
 
     setIdentityATally(newIdentityATally);
     setIdentityBTally(newIdentityBTally);
@@ -971,7 +989,10 @@ const Room = (props) => {
       <VideoGrid
         userVideo={userVideo}
         filteredPeers={filteredPeers}
-        gameInfo={formatTime(timeLeft)}
+        gameInfo={{
+          time: formatTime(timeLeft),
+          omoIdentity: oddManOutIdentity,
+        }}
         handleVideoReady={handleVideoReady}
       />
 

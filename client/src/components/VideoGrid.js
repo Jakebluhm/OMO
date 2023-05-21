@@ -87,8 +87,11 @@ const VideoGrid = ({
           );
         }
       })}
-      <GridItem>
-        <p>{gameInfo}</p>
+      <GridItem size={size}>
+        <p>{"Find the odd man out:"}</p>
+        <p>{gameInfo.omoIdentity}</p>
+        <p>{gameInfo.time}</p>
+        <p>{"Remaining"}</p>
       </GridItem>
     </GridContainer>
   );
