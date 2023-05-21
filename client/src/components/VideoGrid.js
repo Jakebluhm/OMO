@@ -67,29 +67,22 @@ const VideoGrid = ({
           // Only take the first two peers
           return (
             <GridItem key={peer.peerID} size={size}>
-              <div
+              <Video
+                style={{ display: "flex", flex: 1 }}
+                key={peer.peerID}
+                peer={peer.peer}
+                onVideoReady={handleVideoReady}
+              />
+              <label
                 style={{
-                  display: "flex",
-                  flex: 1,
+                  position: "absolute",
+                  alignSelf: "flex-end",
+                  padding: 5,
+                  fontWeight: "bold",
                 }}
               >
-                <Video
-                  style={{ display: "flex", flex: 1 }}
-                  key={peer.peerID}
-                  peer={peer.peer}
-                  onVideoReady={handleVideoReady}
-                />
-                <label
-                  style={{
-                    position: "absolute",
-                    alignSelf: "flex-end",
-                    padding: 5,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {peer.peerName}
-                </label>
-              </div>
+                {peer.peerName}
+              </label>
             </GridItem>
           );
         }
