@@ -30,6 +30,17 @@ const StyledVideo = styled.video`
   display: flex;
   flex: 1;
 `;
+
+const LabelContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 20%; // Add this new div with 20% height for label
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const VideoGrid = ({
   userVideo,
   filteredPeers,
@@ -49,25 +60,16 @@ const VideoGrid = ({
           return (
             <GridItem key={peer.peerID}>
               <GridItemContent>
-                {/* <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                    border: "3px solid rgba(0, 255, 0, 1)",
-                  }}
-                > */}
                 <Video
                   style={{ display: "flex", flex: 1 }}
                   key={peer.peerID}
                   peer={peer.peer}
                   onVideoReady={handleVideoReady}
                 />
-                <label style={{ padding: 5 }}>{peer.peerName}</label>
-                {/* </div> */}
               </GridItemContent>
+              <LabelContainer>
+                <label style={{ padding: 5 }}>{peer.peerName}</label>
+              </LabelContainer>
             </GridItem>
           );
         }
@@ -80,5 +82,4 @@ const VideoGrid = ({
     </GridContainer>
   );
 };
-
 export default VideoGrid;
