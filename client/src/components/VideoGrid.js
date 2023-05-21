@@ -49,7 +49,7 @@ const VideoGrid = ({
           return (
             <GridItem key={peer.peerID}>
               <GridItemContent>
-                <div
+                {/* <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
@@ -58,15 +58,15 @@ const VideoGrid = ({
                     height: "100%",
                     border: "3px solid rgba(0, 255, 0, 1)",
                   }}
-                >
-                  <Video
-                    style={{ display: "flex", flex: 1 }}
-                    key={peer.peerID}
-                    peer={peer.peer}
-                    onVideoReady={handleVideoReady}
-                  />
-                  <label style={{ padding: 5 }}>{peer.peerName}</label>
-                </div>
+                > */}
+                <Video
+                  style={{ display: "flex", flex: 1 }}
+                  key={peer.peerID}
+                  peer={peer.peer}
+                  onVideoReady={handleVideoReady}
+                />
+                <label style={{ padding: 5 }}>{peer.peerName}</label>
+                {/* </div> */}
               </GridItemContent>
             </GridItem>
           );
