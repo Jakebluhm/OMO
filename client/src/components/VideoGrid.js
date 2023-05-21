@@ -52,7 +52,16 @@ const VideoGrid = ({
                   peer={peer.peer}
                   onVideoReady={handleVideoReady}
                 />
-                <label style={{ padding: 5 }}>{peer.peerName}</label>
+                <label
+                  style={{
+                    position: "absolute",
+                    alignSelf: "flex-end",
+                    padding: 5,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {peer.peerName}
+                </label>
               </div>
             </GridItem>
           );
