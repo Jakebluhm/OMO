@@ -11,7 +11,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   margin: auto;
   flex-wrap: wrap;
