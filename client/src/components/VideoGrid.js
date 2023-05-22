@@ -134,12 +134,12 @@ const VideoGrid = ({
                 alignItems: "center",
               }}
             >
-              <p style={{ fontSize: "calc(2px + 2vh)", marginBottom: "5px" }}>
+              <p style={{ fontSize: "calc(2px + 0.5vh)", marginBottom: "5px" }}>
                 Select the odd man out:
               </p>
               <div
                 key={currentPlayer.uid}
-                style={{ fontSize: "calc(2px + 1.5vh)", marginBottom: "5px" }}
+                style={{ fontSize: "calc(2px + 0.5vh)", marginBottom: "5px" }}
               >
                 {currentPlayer.peerName} - Votes:{" "}
                 {voteCounts[currentPlayer.uid] || 0}
@@ -151,7 +151,7 @@ const VideoGrid = ({
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      fontSize: "calc(2px + 1.5vh)",
+                      fontSize: "calc(2px + 0.5vh)",
                       marginBottom: "5px",
                     }}
                   >
@@ -172,7 +172,7 @@ const VideoGrid = ({
               {isRevote && (
                 <p
                   style={{
-                    fontSize: "calc(2px + 1.6vh)",
+                    fontSize: "calc(2px + 0.5vh)",
                     marginBottom: "5px",
                   }}
                 >
@@ -183,7 +183,7 @@ const VideoGrid = ({
                 <div>
                   <p
                     style={{
-                      fontSize: "calc(2px + 1.6vh)",
+                      fontSize: "calc(2px + 0.5vh)",
                       marginBottom: "5px",
                     }}
                   >
@@ -195,7 +195,7 @@ const VideoGrid = ({
                       flexDirection: "column",
                       justifyContent: "center",
                       alignItems: "center",
-                      fontSize: "calc(2px + 1.8vh)",
+                      fontSize: "calc(2px + 0.5vh)",
                       marginBottom: "5px",
                     }}
                   >
@@ -205,7 +205,7 @@ const VideoGrid = ({
                   </p>
                   <p
                     style={{
-                      fontSize: "calc(2px + 1.6vh)",
+                      fontSize: "calc(2px + 0.5vh)",
                       marginBottom: "5px",
                     }}
                   >
@@ -214,7 +214,7 @@ const VideoGrid = ({
                   {countdown === 0 && (
                     <p
                       style={{
-                        fontSize: "calc(2px + 1.8vh)",
+                        fontSize: "calc(2px + 0.5vh)",
                         marginBottom: "5px",
                       }}
                     >
@@ -226,7 +226,7 @@ const VideoGrid = ({
               {gameComplete && (
                 <p
                   style={{
-                    fontSize: "calc(2px + 1.6vh)",
+                    fontSize: "calc(2px + 0.5vh)",
                     marginBottom: "5px",
                   }}
                 >
@@ -238,24 +238,24 @@ const VideoGrid = ({
             <>
               <p
                 style={{
-                  fontSize: "calc(2px + 1.8vh)",
+                  fontSize: "calc(2px + 0.5vh)",
                   marginBottom: "5px",
                 }}
               >
                 {"Find the odd man out:"}
               </p>
-              <p style={{ fontSize: "calc(2px + 1.5vh)", marginBottom: "5px" }}>
+              <p style={{ fontSize: "calc(2px + 0.5vh)", marginBottom: "5px" }}>
                 {gameInfo.omoIdentity}
               </p>
               <p
                 style={{
-                  fontSize: "calc(2px + 1.8vh)",
+                  fontSize: "calc(2px + 0.5vh)",
                   marginBottom: "5px",
                 }}
               >
                 {gameInfo.time}
               </p>
-              <p style={{ fontSize: "calc(2px + 1.5vh)" }}>{"Remaining"}</p>
+              <p style={{ fontSize: "calc(2px + 0.5vh)" }}>{"Remaining"}</p>
             </>
           )}
         </div>
