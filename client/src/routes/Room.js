@@ -11,8 +11,8 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   margin: auto;
   flex-wrap: wrap;
 `;
@@ -891,7 +891,7 @@ const Room = (props) => {
   });
 
   return (
-    <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
+    <Container>
       <h2 style={{ textAlign: "center" }}>
         {identityATally} {prompt.prompt.identityA} - {identityBTally}{" "}
         {prompt.prompt.identityB}
@@ -926,51 +926,6 @@ const Room = (props) => {
           </div>
         </div>
       )}
-
-      {/* <ModalContainer isOpen={isModalOpen}>
-        <ModalContent>
-          <>
-            <h1>Select the odd man out:</h1>
-            <div key={currentPlayer.uid}>
-              {currentPlayer.peerName} - Votes:{" "}
-              {voteCounts[currentPlayer.uid] || 0}
-            </div>
-            {filteredPeers.map((peer) => (
-              <div key={peer.id}>
-                {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
-                {selectedUser === null && (
-                  <VoteButton
-                    onClick={() => {
-                      handleUserVote(peer);
-                      //console.log("filteredPeers");
-                      //console.log(filteredPeers);
-                    }}
-                  >
-                    Vote
-                  </VoteButton>
-                )}
-              </div>
-            ))}
-            {isRevote && (
-              <h2>Revote is happening due to a tie. Please vote again.</h2>
-            )}
-            {voteComplete && (
-              <div>
-                <h1>Voting Complete</h1>
-                <h2>
-                  {voteResult === "tie"
-                    ? "It's a tie!"
-                    : `Person with the most votes: ${voteResult}`}
-                </h2>
-                <h3>Countdown: {countdown}</h3>
-                {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
-              </div>
-            )}
-            {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
-          </>
-          {/* <button onClick={toggleModal}>Close</button> */}
-      {/* </ModalContent>
-      </ModalContainer> */}
 
       <VideoGrid
         userVideo={userVideo}
