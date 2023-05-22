@@ -8,8 +8,11 @@ import VideoGrid from "../components/VideoGrid";
 const Container = styled.div`
   padding: 5px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   height: 100vh;
-  width: 100vh;
+  width: 100vw;
   margin: auto;
   flex-wrap: wrap;
 `;
@@ -889,18 +892,10 @@ const Room = (props) => {
 
   return (
     <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <h2 style={{ textAlign: "center" }}>
-          {identityATally} {prompt.prompt.identityA} - {identityBTally}{" "}
-          {prompt.prompt.identityB}
-        </h2>
-      </div>
+      <h2 style={{ textAlign: "center" }}>
+        {identityATally} {prompt.prompt.identityA} - {identityBTally}{" "}
+        {prompt.prompt.identityB}
+      </h2>
       {isRoomFull && (
         <div
           style={{
@@ -1017,15 +1012,15 @@ const Room = (props) => {
         >
           <div
             style={{
-              backgroundColor: "rgba(200, 200, 255, 0.1)", // Change the opacity value to 0.1
+              backgroundColor: "rgba(200, 200, 255, 0.5)", // Change the opacity value to 0.1
               padding: 20,
               borderRadius: 10,
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              width: "100%", // Set width and height to 100%
-              height: "100%",
+              width: "90%",
+              height: "90%",
             }}
           >
             <h2>Loading...</h2>
