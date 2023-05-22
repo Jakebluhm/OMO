@@ -14,7 +14,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100%;
   margin: auto;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 `;
 
 const StyledVideo = styled.video`
