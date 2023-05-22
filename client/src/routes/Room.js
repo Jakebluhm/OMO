@@ -929,6 +929,7 @@ const Room = (props) => {
       )}
 
       <VideoGrid
+        style={{ flex: 1, overflow: "auto" }}
         userVideo={userVideo}
         filteredPeers={filteredPeers}
         gameInfo={{
