@@ -6,10 +6,10 @@ import styled from "styled-components";
 import VideoGrid from "../components/VideoGrid";
 
 const Container = styled.div`
-  padding: 20px;
+  padding: 5px;
   display: flex;
   height: 100vh;
-  width: 90%;
+  width: 100vh;
   margin: auto;
   flex-wrap: wrap;
 `;
