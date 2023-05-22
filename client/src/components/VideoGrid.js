@@ -22,11 +22,11 @@ const VoteButton = styled.button`
   background-color: #4caf50;
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: ${(props) => props.size / 120}px ${(props) => props.size / 60}px; // adjust these fractions as necessary
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  margin: 10px 10px;
+  margin: ${(props) => props.size / 120}px ${(props) => props.size / 120}px; // adjust these fractions as necessary
   cursor: pointer;
 `;
 const GridItem = styled.div`
@@ -133,14 +133,12 @@ const VideoGrid = ({
                 alignItems: "center",
               }}
             >
-              <h1
-                style={{ fontSize: "calc(10px + 2vh)", marginBottom: "0.2vh" }}
-              >
+              <p style={{ fontSize: "calc(6px + 2vh)", marginBottom: "0.1vh" }}>
                 Select the odd man out:
-              </h1>
+              </p>
               <div
                 key={currentPlayer.uid}
-                style={{ fontSize: "calc(8px + 1.5vh)", marginBottom: "0.1vh" }}
+                style={{ fontSize: "calc(6px + 1.5vh)", marginBottom: "0.1vh" }}
               >
                 {currentPlayer.peerName} - Votes:{" "}
                 {voteCounts[currentPlayer.uid] || 0}
@@ -152,7 +150,7 @@ const VideoGrid = ({
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      fontSize: "calc(8px + 1.5vh)",
+                      fontSize: "calc(6px + 1.5vh)",
                       marginBottom: "0.1vh",
                     }}
                   >
@@ -171,94 +169,94 @@ const VideoGrid = ({
                 </div>
               ))}
               {isRevote && (
-                <h2
+                <p
                   style={{
-                    fontSize: "calc(10px + 1.8vh)",
+                    fontSize: "calc(6px + 1.6vh)",
                     marginBottom: "0.1vh",
                   }}
                 >
                   Revote is happening due to a tie. Please vote again.
-                </h2>
+                </p>
               )}
               {voteComplete && (
                 <div>
-                  <h1
+                  <p
                     style={{
-                      fontSize: "calc(10px + 2vh)",
-                      marginBottom: "0.2vh",
+                      fontSize: "calc(6px + 1.6vh)",
+                      marginBottom: "0.1vh",
                     }}
                   >
                     Voting Complete
-                  </h1>
-                  <h2
+                  </p>
+                  <p
                     style={{
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "center",
                       alignItems: "center",
-                      fontSize: "calc(10px + 1.8vh)",
+                      fontSize: "calc(6px + 1.8vh)",
                       marginBottom: "0.1vh",
                     }}
                   >
                     {voteResult === "tie"
                       ? "It's a tie!"
                       : `Person with the most votes: ${voteResult}`}
-                  </h2>
-                  <h3
+                  </p>
+                  <p
                     style={{
-                      fontSize: "calc(10px + 1.6vh)",
+                      fontSize: "calc(6px + 1.6vh)",
                       marginBottom: "0.1vh",
                     }}
                   >
                     Countdown: {countdown}
-                  </h3>
+                  </p>
                   {countdown === 0 && (
-                    <h2
+                    <p
                       style={{
-                        fontSize: "calc(10px + 1.8vh)",
+                        fontSize: "calc(6px + 1.8vh)",
                         marginBottom: "0.1vh",
                       }}
                     >
                       Real odd man out: {realOddManOut}
-                    </h2>
+                    </p>
                   )}
                 </div>
               )}
               {gameComplete && (
-                <h3
+                <p
                   style={{
-                    fontSize: "calc(10px + 1.6vh)",
+                    fontSize: "calc(6px + 1.6vh)",
                     marginBottom: "0.1vh",
                   }}
                 >
                   Redirecting in {redirectCount} seconds...
-                </h3>
+                </p>
               )}
             </div>
           ) : (
             <>
-              <h2
+              <p
                 style={{
-                  fontSize: "calc(10px + 1.8vh)",
+                  fontSize: "calc(6px + 1.8vh)",
                   marginBottom: "0.1vh",
                 }}
               >
                 {"Find the odd man out:"}
-              </h2>
+              </p>
               <p
-                style={{ fontSize: "calc(10px + 1.5vh)", marginBottom: "2vh" }}
+                style={{ fontSize: "calc(6px + 1.5vh)", marginBottom: "0.1vh" }}
               >
                 {gameInfo.omoIdentity}
               </p>
-              <h2
+              <p
                 style={{
-                  fontSize: "calc(10px + 1.8vh)",
+                  fontSize: "calc(6px + 1.8vh)",
                   marginBottom: "0.1vh",
                 }}
               >
                 {gameInfo.time}
-              </h2>
-              <p style={{ fontSize: "calc(10px + 1.5vh)" }}>{"Remaining"}</p>
+              </p>
+              <p style={{ fontSize: "calc(6px + 1.5vh)" }}>{"Remaining"}</p>
             </>
           )}
         </div>
