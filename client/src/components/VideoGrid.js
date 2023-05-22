@@ -8,7 +8,7 @@ const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, ${(props) => props.size}px);
   grid-template-rows: repeat(2, ${(props) => props.size}px);
-  gap: 5px;
+  gap: 0px;
   justify-content: center;
   align-items: center;
   height: 100%;

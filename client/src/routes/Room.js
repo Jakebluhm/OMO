@@ -6,7 +6,7 @@ import styled from "styled-components";
 import VideoGrid from "../components/VideoGrid";
 
 const Container = styled.div`
-  padding: 5px;
+  padding: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
