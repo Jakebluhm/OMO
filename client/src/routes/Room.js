@@ -892,8 +892,9 @@ const Room = (props) => {
 
   return (
     <Container>
+      <h1 style={{ textAlign: "center" }}>OMO</h1>
       <h2 style={{ textAlign: "center" }}>
-        {identityATally} {prompt.prompt.identityA} - {identityBTally}{" "}
+        {identityATally} {prompt.prompt.identityA} vs {identityBTally}{" "}
         {prompt.prompt.identityB}
       </h2>
       {isRoomFull && (

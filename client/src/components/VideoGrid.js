@@ -8,11 +8,11 @@ const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, ${(props) => props.size}px);
   grid-template-rows: repeat(2, ${(props) => props.size}px);
-  gap: 10px;
+  gap: 5px;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
 `;
 const VoteButton = styled.button`
   width: ${(props) => props.size / 6}px; // adjust these fractions as necessary
