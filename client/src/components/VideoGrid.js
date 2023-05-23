@@ -11,7 +11,7 @@ const GridContainer = styled.div`
   gap: 5px;
   justify-content: center;
   align-items: center;
-  flex: 1;
+  flex: 0.95;
   width: 100%;
 `;
 const VoteButton = styled.button`
