@@ -15,6 +15,9 @@ const Container = styled.div`
   width: 95%;
   margin: auto;
   flex-wrap: nowrap;
+  border-width: 1px;
+  border-color: #00ff00;
+  border-style: solid;
 `;
 
 const StyledVideo = styled.video`
@@ -891,7 +894,7 @@ const Room = (props) => {
   });
 
   return (
-    <Container style={{ borderWidth: 1, borderColor: "#00ff00" }}>
+    <Container>
       <p style={{ textAlign: "center" }}>OMO</p>
       <p style={{ textAlign: "center" }}>
         {identityATally} {prompt.prompt.identityA} vs {identityBTally}{" "}
@@ -932,8 +935,6 @@ const Room = (props) => {
         style={{
           flex: 1,
           overflow: "auto",
-          borderWidth: 1,
-          borderColor: "#ff0000",
         }}
         userVideo={userVideo}
         filteredPeers={filteredPeers}
