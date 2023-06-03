@@ -15,6 +15,8 @@ const Container = styled.div`
   width: 100%;
   margin: auto;
   flex-wrap: nowrap;
+  border-color: blue;
+  border-width: 1px;
 `;
 
 const StyledVideo = styled.video`
