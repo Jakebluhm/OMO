@@ -123,6 +123,7 @@ const VideoGrid = ({
         <div
           style={{
             display: "flex",
+            flex: 1, //Just added this
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",

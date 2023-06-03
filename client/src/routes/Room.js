@@ -19,7 +19,10 @@ const Container = styled.div`
   border-color: #00ff00;
   border-style: solid;
 `;
-
+const TopInfo = styled.div`
+  display: flex;
+  flex: 0.05;
+`;
 const StyledVideo = styled.video`
   display: flex;
   flex: 1;
@@ -895,11 +898,14 @@ const Room = (props) => {
 
   return (
     <Container>
-      <p style={{ textAlign: "center" }}>OMO</p>
-      <p style={{ textAlign: "center" }}>
-        {identityATally} {prompt.prompt.identityA} vs {identityBTally}{" "}
-        {prompt.prompt.identityB}
-      </p>
+      <TopInfo>
+        <p style={{ textAlign: "center" }}>OMO</p>
+        <p style={{ textAlign: "center" }}>
+          {identityATally} {prompt.prompt.identityA} vs {identityBTally}{" "}
+          {prompt.prompt.identityB}
+        </p>
+      </TopInfo>
+
       {isRoomFull && (
         <div
           style={{
@@ -932,10 +938,6 @@ const Room = (props) => {
       )}
 
       <VideoGrid
-        style={{
-          flex: 1,
-          overflow: "auto",
-        }}
         userVideo={userVideo}
         filteredPeers={filteredPeers}
         gameInfo={{
