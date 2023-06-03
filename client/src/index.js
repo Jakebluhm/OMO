@@ -11,7 +11,11 @@ Sentry.init({
   integrations: [
     new Sentry.BrowserTracing({
       // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
-      tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
+      tracePropagationTargets: [
+        "localhost",
+        /^https:\/\/1myegfct68\.execute-api\.us-east-1\.amazonaws\.com\/production\//,
+        /^https:\/\/omo\.social\//,
+      ],
     }),
     new Sentry.Replay(),
   ],
