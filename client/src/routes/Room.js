@@ -12,11 +12,9 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
-  width: 100%;
+  width: 95%;
   margin: auto;
   flex-wrap: nowrap;
-  border-color: blue;
-  border-width: 1px;
 `;
 
 const StyledVideo = styled.video`
@@ -893,7 +891,7 @@ const Room = (props) => {
   });
 
   return (
-    <Container>
+    <Container style={{ borderWidth: 1, borderColor: "#00ff00" }}>
       <p style={{ textAlign: "center" }}>OMO</p>
       <p style={{ textAlign: "center" }}>
         {identityATally} {prompt.prompt.identityA} vs {identityBTally}{" "}
@@ -931,7 +929,12 @@ const Room = (props) => {
       )}
 
       <VideoGrid
-        style={{ flex: 1, overflow: "auto" }}
+        style={{
+          flex: 1,
+          overflow: "auto",
+          borderWidth: 1,
+          borderColor: "#ff0000",
+        }}
         userVideo={userVideo}
         filteredPeers={filteredPeers}
         gameInfo={{
