@@ -239,6 +239,37 @@ const CreateRoom = (props) => {
           <PromptComponent prompt={prompt} onButtonClick={handlePromptClick} />
         ))}
       </div>
+      {/* <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h3>Debug Room.js UI</h3>
+        <button
+          className="debug-room-btn"
+          onClick={() => {
+            console.log("I suck");
+            props.history.push(`/room/${uuid}`, {
+              playerName: "Dummy",
+              oddOneOut: ['{"0":0}', '{"1":0}', '{"2":0}'],
+              uid: "31eb15f0-f44e-11ed-aa47-d7f63467c0b0",
+              prompt: {
+                id: 0,
+                uuid: "abc123",
+                identityA: "Vegan",
+                identityB: "Meat Eater",
+                count: 0,
+              },
+              debug: true, // Add this line
+            });
+          }}
+        >
+          Debug
+        </button>
+      </div> */}
       <Modal
         isOpen={isSearchingModalOpen}
         onRequestClose={toggleModal}

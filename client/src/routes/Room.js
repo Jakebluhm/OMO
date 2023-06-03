@@ -3,19 +3,23 @@ import { useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import VideoGrid from "../components/VideoGrid";
 
 const Container = styled.div`
-  padding: 20px;
+  padding: 0px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   height: 100vh;
-  width: 90%;
+  width: 100%;
   margin: auto;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 `;
 
 const StyledVideo = styled.video`
-  height: 400px;
-  width: 400px;
+  display: flex;
+  flex: 1;
 `;
 
 const Timer = styled.div`
@@ -48,19 +52,6 @@ const ModalContent = styled.div`
   text-align: center;
 `;
 
-const VoteButton = styled.button`
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 2px;
-  cursor: pointer;
-`;
-
 const MuteUnmuteButton = styled.button`
   /* Add your styles for the mute/unmute button */
   position: absolute;
@@ -68,7 +59,7 @@ const MuteUnmuteButton = styled.button`
   right: 10px;
 `;
 
-const Video = (props) => {
+export const Video = (props) => {
   const ref = useRef();
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -136,7 +127,7 @@ const Video = (props) => {
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", display: "flex", flex: 1 }}>
       <StyledVideo
         playsInline
         autoPlay
@@ -164,6 +155,7 @@ const Room = (props) => {
   const oddOneOut = { oddOneOut: playerInfo.oddOneOut };
   const uid = { uid: playerInfo.uid };
   const prompt = { prompt: playerInfo.prompt };
+  //const debug = props.location.state.debug;
 
   const currentPlayer = {
     peerName: playerInfo.playerName,
@@ -176,6 +168,7 @@ const Room = (props) => {
   const [isRoomFull, setIsRoomFull] = useState(false);
   const [identityATally, setIdentityATally] = useState(0);
   const [identityBTally, setIdentityBTally] = useState(0);
+  const [oddManOutIdentity, setOddManOutIdentity] = useState(null);
   const [gameReady, setGameReady] = useState(false);
   const [voteCounts, setVoteCounts] = useState({});
   const [voteComplete, setVoteComplete] = useState(false);
@@ -212,6 +205,23 @@ const Room = (props) => {
         }
       }
     });
+
+    if (
+      newIdentityBTally + newIdentityATally >= 3 &&
+      oddManOutIdentity == null
+    ) {
+      if (newIdentityATally === 1) {
+        console.log(
+          "Setting odd man out identity to: " + prompt.prompt.identityA
+        );
+        setOddManOutIdentity(prompt.prompt.identityA);
+      } else {
+        console.log(
+          "Setting odd man out identity to: " + prompt.prompt.identityB
+        );
+        setOddManOutIdentity(prompt.prompt.identityB);
+      }
+    }
 
     setIdentityATally(newIdentityATally);
     setIdentityBTally(newIdentityBTally);
@@ -881,15 +891,12 @@ const Room = (props) => {
   });
 
   return (
-    <Container style={{ border: "0px solid rgba(0, 255, 255, 1)" }}>
-      <div>
-        <h3>
-          {identityATally} {prompt.prompt.identityA} - {identityBTally}
-          {prompt.prompt.identityB}
-        </h3>
-        <h4>Find the Odd Man Out</h4>
-      </div>
-      <Timer>{formatTime(timeLeft)}</Timer>
+    <Container>
+      <p style={{ textAlign: "center" }}>OMO</p>
+      <p style={{ textAlign: "center" }}>
+        {identityATally} {prompt.prompt.identityA} vs {identityBTally}{" "}
+        {prompt.prompt.identityB}
+      </p>
       {isRoomFull && (
         <div
           style={{
@@ -921,124 +928,30 @@ const Room = (props) => {
         </div>
       )}
 
-      <ModalContainer isOpen={isModalOpen}>
-        <ModalContent>
-          <>
-            <h1>Select the odd man out:</h1>
-            <div key={currentPlayer.uid}>
-              {currentPlayer.peerName} - Votes:{" "}
-              {voteCounts[currentPlayer.uid] || 0}
-            </div>
-            {filteredPeers.map((peer) => (
-              <div key={peer.id}>
-                {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
-                {selectedUser === null && (
-                  <VoteButton
-                    onClick={() => {
-                      handleUserVote(peer);
-                      //console.log("filteredPeers");
-                      //console.log(filteredPeers);
-                    }}
-                  >
-                    Vote
-                  </VoteButton>
-                )}
-              </div>
-            ))}
-            {isRevote && (
-              <h2>Revote is happening due to a tie. Please vote again.</h2>
-            )}
-            {voteComplete && (
-              <div>
-                <h1>Voting Complete</h1>
-                <h2>
-                  {voteResult === "tie"
-                    ? "It's a tie!"
-                    : `Person with the most votes: ${voteResult}`}
-                </h2>
-                <h3>Countdown: {countdown}</h3>
-                {countdown === 0 && <h2>Real odd man out: {realOddManOut}</h2>}
-              </div>
-            )}
-            {gameComplete && <h3>Redirecting in {redirectCount} seconds...</h3>}
-          </>
-          {/* <button onClick={toggleModal}>Close</button> */}
-        </ModalContent>
-      </ModalContainer>
-
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "0px solid rgba(0, 255, 0, 1)",
+      <VideoGrid
+        style={{ flex: 1, overflow: "auto" }}
+        userVideo={userVideo}
+        filteredPeers={filteredPeers}
+        gameInfo={{
+          time: formatTime(timeLeft),
+          omoIdentity: oddManOutIdentity,
         }}
-      >
-        <div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "400px",
-              width: "400px",
-              border: "3px solid rgba(255, 0, 0, 1)",
-            }}
-          >
-            <StyledVideo
-              style={{ display: "flex", flex: 1 }}
-              muted
-              ref={userVideo}
-              autoPlay
-              playsInline
-            />
-          </div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <label style={{ padding: 5 }}>
-              {typeof name !== "undefined" && name != null
-                ? name.playerName
-                : "empty"}
-            </label>
-            {/* <label style={{ padding: 5 }}>
-              {typeof oddOneOut !== "undefined" && oddOneOut != null
-                ? oddOneOut.oddOneOut
-                : "empty"}
-            </label> */}
-          </div>
-        </div>
-        {peers.length > 0 &&
-          filteredPeers.map((peer) => {
-            return (
-              <div>
-                <div
-                  key={peer.peer._id}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "400px",
-                    width: "400px",
-                    border: "0px solid rgba(0, 255, 0, 1)",
-                  }}
-                >
-                  <Video
-                    style={{ display: "flex", flex: 1 }}
-                    key={peer.peerID}
-                    peer={peer.peer}
-                    onVideoReady={handleVideoReady}
-                  />
-                </div>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <label style={{ padding: 5 }}>{peer.peerName}</label>
-                </div>
-              </div>
-            );
-          })}
-      </div>
+        handleVideoReady={handleVideoReady}
+        // Add new props
+        isModalOpen={isModalOpen}
+        currentPlayer={currentPlayer}
+        voteCounts={voteCounts}
+        handleUserVote={handleUserVote}
+        isRevote={isRevote}
+        voteComplete={voteComplete}
+        voteResult={voteResult}
+        countdown={countdown}
+        realOddManOut={realOddManOut}
+        gameComplete={gameComplete}
+        redirectCount={redirectCount}
+        selectedUser={selectedUser}
+      />
+
       {!gameReady && (
         <div
           style={{
@@ -1056,15 +969,15 @@ const Room = (props) => {
         >
           <div
             style={{
-              backgroundColor: "rgba(200, 200, 255, 0.1)", // Change the opacity value to 0.1
+              backgroundColor: "rgba(200, 200, 255, 0.5)", // Change the opacity value to 0.1
               padding: 20,
               borderRadius: 10,
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              width: "100%", // Set width and height to 100%
-              height: "100%",
+              width: "90%",
+              height: "90%",
             }}
           >
             <h2>Loading...</h2>
