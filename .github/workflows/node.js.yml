@@ -33,12 +33,6 @@ jobs:
         run: node ./test/OMOUserAddedTest.js
       - name: Run Selenium test
         run: node ./test/automatedBrowser.js
-      - name: Sentry Release
-        uses: getsentry/action-release@v1.4.1
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:
