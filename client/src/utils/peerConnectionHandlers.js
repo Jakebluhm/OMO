@@ -1,5 +1,11 @@
 export function getOnConnectHandler(uid, getPeerByUid) {
-  // implementation
+  return function() {
+    console.log('Peer connection established');
+    return {
+      uid,
+      connectionState: "connected",
+    };
+  };
 }
 
 export function getOnCloseHandler(uid, getPeerByUid) {

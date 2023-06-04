@@ -794,6 +794,20 @@ const Room = (props) => {
         config: configuration,
       });
 
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
+        setPeers(peers => {
+          const updatedPeers = peers.map(peer => {
+            if (peer.uid === uid) {
+              return { ...peer, connectionState };
+            }
+            return peer;
+          });
+          return updatedPeers;
+        });
+      });
+
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
           userToSignal,
@@ -814,6 +828,20 @@ const Room = (props) => {
         initiator: true,
         trickle: false,
         stream,
+      });
+
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
+        setPeers(peers => {
+          const updatedPeers = peers.map(peer => {
+            if (peer.uid === uid) {
+              return { ...peer, connectionState };
+            }
+            return peer;
+          });
+          return updatedPeers;
+        });
       });
 
       peer.on("signal", (signal) => {
@@ -858,15 +886,25 @@ const Room = (props) => {
       });
 
       // Connection State Callbacks
-
-      peer.on("connect", getOnConnectHandler(uid, getPeerByUid));
-      peer.on("close", getOnCloseHandler(uid, getPeerByUid));
-      peer._pc.oniceconnectionstatechange =
-        getOnIceConnectionStateChangeHandler(uid, getPeerByUid);
-      peer._pc.onconnectionstatechange = getOnConnectionStateChangeHandler(
-        uid,
-        getPeerByUid
-      );
+      peer.on("connect", () => {
+        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
+        setPeers(peers => {
+          const updatedPeers = peers.map(peer => {
+            if (peer.uid === uid) {
+              return { ...peer, connectionState };
+            }
+            return peer;
+          });
+          return updatedPeers;
+        });
+      });
+      // peer.on("close", getOnCloseHandler(uid, getPeerByUid));
+      // peer._pc.oniceconnectionstatechange =
+      //   getOnIceConnectionStateChangeHandler(uid, getPeerByUid);
+      // peer._pc.onconnectionstatechange = getOnConnectionStateChangeHandler(
+      //   uid,
+      //   getPeerByUid
+      // );
       // Connection State Callbacks End
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
@@ -912,6 +950,20 @@ const Room = (props) => {
         initiator: false,
         trickle: false,
         stream,
+      });
+
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
+        setPeers(peers => {
+          const updatedPeers = peers.map(peer => {
+            if (peer.uid === uid) {
+              return { ...peer, connectionState };
+            }
+            return peer;
+          });
+          return updatedPeers;
+        });
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
