@@ -110,7 +110,7 @@ const VideoGrid = ({
                   fontWeight: "bold",
                 }}
               >
-                {peer.peerName - peer.connectionState}
+                {`${peer.peerName} - ${peer.connectionState}`}
               </label>
             </GridItem>
           );
