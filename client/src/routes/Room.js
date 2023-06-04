@@ -7,6 +7,13 @@ import VideoGrid from "../components/VideoGrid";
 
 import * as Sentry from "@sentry/react";
 
+import {
+  getOnConnectHandler,
+  getOnCloseHandler,
+  getOnIceConnectionStateChangeHandler,
+  getOnConnectionStateChangeHandler,
+} from "../utils/peerConnectionHandlers";
+
 const Container = styled.div`
   padding: 0px;
   display: flex;
@@ -583,6 +590,7 @@ const Room = (props) => {
                 }
                 //JAKEB Get each peer in the chat
                 const peer = createPeer(
+                  userID.uid,
                   userID.socketID,
                   socketRef.current.id,
                   stream,
@@ -602,6 +610,7 @@ const Room = (props) => {
                   uid: userID.uid,
                   omo: userID.omo,
                   peer: peer,
+                  connectionState: "initializing",
                 });
               });
 
@@ -634,6 +643,7 @@ const Room = (props) => {
               }
 
               const peer = addPeer(
+                payload.uid,
                 payload.signal,
                 payload.callerID,
                 stream,
@@ -655,6 +665,7 @@ const Room = (props) => {
                 uid: payload.uid,
                 omo: payload.omo,
                 peer: peer,
+                connectionState: "initializing",
               };
 
               console.log("user joined - setPeers:");
@@ -754,8 +765,13 @@ const Room = (props) => {
     //localStorage.clear();
   };
 
+  // This is the function you'll pass to your handlers.
+  const getPeerByUid = (uid) => {
+    return peers.find((peer) => peer.uid === uid);
+  };
+
   //  called when joining a room with players already in room. Called in useEffect to make list of players
-  function createPeer(userToSignal, callerID, stream, turnCreds) {
+  function createPeer(uid, userToSignal, callerID, stream, turnCreds) {
     if (turnCreds != null) {
       console.log("In createPeer using turn configuration");
       const configuration = {
@@ -816,7 +832,7 @@ const Room = (props) => {
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream, userName, turnCreds) {
+  function addPeer(uid, incomingSignal, callerID, stream, userName, turnCreds) {
     console.log("------Inside addPeer()-----");
 
     if (turnCreds != null) {
@@ -840,6 +856,18 @@ const Room = (props) => {
         stream,
         config: configuration,
       });
+
+      // Connection State Callbacks
+
+      peer.on("connect", getOnConnectHandler(uid, getPeerByUid));
+      peer.on("close", getOnCloseHandler(uid, getPeerByUid));
+      peer._pc.oniceconnectionstatechange =
+        getOnIceConnectionStateChangeHandler(uid, getPeerByUid);
+      peer._pc.onconnectionstatechange = getOnConnectionStateChangeHandler(
+        uid,
+        getPeerByUid
+      );
+      // Connection State Callbacks End
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
       peer._pc.addEventListener("icecandidate", (event) => {
