@@ -817,6 +817,12 @@ const Room = (props) => {
         config: configuration,
       });
 
+      // Attach the 'stream' event listener immediately after creating the peer connection
+      peer.on('stream', (stream) => {
+        console.log("STREAM!!!!!!!!!!!!!!");
+        // Handle the stream
+      });
+
       // Connection State Callbacks
       peer.on("connect", () => {
         const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
@@ -851,6 +857,12 @@ const Room = (props) => {
         initiator: true,
         trickle: false,
         stream,
+      });
+
+      // Attach the 'stream' event listener immediately after creating the peer connection
+      peer.on('stream', (stream) => {
+        console.log("STREAM!!!!!!!!!!!!!!");
+        // Handle the stream
       });
 
       // Connection State Callbacks
@@ -906,6 +918,13 @@ const Room = (props) => {
         trickle: false,
         stream,
         config: configuration,
+      });
+
+
+      // Attach the 'stream' event listener immediately after creating the peer connection
+      peer.on('stream', (stream) => {
+        console.log("STREAM!!!!!!!!!!!!!!");
+        // Handle the stream
       });
 
       // Connection State Callbacks
@@ -973,6 +992,12 @@ const Room = (props) => {
         initiator: false,
         trickle: false,
         stream,
+      });
+
+      // Attach the 'stream' event listener immediately after creating the peer connection
+      peer.on('stream', (stream) => {
+        console.log("STREAM!!!!!!!!!!!!!!");
+        // Handle the stream
       });
 
       // Connection State Callbacks
