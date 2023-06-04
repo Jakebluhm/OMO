@@ -100,7 +100,7 @@ export const Video = (props) => {
         console.log("Video can start and is expected to finish without interruption");
       };
     }
-  }, [ref.current]);
+  }, [ref.current, props.peer]);
 
   //Sentry error reporting
   useEffect(() => {
@@ -151,11 +151,10 @@ export const Video = (props) => {
       if (ref.current) {
         ref.current.srcObject = stream;
       } else if (retryCount < 10) {
-        // Stop retrying after 10 attempts
-        // Retry after 100ms if ref.current is not available
+        console.log("Attempting to set stream:", String(retryCount))
         setTimeout(() => setStream(stream, retryCount + 1), 100);
       } else {
-        throw Error("Unable to set ref.cuurent.srcObject in Video");
+        throw Error("Unable to set ref.current.srcObject in Video");
       }
     };
 
@@ -169,7 +168,8 @@ export const Video = (props) => {
 
       setStream(stream);
     });
-  }, []);
+  }, [props.peer]);
+
 
   // Debug stream
   useEffect(() => {
