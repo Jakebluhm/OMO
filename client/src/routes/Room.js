@@ -79,6 +79,29 @@ export const Video = (props) => {
   // A reference to store the timestamp of the last time readyState was < 3
   const lastTimeStateLessThanThreeRef = useRef(null);
 
+  // Video debug
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.onerror = (event) => {
+        console.log("Video error event:", event);
+        Sentry.captureMessage(`Video error: ${event.message}`, "error");
+      };
+
+      ref.current.onstalled = () => {
+        console.log("Video playback has been stalled");
+        Sentry.captureMessage("Video playback stalled", "warning");
+      };
+
+      ref.current.oncanplay = () => {
+        console.log("Video can start, but not sure if it will finish");
+      };
+
+      ref.current.oncanplaythrough = () => {
+        console.log("Video can start and is expected to finish without interruption");
+      };
+    }
+  }, [ref.current]);
+
   //Sentry error reporting
   useEffect(() => {
     const checkStates = () => {
