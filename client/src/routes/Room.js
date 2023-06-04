@@ -87,7 +87,7 @@ export const Video = (props) => {
           else if (Date.now() - lastTimeStateLessThanThreeRef.current > 15000) {
             Sentry.captureMessage(
               `Video readyState less than HAVE_FUTURE_DATA for more than 15 seconds: ${ref.current.readyState}`,
-              Sentry.Severity.Warning
+              "warning"
             );
           }
         } else {
@@ -105,7 +105,7 @@ export const Video = (props) => {
         ) {
           Sentry.captureMessage(
             `RTCPeerConnection is in a bad state: ${peerConnectionState}`,
-            Sentry.Severity.Warning
+            "warning"
           );
         }
       }
