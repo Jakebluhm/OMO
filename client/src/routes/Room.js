@@ -5,6 +5,8 @@ import Peer from "simple-peer";
 import styled from "styled-components";
 import VideoGrid from "../components/VideoGrid";
 
+import * as Sentry from "@sentry/react";
+
 const Container = styled.div`
   padding: 0px;
   display: flex;
@@ -66,6 +68,53 @@ export const Video = (props) => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   const [muted, setMuted] = useState(isIOS || isSafari);
+
+  // A reference to store the timestamp of the last time readyState was < 3
+  const lastTimeStateLessThanThreeRef = useRef(null);
+
+  //Sentry error reporting
+  useEffect(() => {
+    const checkStates = () => {
+      if (ref.current) {
+        console.log("Video readyState:", ref.current.readyState);
+
+        if (ref.current.readyState < 3) {
+          // If this is the first time readyState is < 3, remember the timestamp
+          if (!lastTimeStateLessThanThreeRef.current) {
+            lastTimeStateLessThanThreeRef.current = Date.now();
+          }
+          // If readyState has been < 3 for more than 15 seconds, report an error
+          else if (Date.now() - lastTimeStateLessThanThreeRef.current > 15000) {
+            Sentry.captureMessage(
+              `Video readyState less than HAVE_FUTURE_DATA for more than 15 seconds: ${ref.current.readyState}`,
+              "warning"
+            );
+          }
+        } else {
+          // If readyState is >= 3, clear the timestamp
+          lastTimeStateLessThanThreeRef.current = null;
+        }
+
+        // Check the RTCPeerConnection state
+        const peerConnectionState = props.peer.connectionState;
+        console.log("Peer connection state:", peerConnectionState);
+
+        if (
+          peerConnectionState === "failed" ||
+          peerConnectionState === "disconnected"
+        ) {
+          Sentry.captureMessage(
+            `RTCPeerConnection is in a bad state: ${peerConnectionState}`,
+            "warning"
+          );
+        }
+      }
+    };
+
+    const interval = setInterval(checkStates, 5000); // Check the states every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const setStream = (stream, retryCount = 0) => {
