@@ -97,7 +97,9 @@ export const Video = (props) => {
       };
 
       ref.current.oncanplaythrough = () => {
-        console.log("Video can start and is expected to finish without interruption");
+        console.log(
+          "Video can start and is expected to finish without interruption"
+        );
       };
     }
   }, [ref.current, props.peer]);
@@ -151,7 +153,7 @@ export const Video = (props) => {
       if (ref.current) {
         ref.current.srcObject = stream;
       } else if (retryCount < 10) {
-        console.log("Attempting to set stream:", String(retryCount))
+        console.log("Attempting to set stream:", String(retryCount));
         setTimeout(() => setStream(stream, retryCount + 1), 100);
       } else {
         throw Error("Unable to set ref.current.srcObject in Video");
@@ -169,7 +171,6 @@ export const Video = (props) => {
       setStream(stream);
     });
   }, [props.peer]);
-
 
   // Debug stream
   useEffect(() => {
@@ -818,19 +819,21 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on('stream', (stream) => {
+      peer.on("stream", (stream) => {
         console.log("STREAM!!!!!!!!!!!!!!");
         // Handle the stream
       });
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
-        setPeers(peers => {
-          const updatedPeers = peers.map(peer => {
+        console.log("Peer connection established");
+        setPeers((prevPeers) => {
+          const updatedPeers = prevPeers.map((peer) => {
             if (peer.uid === uid) {
-              return { ...peer, connectionState };
+              // Create a new object for the updated peer, do not mutate the existing one
+              return { ...peer, connectionState: "connected" };
             }
+            // Return the peer as it is if its uid doesn't match
             return peer;
           });
           return updatedPeers;
@@ -860,19 +863,21 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on('stream', (stream) => {
+      peer.on("stream", (stream) => {
         console.log("STREAM!!!!!!!!!!!!!!");
         // Handle the stream
       });
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
-        setPeers(peers => {
-          const updatedPeers = peers.map(peer => {
+        console.log("Peer connection established");
+        setPeers((prevPeers) => {
+          const updatedPeers = prevPeers.map((peer) => {
             if (peer.uid === uid) {
-              return { ...peer, connectionState };
+              // Create a new object for the updated peer, do not mutate the existing one
+              return { ...peer, connectionState: "connected" };
             }
+            // Return the peer as it is if its uid doesn't match
             return peer;
           });
           return updatedPeers;
@@ -920,21 +925,23 @@ const Room = (props) => {
         config: configuration,
       });
 
-
-      // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on('stream', (stream) => {
+      // Attach the 'stream' event listener immediately after `creating the peer connection
+      peer.on("stream", (stream) => {
         console.log("STREAM!!!!!!!!!!!!!!");
+
         // Handle the stream
       });
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
-        setPeers(peers => {
-          const updatedPeers = peers.map(peer => {
+        console.log("Peer connection established");
+        setPeers((prevPeers) => {
+          const updatedPeers = prevPeers.map((peer) => {
             if (peer.uid === uid) {
-              return { ...peer, connectionState };
+              // Create a new object for the updated peer, do not mutate the existing one
+              return { ...peer, connectionState: "connected" };
             }
+            // Return the peer as it is if its uid doesn't match
             return peer;
           });
           return updatedPeers;
@@ -995,19 +1002,21 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on('stream', (stream) => {
+      peer.on("stream", (stream) => {
         console.log("STREAM!!!!!!!!!!!!!!");
         // Handle the stream
       });
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        const { uid, connectionState } = getOnConnectHandler(uid, getPeerByUid);
-        setPeers(peers => {
-          const updatedPeers = peers.map(peer => {
+        console.log("Peer connection established");
+        setPeers((prevPeers) => {
+          const updatedPeers = prevPeers.map((peer) => {
             if (peer.uid === uid) {
-              return { ...peer, connectionState };
+              // Create a new object for the updated peer, do not mutate the existing one
+              return { ...peer, connectionState: "connected" };
             }
+            // Return the peer as it is if its uid doesn't match
             return peer;
           });
           return updatedPeers;
