@@ -826,18 +826,20 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        console.log("Peer connection established");
-        setPeers((prevPeers) => {
-          const updatedPeers = prevPeers.map((peer) => {
-            if (peer.uid === uid) {
-              // Create a new object for the updated peer, do not mutate the existing one
-              return { ...peer, connectionState: "connected" };
-            }
-            // Return the peer as it is if its uid doesn't match
-            return peer;
+        setTimeout(() => {
+          console.log("Peer connection established");
+          setPeers((prevPeers) => {
+            const updatedPeers = prevPeers.map((peer) => {
+              if (peer.uid === uid) {
+                // Create a new object for the updated peer, do not mutate the existing one
+                return { ...peer, connectionState: "connected" };
+              }
+              // Return the peer as it is if its uid doesn't match
+              return peer;
+            });
+            return updatedPeers;
           });
-          return updatedPeers;
-        });
+        }, 2000);
       });
 
       peer.on("signal", (signal) => {
@@ -870,18 +872,20 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        console.log("Peer connection established");
-        setPeers((prevPeers) => {
-          const updatedPeers = prevPeers.map((peer) => {
-            if (peer.uid === uid) {
-              // Create a new object for the updated peer, do not mutate the existing one
-              return { ...peer, connectionState: "connected" };
-            }
-            // Return the peer as it is if its uid doesn't match
-            return peer;
+        setTimeout(() => {
+          console.log("Peer connection established");
+          setPeers((prevPeers) => {
+            const updatedPeers = prevPeers.map((peer) => {
+              if (peer.uid === uid) {
+                // Create a new object for the updated peer, do not mutate the existing one
+                return { ...peer, connectionState: "connected" };
+              }
+              // Return the peer as it is if its uid doesn't match
+              return peer;
+            });
+            return updatedPeers;
           });
-          return updatedPeers;
-        });
+        }, 2000);
       });
 
       peer.on("signal", (signal) => {
@@ -934,18 +938,20 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        console.log("Peer connection established");
-        setPeers((prevPeers) => {
-          const updatedPeers = prevPeers.map((peer) => {
-            if (peer.uid === uid) {
-              // Create a new object for the updated peer, do not mutate the existing one
-              return { ...peer, connectionState: "connected" };
-            }
-            // Return the peer as it is if its uid doesn't match
-            return peer;
+        setTimeout(() => {
+          console.log("Peer connection established");
+          setPeers((prevPeers) => {
+            const updatedPeers = prevPeers.map((peer) => {
+              if (peer.uid === uid) {
+                // Create a new object for the updated peer, do not mutate the existing one
+                return { ...peer, connectionState: "connected" };
+              }
+              // Return the peer as it is if its uid doesn't match
+              return peer;
+            });
+            return updatedPeers;
           });
-          return updatedPeers;
-        });
+        }, 2000);
       });
       // peer.on("close", getOnCloseHandler(uid, getPeerByUid));
       // peer._pc.oniceconnectionstatechange =
@@ -1009,18 +1015,20 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        console.log("Peer connection established");
-        setPeers((prevPeers) => {
-          const updatedPeers = prevPeers.map((peer) => {
-            if (peer.uid === uid) {
-              // Create a new object for the updated peer, do not mutate the existing one
-              return { ...peer, connectionState: "connected" };
-            }
-            // Return the peer as it is if its uid doesn't match
-            return peer;
+        setTimeout(() => {
+          console.log("Peer connection established");
+          setPeers((prevPeers) => {
+            const updatedPeers = prevPeers.map((peer) => {
+              if (peer.uid === uid) {
+                // Create a new object for the updated peer, do not mutate the existing one
+                return { ...peer, connectionState: "connected" };
+              }
+              // Return the peer as it is if its uid doesn't match
+              return peer;
+            });
+            return updatedPeers;
           });
-          return updatedPeers;
-        });
+        }, 2000);
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
