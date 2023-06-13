@@ -820,19 +820,19 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on("stream", (stream) => {
-        console.log("STREAM!!!!!!!!!!!!!!");
-        // Handle the stream
-      });
+      // peer.on("stream", (stream) => {
+      //   console.log("STREAM!!!!!!!!!!!!!!");
+      //   // Handle the stream
+      // });
 
-      // Connection State Callbacks
-      peer.on("connect", () => {
-        // Update the connectionStatus state
-        setConnectionStatus((prevStatus) => [
-          ...prevStatus,
-          { uid, status: "Connected" },
-        ]);
-      });
+      // // Connection State Callbacks
+      // peer.on("connect", () => {
+      //   // Update the connectionStatus state
+      //   setConnectionStatus((prevStatus) => [
+      //     ...prevStatus,
+      //     { uid, status: "Connected" },
+      //   ]);
+      // });
 
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
@@ -857,19 +857,19 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on("stream", (stream) => {
-        console.log("STREAM!!!!!!!!!!!!!!");
-        // Handle the stream
-      });
+      // peer.on("stream", (stream) => {
+      //   console.log("STREAM!!!!!!!!!!!!!!");
+      //   // Handle the stream
+      // });
 
-      // Connection State Callbacks
-      peer.on("connect", () => {
-        // Update the connectionStatus state
-        setConnectionStatus((prevStatus) => [
-          ...prevStatus,
-          { uid, status: "Connected" },
-        ]);
-      });
+      // // Connection State Callbacks
+      // peer.on("connect", () => {
+      //   // Update the connectionStatus state
+      //   setConnectionStatus((prevStatus) => [
+      //     ...prevStatus,
+      //     { uid, status: "Connected" },
+      //   ]);
+      // });
 
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
@@ -913,20 +913,20 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after `creating the peer connection
-      peer.on("stream", (stream) => {
-        console.log("STREAM!!!!!!!!!!!!!!");
+      // peer.on("stream", (stream) => {
+      //   console.log("STREAM!!!!!!!!!!!!!!");
 
-        // Handle the stream
-      });
+      //   // Handle the stream
+      // });
 
-      // Connection State Callbacks
-      peer.on("connect", () => {
-        // Update the connectionStatus state
-        setConnectionStatus((prevStatus) => [
-          ...prevStatus,
-          { uid, status: "Connected" },
-        ]);
-      });
+      // // Connection State Callbacks
+      // peer.on("connect", () => {
+      //   // Update the connectionStatus state
+      //   setConnectionStatus((prevStatus) => [
+      //     ...prevStatus,
+      //     { uid, status: "Connected" },
+      //   ]);
+      // });
       // peer.on("close", getOnCloseHandler(uid, getPeerByUid));
       // peer._pc.oniceconnectionstatechange =
       //   getOnIceConnectionStateChangeHandler(uid, getPeerByUid);
@@ -982,19 +982,19 @@ const Room = (props) => {
       });
 
       // Attach the 'stream' event listener immediately after creating the peer connection
-      peer.on("stream", (stream) => {
-        console.log("STREAM!!!!!!!!!!!!!!");
-        // Handle the stream
-      });
+      // peer.on("stream", (stream) => {
+      //   console.log("STREAM!!!!!!!!!!!!!!");
+      //   // Handle the stream
+      // });
 
-      // Connection State Callbacks
-      peer.on("connect", () => {
-        // Update the connectionStatus state
-        setConnectionStatus((prevStatus) => [
-          ...prevStatus,
-          { uid, status: "Connected" },
-        ]);
-      });
+      // // Connection State Callbacks
+      // peer.on("connect", () => {
+      //   // Update the connectionStatus state
+      //   setConnectionStatus((prevStatus) => [
+      //     ...prevStatus,
+      //     { uid, status: "Connected" },
+      //   ]);
+      // });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
       peer._pc.addEventListener("icecandidate", (event) => {
