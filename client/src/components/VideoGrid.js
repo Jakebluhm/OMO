@@ -63,6 +63,7 @@ const VideoGrid = ({
   gameComplete,
   redirectCount,
   selectedUser,
+  connectionStatus,
 }) => {
   const [size, setSize] = useState(BASE_SIZE);
 
@@ -110,7 +111,7 @@ const VideoGrid = ({
                   fontWeight: "bold",
                 }}
               >
-                {`${peer.peerName} - ${peer.connectionState}`}
+                {`${peer.peerName} - ${connectionStatus[peer.uid]}`}
               </label>
             </GridItem>
           );

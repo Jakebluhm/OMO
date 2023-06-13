@@ -128,18 +128,18 @@ export const Video = (props) => {
         }
 
         // Check the RTCPeerConnection state
-        const peerConnectionState = props.peer.connectionState;
-        console.log("Peer connection state:", peerConnectionState);
+        // const peerConnectionState = props.peer.connectionState;
+        // console.log("Peer connection state:", peerConnectionState);
 
-        if (
-          peerConnectionState === "failed" ||
-          peerConnectionState === "disconnected"
-        ) {
-          Sentry.captureMessage(
-            `RTCPeerConnection is in a bad state: ${peerConnectionState}`,
-            "warning"
-          );
-        }
+        // if (
+        //   peerConnectionState === "failed" ||
+        //   peerConnectionState === "disconnected"
+        // ) {
+        //   Sentry.captureMessage(
+        //     `RTCPeerConnection is in a bad state: ${peerConnectionState}`,
+        //     "warning"
+        //   );
+        // }
       }
     };
 
@@ -263,6 +263,7 @@ const Room = (props) => {
   const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
   const [turnCredentials, setTurnCredentials] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState([]);
 
   const socketRef = useRef();
   const userVideo = useRef();
@@ -634,7 +635,7 @@ const Room = (props) => {
                   uid: userID.uid,
                   omo: userID.omo,
                   peer: peer,
-                  connectionState: "initializing",
+                  // connectionState: "initializing",
                 });
               });
 
@@ -689,7 +690,7 @@ const Room = (props) => {
                 uid: payload.uid,
                 omo: payload.omo,
                 peer: peer,
-                connectionState: "initializing",
+                // connectionState: "initializing",
               };
 
               console.log("user joined - setPeers:");
@@ -826,20 +827,11 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        setTimeout(() => {
-          console.log("Peer connection established");
-          setPeers((prevPeers) => {
-            const updatedPeers = prevPeers.map((peer) => {
-              if (peer.uid === uid) {
-                // Create a new object for the updated peer, do not mutate the existing one
-                return { ...peer, connectionState: "connected" };
-              }
-              // Return the peer as it is if its uid doesn't match
-              return peer;
-            });
-            return updatedPeers;
-          });
-        }, 2000);
+        // Update the connectionStatus state
+        setConnectionStatus((prevStatus) => [
+          ...prevStatus,
+          { uid, status: "Connected" },
+        ]);
       });
 
       peer.on("signal", (signal) => {
@@ -872,20 +864,11 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        setTimeout(() => {
-          console.log("Peer connection established");
-          setPeers((prevPeers) => {
-            const updatedPeers = prevPeers.map((peer) => {
-              if (peer.uid === uid) {
-                // Create a new object for the updated peer, do not mutate the existing one
-                return { ...peer, connectionState: "connected" };
-              }
-              // Return the peer as it is if its uid doesn't match
-              return peer;
-            });
-            return updatedPeers;
-          });
-        }, 2000);
+        // Update the connectionStatus state
+        setConnectionStatus((prevStatus) => [
+          ...prevStatus,
+          { uid, status: "Connected" },
+        ]);
       });
 
       peer.on("signal", (signal) => {
@@ -938,20 +921,11 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        setTimeout(() => {
-          console.log("Peer connection established");
-          setPeers((prevPeers) => {
-            const updatedPeers = prevPeers.map((peer) => {
-              if (peer.uid === uid) {
-                // Create a new object for the updated peer, do not mutate the existing one
-                return { ...peer, connectionState: "connected" };
-              }
-              // Return the peer as it is if its uid doesn't match
-              return peer;
-            });
-            return updatedPeers;
-          });
-        }, 2000);
+        // Update the connectionStatus state
+        setConnectionStatus((prevStatus) => [
+          ...prevStatus,
+          { uid, status: "Connected" },
+        ]);
       });
       // peer.on("close", getOnCloseHandler(uid, getPeerByUid));
       // peer._pc.oniceconnectionstatechange =
@@ -1015,20 +989,11 @@ const Room = (props) => {
 
       // Connection State Callbacks
       peer.on("connect", () => {
-        setTimeout(() => {
-          console.log("Peer connection established");
-          setPeers((prevPeers) => {
-            const updatedPeers = prevPeers.map((peer) => {
-              if (peer.uid === uid) {
-                // Create a new object for the updated peer, do not mutate the existing one
-                return { ...peer, connectionState: "connected" };
-              }
-              // Return the peer as it is if its uid doesn't match
-              return peer;
-            });
-            return updatedPeers;
-          });
-        }, 2000);
+        // Update the connectionStatus state
+        setConnectionStatus((prevStatus) => [
+          ...prevStatus,
+          { uid, status: "Connected" },
+        ]);
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
@@ -1144,6 +1109,7 @@ const Room = (props) => {
         gameComplete={gameComplete}
         redirectCount={redirectCount}
         selectedUser={selectedUser}
+        connectionStatus={connectionStatus}
       />
 
       {!gameReady && (
