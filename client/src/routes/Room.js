@@ -595,7 +595,8 @@ const Room = (props) => {
                   peerName: userID.name,
                   uid: userID.uid,
                   omo: userID.omo,
-                  peer,
+                  peer: peer,
+                  connectionState: "initializing",
                 });
                 initPeers.push({
                   peerID: userID.socketID,
@@ -649,7 +650,8 @@ const Room = (props) => {
                 peerName: payload.userName.playerName,
                 uid: payload.uid,
                 omo: payload.omo,
-                peer,
+                peer: peer,
+                connectionState: "initializing",
               });
 
               const tempPeer = {
@@ -658,6 +660,7 @@ const Room = (props) => {
                 uid: payload.uid,
                 omo: payload.omo,
                 peer: peer,
+                connectionState: "initializing",
               };
 
               console.log("user joined - setPeers:");
@@ -781,8 +784,6 @@ const Room = (props) => {
         config: configuration,
       });
 
- 
-
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
           userToSignal,
@@ -804,9 +805,6 @@ const Room = (props) => {
         trickle: false,
         stream,
       });
-
- 
-
 
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
@@ -848,8 +846,6 @@ const Room = (props) => {
         stream,
         config: configuration,
       });
-
- 
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
       peer._pc.addEventListener("icecandidate", (event) => {
@@ -895,8 +891,6 @@ const Room = (props) => {
         trickle: false,
         stream,
       });
-
- 
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
       peer._pc.addEventListener("icecandidate", (event) => {
