@@ -583,6 +583,7 @@ const Room = (props) => {
                 }
                 //JAKEB Get each peer in the chat
                 const peer = createPeer(
+                  userID.uid,
                   userID.socketID,
                   socketRef.current.id,
                   stream,
@@ -594,6 +595,7 @@ const Room = (props) => {
                   peerName: userID.name,
                   uid: userID.uid,
                   omo: userID.omo,
+                  connectionState: "initializing",
                   peer,
                 });
                 initPeers.push({
@@ -601,6 +603,7 @@ const Room = (props) => {
                   peerName: userID.name,
                   uid: userID.uid,
                   omo: userID.omo,
+                  connectionState: "initializing",
                   peer: peer,
                 });
               });
@@ -634,6 +637,7 @@ const Room = (props) => {
               }
 
               const peer = addPeer(
+                payload.uid,
                 payload.signal,
                 payload.callerID,
                 stream,
@@ -646,6 +650,7 @@ const Room = (props) => {
                 peerName: payload.userName.playerName,
                 uid: payload.uid,
                 omo: payload.omo,
+                connectionState: "initializing",
                 peer,
               });
 
@@ -654,6 +659,7 @@ const Room = (props) => {
                 peerName: payload.userName.playerName,
                 uid: payload.uid,
                 omo: payload.omo,
+                connectionState: "initializing",
                 peer: peer,
               };
 
@@ -755,7 +761,7 @@ const Room = (props) => {
   };
 
   //  called when joining a room with players already in room. Called in useEffect to make list of players
-  function createPeer(userToSignal, callerID, stream, turnCreds) {
+  function createPeer(incomingUID, userToSignal, callerID, stream, turnCreds) {
     if (turnCreds != null) {
       console.log("In createPeer using turn configuration");
       const configuration = {
@@ -816,7 +822,7 @@ const Room = (props) => {
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream, userName, turnCreds) {
+  function addPeer(incomingUID, incomingSignal, callerID, stream, userName, turnCreds) {
     console.log("------Inside addPeer()-----");
 
     if (turnCreds != null) {
