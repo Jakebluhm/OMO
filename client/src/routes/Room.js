@@ -594,7 +594,7 @@ const Room = (props) => {
                   peerName: userID.name,
                   uid: userID.uid,
                   omo: userID.omo,
-                  peer: peer,
+                  peer,
                 });
                 initPeers.push({
                   peerID: userID.socketID,
@@ -646,7 +646,7 @@ const Room = (props) => {
                 peerName: payload.userName.playerName,
                 uid: payload.uid,
                 omo: payload.omo,
-                peer: peer,
+                peer,
               });
 
               const tempPeer = {
