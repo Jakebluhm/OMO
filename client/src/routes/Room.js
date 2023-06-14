@@ -583,6 +583,7 @@ const Room = (props) => {
                 }
                 //JAKEB Get each peer in the chat
                 const peer = createPeer(
+                  userID.uid,
                   userID.socketID,
                   socketRef.current.id,
                   stream,
@@ -602,6 +603,7 @@ const Room = (props) => {
                   uid: userID.uid,
                   omo: userID.omo,
                   peer: peer,
+                  connectionState: "initializing",
                 });
               });
 
@@ -634,6 +636,7 @@ const Room = (props) => {
               }
 
               const peer = addPeer(
+                payload.uid,
                 payload.signal,
                 payload.callerID,
                 stream,
@@ -755,7 +758,7 @@ const Room = (props) => {
   };
 
   //  called when joining a room with players already in room. Called in useEffect to make list of players
-  function createPeer(userToSignal, callerID, stream, turnCreds) {
+  function createPeer(uid, userToSignal, callerID, stream, turnCreds) {
     if (turnCreds != null) {
       console.log("In createPeer using turn configuration");
       const configuration = {
@@ -776,6 +779,22 @@ const Room = (props) => {
         trickle: false,
         stream,
         config: configuration,
+      });
+
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        console.log('Peer connection established');
+        // setPeers(prevPeers => {
+        //   const updatedPeers = prevPeers.map((peer) => {
+        //     if (peer.uid === uid) {
+        //       // Create a new object for the updated peer, do not mutate the existing one
+        //       return { ...peer, connectionState: "connected" };
+        //     }
+        //     // Return the peer as it is if its uid doesn't match
+        //     return peer;
+        //   });
+        //   return updatedPeers;
+        // });
       });
 
       peer.on("signal", (signal) => {
@@ -800,6 +819,23 @@ const Room = (props) => {
         stream,
       });
 
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        console.log('Peer connection established');
+        // setPeers(prevPeers => {
+        //   const updatedPeers = prevPeers.map((peer) => {
+        //     if (peer.uid === uid) {
+        //       // Create a new object for the updated peer, do not mutate the existing one
+        //       return { ...peer, connectionState: "connected" };
+        //     }
+        //     // Return the peer as it is if its uid doesn't match
+        //     return peer;
+        //   });
+        //   return updatedPeers;
+        // });
+      });
+
+
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
           userToSignal,
@@ -816,7 +852,7 @@ const Room = (props) => {
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingSignal, callerID, stream, userName, turnCreds) {
+  function addPeer(uid, incomingSignal, callerID, stream, userName, turnCreds) {
     console.log("------Inside addPeer()-----");
 
     if (turnCreds != null) {
@@ -839,6 +875,22 @@ const Room = (props) => {
         trickle: false,
         stream,
         config: configuration,
+      });
+
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        console.log('Peer connection established');
+        // setPeers(prevPeers => {
+        //   const updatedPeers = prevPeers.map((peer) => {
+        //     if (peer.uid === uid) {
+        //       // Create a new object for the updated peer, do not mutate the existing one
+        //       return { ...peer, connectionState: "connected" };
+        //     }
+        //     // Return the peer as it is if its uid doesn't match
+        //     return peer;
+        //   });
+        //   return updatedPeers;
+        // });
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
@@ -884,6 +936,22 @@ const Room = (props) => {
         initiator: false,
         trickle: false,
         stream,
+      });
+
+      // Connection State Callbacks
+      peer.on("connect", () => {
+        console.log('Peer connection established');
+        // setPeers(prevPeers => {
+        //   const updatedPeers = prevPeers.map((peer) => {
+        //     if (peer.uid === uid) {
+        //       // Create a new object for the updated peer, do not mutate the existing one
+        //       return { ...peer, connectionState: "connected" };
+        //     }
+        //     // Return the peer as it is if its uid doesn't match
+        //     return peer;
+        //   });
+        //   return updatedPeers;
+        // });
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
