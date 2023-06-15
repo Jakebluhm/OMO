@@ -129,7 +129,7 @@ export const Video = (props) => {
       }
     };
 
-    props.peer.on("stream", (stream) => {
+    props.peer.peer.on("stream", (stream) => {
       console.log("Inside peer received stream in Video");
       console.log("Stream ID:", stream.id);
       console.log("Stream active:", stream.active);
@@ -760,6 +760,23 @@ const Room = (props) => {
     //localStorage.clear();
   };
 
+  // Then you can define your updateConnectionState function which
+  // uses a setState action to update your state variable
+  function updateConnectionState(currentUID, state) {
+    // Update the peers state
+    setPeers((prevPeers) => {
+      const updatedPeers = prevPeers.map((peer) => {
+        if (peer.uid === currentUID) {
+          // Create a new object for the updated peer, do not mutate the existing one
+          return { ...peer, connectionState: state };
+        }
+        // Return the peer as it is if its uid doesn't match
+        return peer;
+      });
+      return updatedPeers;
+    });
+  }
+
   //  called when joining a room with players already in room. Called in useEffect to make list of players
   function createPeer(incomingUID, userToSignal, callerID, stream, turnCreds) {
     if (turnCreds != null) {
@@ -784,6 +801,23 @@ const Room = (props) => {
         config: configuration,
       });
 
+      // Add a listener for each event
+      peer.addListener("connect", () => {
+        updateConnectionState(incomingUID, "connected");
+      });
+
+      peer.addListener("close", () => {
+        updateConnectionState(incomingUID, "closed");
+      });
+
+      peer.addListener("error", () => {
+        updateConnectionState(incomingUID, "error");
+      });
+      // Add a listener for each event
+      peer.addListener("end", () => {
+        updateConnectionState(incomingUID, "end");
+      });
+
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
           userToSignal,
@@ -806,6 +840,23 @@ const Room = (props) => {
         stream,
       });
 
+      // Add a listener for each event
+      peer.addListener("connect", () => {
+        updateConnectionState(incomingUID, "connected");
+      });
+
+      peer.addListener("close", () => {
+        updateConnectionState(incomingUID, "closed");
+      });
+
+      peer.addListener("error", () => {
+        updateConnectionState(incomingUID, "error");
+      });
+      // Add a listener for each event
+      peer.addListener("end", () => {
+        updateConnectionState(incomingUID, "end");
+      });
+
       peer.on("signal", (signal) => {
         socketRef.current.emit("sending signal", {
           userToSignal,
@@ -822,7 +873,14 @@ const Room = (props) => {
   }
 
   //  Add new player to current call that this user is already in
-  function addPeer(incomingUID, incomingSignal, callerID, stream, userName, turnCreds) {
+  function addPeer(
+    incomingUID,
+    incomingSignal,
+    callerID,
+    stream,
+    userName,
+    turnCreds
+  ) {
     console.log("------Inside addPeer()-----");
 
     if (turnCreds != null) {
@@ -845,6 +903,23 @@ const Room = (props) => {
         trickle: false,
         stream,
         config: configuration,
+      });
+
+      // Add a listener for each event
+      peer.addListener("connect", () => {
+        updateConnectionState(incomingUID, "connected");
+      });
+
+      peer.addListener("close", () => {
+        updateConnectionState(incomingUID, "closed");
+      });
+
+      peer.addListener("error", () => {
+        updateConnectionState(incomingUID, "error");
+      });
+      // Add a listener for each event
+      peer.addListener("end", () => {
+        updateConnectionState(incomingUID, "end");
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange
@@ -890,6 +965,23 @@ const Room = (props) => {
         initiator: false,
         trickle: false,
         stream,
+      });
+
+      // Add a listener for each event
+      peer.addListener("connect", () => {
+        updateConnectionState(incomingUID, "connected");
+      });
+
+      peer.addListener("close", () => {
+        updateConnectionState(incomingUID, "closed");
+      });
+
+      peer.addListener("error", () => {
+        updateConnectionState(incomingUID, "error");
+      });
+      // Add a listener for each event
+      peer.addListener("end", () => {
+        updateConnectionState(incomingUID, "end");
       });
 
       // Add the event listeners for icecandidate and iceconnectionstatechange

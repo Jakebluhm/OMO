@@ -99,7 +99,7 @@ const VideoGrid = ({
               <Video
                 style={{ display: "flex", flex: 1 }}
                 key={peer.peerID}
-                peer={peer.peer}
+                peer={peer}
                 onVideoReady={handleVideoReady}
               />
               <label
@@ -110,7 +110,7 @@ const VideoGrid = ({
                   fontWeight: "bold",
                 }}
               >
-                {peer.peerName}
+                {peer.peerName} - {peer.connectionState}
               </label>
             </GridItem>
           );
