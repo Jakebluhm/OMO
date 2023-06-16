@@ -143,22 +143,24 @@ export const Video = (props) => {
 
   // Debug stream
   useEffect(() => {
-    if (props.videoStream && props.videoStream.srcObject) {
-      props.videoStream.srcObject.onaddtrack = (event) => {
-        console.log("Track added to stream:", event.track);
-      };
-
-      props.videoStream.srcObject.onremovetrack = (event) => {
-        console.log("Track removed from stream:", event.track);
-      };
-
-      props.videoStream.srcObject.getTracks().forEach((track) => {
-        track.onended = (event) => {
-          console.log("Track ended:", event.target);
+    if (props.videoStream) {
+      if (props.videoStream && props.videoStream.srcObject) {
+        props.videoStream.srcObject.onaddtrack = (event) => {
+          console.log("Track added to stream:", event.track);
         };
-      });
+
+        props.videoStream.srcObject.onremovetrack = (event) => {
+          console.log("Track removed from stream:", event.track);
+        };
+
+        props.videoStream.srcObject.getTracks().forEach((track) => {
+          track.onended = (event) => {
+            console.log("Track ended:", event.target);
+          };
+        });
+      }
     }
-  }, [props.videoStream.srcObject]);
+  }, [props.videoStream]);
 
   useEffect(() => {
     const interval = setInterval(() => {
