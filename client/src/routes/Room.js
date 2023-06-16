@@ -813,7 +813,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID] = stream;
+        peersStreamRef.current[incomingUID].srcObject = stream;
       });
 
       // Add a listener for each event
@@ -858,7 +858,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID] = stream;
+        peersStreamRef.current[incomingUID].srcObject = stream;
       });
 
       // Add a listener for each event
@@ -931,7 +931,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID] = stream;
+        peersStreamRef.current[incomingUID].srcObject = stream;
       });
 
       // Add a listener for each event
@@ -1000,7 +1000,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID] = stream;
+        peersStreamRef.current[incomingUID].srcObject = stream;
       });
 
       // Add a listener for each event
