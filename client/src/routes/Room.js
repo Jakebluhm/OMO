@@ -100,8 +100,9 @@ export const Video = (props) => {
         console.log("Peer connection state:", peerConnectionState);
 
         if (
-          peerConnectionState === "failed" ||
-          peerConnectionState === "disconnected"
+          peerConnectionState === "end" ||
+          peerConnectionState === "error" ||
+          peerConnectionState === "closed"
         ) {
           Sentry.captureMessage(
             `RTCPeerConnection is in a bad state: ${peerConnectionState}`,
@@ -114,7 +115,7 @@ export const Video = (props) => {
     const interval = setInterval(checkStates, 5000); // Check the states every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [props.peer.connectionState]);
 
   useEffect(() => {
     const setStream = (stream, retryCount = 0) => {
@@ -139,7 +140,7 @@ export const Video = (props) => {
 
       setStream(stream);
     });
-  }, []);
+  }, [props.peer.peer]);
 
   // Debug stream
   useEffect(() => {
