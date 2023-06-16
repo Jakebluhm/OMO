@@ -63,6 +63,7 @@ const VideoGrid = ({
   gameComplete,
   redirectCount,
   selectedUser,
+  videoStreams,
 }) => {
   const [size, setSize] = useState(BASE_SIZE);
 
@@ -93,6 +94,7 @@ const VideoGrid = ({
       </GridItem>
       {filteredPeers.map((peer, index) => {
         if (index < 2) {
+          const stream = videoStreams.current[peer.uid];
           // Only take the first two peers
           return (
             <GridItem key={peer.peerID} size={size}>
@@ -101,6 +103,7 @@ const VideoGrid = ({
                 key={peer.peerID}
                 peer={peer}
                 onVideoReady={handleVideoReady}
+                videoStream={stream}
               />
               <label
                 style={{
