@@ -108,6 +108,9 @@ const VideoGrid = ({
                   alignSelf: "flex-end",
                   padding: 5,
                   fontWeight: "bold",
+                  color: "white", // white color for the text
+                  textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // text shadow for contrast
+                  backgroundColor: "rgba(0, 0, 0, 0.5)", // optional: semi-transparent background for the text
                 }}
               >
                 {peer.peerName} - {peer.connectionState}
