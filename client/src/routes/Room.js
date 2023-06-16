@@ -62,7 +62,6 @@ const MuteUnmuteButton = styled.button`
 `;
 
 export const Video = (props) => {
-  const ref = useRef();
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -75,10 +74,10 @@ export const Video = (props) => {
   //Sentry error reporting
   useEffect(() => {
     const checkStates = () => {
-      if (ref.current) {
-        console.log("Video readyState:", ref.current.readyState);
+      if (props.videoStream) {
+        console.log("Video readyState:", props.videoStream.readyState);
 
-        if (ref.current.readyState < 3) {
+        if (props.videoStream.readyState < 3) {
           // If this is the first time readyState is < 3, remember the timestamp
           if (!lastTimeStateLessThanThreeRef.current) {
             lastTimeStateLessThanThreeRef.current = Date.now();
@@ -86,7 +85,7 @@ export const Video = (props) => {
           // If readyState has been < 3 for more than 15 seconds, report an error
           else if (Date.now() - lastTimeStateLessThanThreeRef.current > 15000) {
             Sentry.captureMessage(
-              `Video readyState less than HAVE_FUTURE_DATA for more than 15 seconds: ${ref.current.readyState}`,
+              `Video readyState less than HAVE_FUTURE_DATA for more than 15 seconds: ${props.videoStream.readyState}`,
               "warning"
             );
           }
@@ -117,54 +116,54 @@ export const Video = (props) => {
     return () => clearInterval(interval);
   }, [props.peer.connectionState]);
 
-  useEffect(() => {
-    const setStream = (stream, retryCount = 0) => {
-      if (ref.current) {
-        ref.current.srcObject = stream;
-      } else if (retryCount < 10) {
-        // Stop retrying after 10 attempts
-        // Retry after 100ms if ref.current is not available
-        setTimeout(() => setStream(stream, retryCount + 1), 100);
-      } else {
-        throw Error("Unable to set ref.cuurent.srcObject in Video");
-      }
-    };
+  // useEffect(() => {
+  //   const setStream = (stream, retryCount = 0) => {
+  //     if (ref.current) {
+  //       ref.current.srcObject = stream;
+  //     } else if (retryCount < 10) {
+  //       // Stop retrying after 10 attempts
+  //       // Retry after 100ms if ref.current is not available
+  //       setTimeout(() => setStream(stream, retryCount + 1), 100);
+  //     } else {
+  //       throw Error("Unable to set ref.cuurent.srcObject in Video");
+  //     }
+  //   };
 
-    props.peer.peer.on("stream", (stream) => {
-      console.log("Inside peer received stream in Video");
-      console.log("Stream ID:", stream.id);
-      console.log("Stream active:", stream.active);
-      console.log("Stream tracks:", stream.getTracks());
-      console.log("navigator.userAgent");
-      console.log(navigator.userAgent);
+  //   props.peer.peer.on("stream", (stream) => {
+  //     console.log("Inside peer received stream in Video");
+  //     console.log("Stream ID:", stream.id);
+  //     console.log("Stream active:", stream.active);
+  //     console.log("Stream tracks:", stream.getTracks());
+  //     console.log("navigator.userAgent");
+  //     console.log(navigator.userAgent);
 
-      setStream(stream);
-    });
-  }, [props.peer.peer]);
+  //     setStream(stream);
+  //   });
+  // }, []);
 
   // Debug stream
   useEffect(() => {
-    if (ref.current && ref.current.srcObject) {
-      ref.current.srcObject.onaddtrack = (event) => {
+    if (props.videoStream && props.videoStream.srcObject) {
+      props.videoStream.srcObject.onaddtrack = (event) => {
         console.log("Track added to stream:", event.track);
       };
 
-      ref.current.srcObject.onremovetrack = (event) => {
+      props.videoStream.srcObject.onremovetrack = (event) => {
         console.log("Track removed from stream:", event.track);
       };
 
-      ref.current.srcObject.getTracks().forEach((track) => {
+      props.videoStream.srcObject.getTracks().forEach((track) => {
         track.onended = (event) => {
           console.log("Track ended:", event.target);
         };
       });
     }
-  }, [ref.current?.srcObject]);
+  }, [props.videoStream.srcObject]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (ref.current) {
-        console.log("Video readyState:", ref.current.readyState);
+      if (props.videoStream) {
+        console.log("Video readyState:", props.videoStream.readyState);
         console.log(
           "peer.connectionstate ",
           props.peer.peerName,
@@ -188,7 +187,7 @@ export const Video = (props) => {
         playsInline
         autoPlay
         muted={muted}
-        ref={ref}
+        ref={props.videoStream}
         onLoadedMetadata={props.onVideoReady}
       />
       <MuteUnmuteButton onClick={toggleMute}>
@@ -244,6 +243,7 @@ const Room = (props) => {
   const userVideo = useRef();
   const peersRef = useRef([]); //JAKEB Array of peers, Could expand this to class other user info, along with peer info
 
+  const peersStreamRef = useRef([]);
   // useCallback Definitions
 
   const updateTally = useCallback(() => {
@@ -807,6 +807,12 @@ const Room = (props) => {
         stream,
         config: configuration,
       });
+      peer.on("stream", (stream) => {
+        console.log("Received stream from", incomingUID);
+
+        // Store the stream under the incomingUID
+        peersStreamRef.current[incomingUID] = stream;
+      });
 
       // Add a listener for each event
       peer.addListener("connect", () => {
@@ -845,6 +851,12 @@ const Room = (props) => {
         initiator: true,
         trickle: false,
         stream,
+      });
+      peer.on("stream", (stream) => {
+        console.log("Received stream from", incomingUID);
+
+        // Store the stream under the incomingUID
+        peersStreamRef.current[incomingUID] = stream;
       });
 
       // Add a listener for each event
@@ -912,6 +924,14 @@ const Room = (props) => {
         config: configuration,
       });
 
+      //Add stream callback:
+      peer.on("stream", (stream) => {
+        console.log("Received stream from", incomingUID);
+
+        // Store the stream under the incomingUID
+        peersStreamRef.current[incomingUID] = stream;
+      });
+
       // Add a listener for each event
       peer.addListener("connect", () => {
         updateConnectionState(incomingUID, "connected");
@@ -972,6 +992,13 @@ const Room = (props) => {
         initiator: false,
         trickle: false,
         stream,
+      });
+
+      peer.on("stream", (stream) => {
+        console.log("Received stream from", incomingUID);
+
+        // Store the stream under the incomingUID
+        peersStreamRef.current[incomingUID] = stream;
       });
 
       // Add a listener for each event
@@ -1104,6 +1131,7 @@ const Room = (props) => {
         gameComplete={gameComplete}
         redirectCount={redirectCount}
         selectedUser={selectedUser}
+        videoStreams={peersStreamRef}
       />
 
       {!gameReady && (
