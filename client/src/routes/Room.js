@@ -62,6 +62,7 @@ const MuteUnmuteButton = styled.button`
 `;
 
 export const Video = (props) => {
+  const ref = useRef();
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -183,13 +184,19 @@ export const Video = (props) => {
     setMuted(!muted);
   };
 
+  useEffect(() => {
+    if (props.videoStream) {
+      ref.current.srcObject = props.videoStream;
+    }
+  }, [props.videoStream]);
+
   return (
     <div style={{ position: "relative", display: "flex", flex: 1 }}>
       <StyledVideo
         playsInline
         autoPlay
         muted={muted}
-        ref={props.videoStream}
+        ref={ref}
         onLoadedMetadata={props.onVideoReady}
       />
       <MuteUnmuteButton onClick={toggleMute}>
@@ -813,7 +820,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID].srcObject = stream;
+        peersStreamRef.current[incomingUID] = stream;
       });
 
       // Add a listener for each event
@@ -858,7 +865,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID].srcObject = stream;
+        peersStreamRef.current[incomingUID] = stream;
       });
 
       // Add a listener for each event
@@ -931,7 +938,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID].srcObject = stream;
+        peersStreamRef.current[incomingUID] = stream;
       });
 
       // Add a listener for each event
@@ -1000,7 +1007,7 @@ const Room = (props) => {
         console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
-        peersStreamRef.current[incomingUID].srcObject = stream;
+        peersStreamRef.current[incomingUID] = stream;
       });
 
       // Add a listener for each event
