@@ -164,6 +164,12 @@ export const Video = (props) => {
     const interval = setInterval(() => {
       if (ref.current) {
         console.log("Video readyState:", ref.current.readyState);
+        console.log(
+          "peer.connectionstate ",
+          props.peer.peerName,
+          " ",
+          props.peer.connectionState
+        );
       }
     }, 5000); // Log the readyState every 5 seconds
 
