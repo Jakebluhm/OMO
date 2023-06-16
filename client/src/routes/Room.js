@@ -175,7 +175,7 @@ export const Video = (props) => {
 
     // Cleanup function to clear the interval when the component is unmounted
     return () => clearInterval(interval);
-  }, []);
+  }, [props.peer]);
 
   const toggleMute = () => {
     setMuted(!muted);
