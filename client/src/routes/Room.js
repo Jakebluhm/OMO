@@ -1080,6 +1080,8 @@ const Room = (props) => {
     return false;
   });
 
+  console.log(filteredPeers)
+
   return (
     <Container>
       <p style={{ textAlign: "center" }}>OMO</p>
