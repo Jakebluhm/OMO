@@ -96,7 +96,9 @@ const VideoGrid = ({
         if (index < 2) {
           const stream = videoStreams.current[peer.uid];
           // Only take the first two peers
-          return (
+          return (<div>
+            {
+            peer.connectionState === "closed" ?
             <GridItem key={peer.peerID} size={size}>
               <Video
                 style={{ display: "flex", flex: 1 }}
@@ -119,7 +121,25 @@ const VideoGrid = ({
                 {peer.peerName} - {peer.connectionState}
               </label>
             </GridItem>
-          );
+              :
+          
+            <GridItem key={peer.peerID} size={size}>
+              <label 
+                style={{
+                  position: "absolute",
+                  alignSelf: "flex-end",
+                  padding: 5,
+                  fontWeight: "bold",
+                  color: "white", // white color for the text
+                  textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // text shadow for contrast
+                  backgroundColor: "rgba(0, 0, 0, 0.5)", // optional: semi-transparent background for the text
+                }}
+                >
+                  {peer.peerName} - left the game...
+                </label>
+            </GridItem>
+            }
+            </div>);
         }
       })}
       <GridItem size={size}>

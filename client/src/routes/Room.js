@@ -605,6 +605,7 @@ const Room = (props) => {
                   stream,
                   credentials
                 );
+                console.log("Setting connectionState to initializing??")
                 peersRef.current.push({
                   // Pushing a new player into array of players -
                   peerID: userID.socketID,
@@ -660,7 +661,7 @@ const Room = (props) => {
                 payload.userName.playerName,
                 credentials
               );
-
+              console.log("Setting connectionState to initializing??")
               peersRef.current.push({
                 peerID: payload.callerID,
                 peerName: payload.userName.playerName,
