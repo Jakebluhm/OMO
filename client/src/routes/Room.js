@@ -76,9 +76,9 @@ export const Video = (props) => {
   useEffect(() => {
     const checkStates = () => {
       if (props.videoStream) {
-        console.log("Video readyState:", props.videoStream.readyState);
+        console.log("Video readyState:", ref.current.readyState);
 
-        if (props.videoStream.readyState < 3) {
+        if (ref.current.readyState < 3) {
           // If this is the first time readyState is < 3, remember the timestamp
           if (!lastTimeStateLessThanThreeRef.current) {
             lastTimeStateLessThanThreeRef.current = Date.now();
@@ -86,7 +86,7 @@ export const Video = (props) => {
           // If readyState has been < 3 for more than 15 seconds, report an error
           else if (Date.now() - lastTimeStateLessThanThreeRef.current > 15000) {
             Sentry.captureMessage(
-              `Video readyState less than HAVE_FUTURE_DATA for more than 15 seconds: ${props.videoStream.readyState}`,
+              `Video readyState less than HAVE_FUTURE_DATA for more than 15 seconds: ${ref.current.readyState}`,
               "warning"
             );
           }
@@ -166,7 +166,7 @@ export const Video = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (props.videoStream) {
-        console.log("Video readyState:", props.videoStream.readyState);
+        console.log("Video readyState:", ref.current.readyState);
         console.log(
           "peer.connectionstate ",
           props.peer.peerName,
@@ -541,25 +541,7 @@ const Room = (props) => {
     return () => window.removeEventListener("beforeunload", unloadCallback);
   }, []);
 
-  // JAKEB useEffect updates when state variables(above) that are in brackets at the bottom
-  // of function change value. In this case no variables are specified so it runs when this
-  // Component mounts aka displays to screen
-  // useEffect(() => {
-  //   // Fetch TURN credentials as soon as the socket connection is established
-  //   fetch("/turn-credentials")
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("HTTP error " + response.status);
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((credentials) => {
-  //       setTurnCredentials(credentials);
-  //     })
-  //     .catch((error) => {
-  //       console.log("Error fetching TURN credentials:", error);
-  //     });
-  // }, []);
+
 
   useEffect(() => {
     // Start by fetching the TURN credentials
@@ -639,7 +621,7 @@ const Room = (props) => {
             //------------------ Callbacks--------------------
 
             socketRef.current.on("user joined", (payload) => {
-              //console.log("--------------user joined---------------");
+              console.log("--------------user joined---------------");
 
               // Prevent self from joining
 
@@ -686,6 +668,7 @@ const Room = (props) => {
             });
 
             socketRef.current.on("user left", (id) => {
+              console.log("--------------user left---------------");
               const peerObj = peersRef.current.find((p) => p.peerID === id);
               if (peerObj) {
                 peerObj.peer.destroy();
@@ -698,6 +681,7 @@ const Room = (props) => {
             });
 
             socketRef.current.on("receiving returned signal", (payload) => {
+              console.log("--------------receiving returned signal--------------");
               const item = peersRef.current.find(
                 (p) => p.peerID === payload.id
               );
