@@ -106,7 +106,7 @@ const VideoGrid = ({
         }
       });
 
-      if (connectionStates.length < 3) {
+      if (connectionStates.length < 2) {
         console.log(
           "GAME RUINED - Not enough users: " + connectionStates.length
         );
