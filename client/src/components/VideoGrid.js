@@ -115,6 +115,9 @@ const VideoGrid = ({
     }
   }, [connectionStates, gameReady]);
 
+  console.log("isModalOpen");
+  console.log(isModalOpen);
+
   return (
     <GridContainer size={size}>
       <GridItem size={size}>
