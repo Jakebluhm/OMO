@@ -89,12 +89,19 @@ const VideoGrid = ({
     };
   }, []);
 
+  const connectionStates = filteredPeers.map((peer) => peer.connectionState);
   // Use an effect to resize the grid when the window resizes
   useEffect(() => {
+    console.log(
+      "Inside ruin game useEffect - gameReady " +
+        gameReady +
+        " connectionStates: " +
+        connectionStates
+    );
     if (gameReady) {
-      filteredPeers.forEach((peer) => {
-        if (peer.connectionState === "closed") {
-          console.log("GAME RUINED - " + peer.peerName + " left game");
+      connectionStates.forEach((state) => {
+        if (state === "closed") {
+          console.log("GAME RUINED - someone left game");
           setGameRuined(true);
         }
       });
@@ -104,7 +111,7 @@ const VideoGrid = ({
         setGameRuined(true);
       }
     }
-  }, [filteredPeers, gameReady]);
+  }, [connectionStates, gameReady]);
 
   return (
     <GridContainer size={size}>
