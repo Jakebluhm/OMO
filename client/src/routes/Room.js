@@ -332,10 +332,11 @@ const Room = (props) => {
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
     if (videosReady >= 2) {
+      console.log("-------------Setting Game Ready----------------");
       setGameReady(true);
       startTimer();
     }
-  }, [videosReady, peers]);
+  }, [videosReady, peers, startTimer]);
 
   useEffect(() => {
     if (
@@ -541,8 +542,6 @@ const Room = (props) => {
     return () => window.removeEventListener("beforeunload", unloadCallback);
   }, []);
 
-
-
   useEffect(() => {
     // Start by fetching the TURN credentials
     fetch("/turn-credentials")
@@ -587,7 +586,7 @@ const Room = (props) => {
                   stream,
                   credentials
                 );
-                console.log("Setting connectionState to initializing??")
+                console.log("Setting connectionState to initializing??");
                 peersRef.current.push({
                   // Pushing a new player into array of players -
                   peerID: userID.socketID,
@@ -643,7 +642,7 @@ const Room = (props) => {
                 payload.userName.playerName,
                 credentials
               );
-              console.log("Setting connectionState to initializing??")
+              console.log("Setting connectionState to initializing??");
               peersRef.current.push({
                 peerID: payload.callerID,
                 peerName: payload.userName.playerName,
@@ -681,7 +680,9 @@ const Room = (props) => {
             });
 
             socketRef.current.on("receiving returned signal", (payload) => {
-              console.log("--------------receiving returned signal--------------");
+              console.log(
+                "--------------receiving returned signal--------------"
+              );
               const item = peersRef.current.find(
                 (p) => p.peerID === payload.id
               );
@@ -1065,7 +1066,7 @@ const Room = (props) => {
     return false;
   });
 
-  console.log(filteredPeers)
+  console.log(filteredPeers);
 
   return (
     <Container>
@@ -1128,6 +1129,7 @@ const Room = (props) => {
         redirectCount={redirectCount}
         selectedUser={selectedUser}
         videoStreams={peersStreamRef}
+        gameReady={gameReady}
       />
 
       {!gameReady && (

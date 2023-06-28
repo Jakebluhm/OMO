@@ -106,8 +106,10 @@ const VideoGrid = ({
         }
       });
 
-      if (filteredPeers.length < 3) {
-        console.log("GAME RUINED - Not enough users: " + filteredPeers.length);
+      if (connectionStates.length < 3) {
+        console.log(
+          "GAME RUINED - Not enough users: " + connectionStates.length
+        );
         setGameRuined(true);
       }
     }
