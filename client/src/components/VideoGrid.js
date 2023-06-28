@@ -50,7 +50,6 @@ const VideoGrid = ({
   filteredPeers,
   gameInfo,
   handleVideoReady,
-
   isModalOpen,
   currentPlayer,
   voteCounts,
@@ -64,8 +63,11 @@ const VideoGrid = ({
   redirectCount,
   selectedUser,
   videoStreams,
+  gameReady,
 }) => {
   const [size, setSize] = useState(BASE_SIZE);
+
+  const [gameRuined, setGameRuined] = useState(false);
 
   // Use an effect to resize the grid when the window resizes
   useEffect(() => {
@@ -87,6 +89,23 @@ const VideoGrid = ({
     };
   }, []);
 
+  // Use an effect to resize the grid when the window resizes
+  useEffect(() => {
+    if (gameReady) {
+      filteredPeers.forEach((peer) => {
+        if (peer.connectionState === "closed") {
+          console.log("GAME RUINED - " + peer.peerName + " left game");
+          setGameRuined(true);
+        }
+      });
+
+      if (filteredPeers.length < 3) {
+        console.log("GAME RUINED - Not enough users: " + filteredPeers.length);
+        setGameRuined(true);
+      }
+    }
+  }, [filteredPeers, gameReady]);
+
   return (
     <GridContainer size={size}>
       <GridItem size={size}>
@@ -96,54 +115,50 @@ const VideoGrid = ({
         if (index < 2) {
           const stream = videoStreams.current[peer.uid];
           // Only take the first two peers
-          return (<div>
-            {
-            peer.connectionState === "closed" ?
-            <GridItem key={peer.peerID} size={size}>
-              <label 
-                style={{
-                  position: "absolute",
-                  alignSelf: "flex-end",
-                  padding: 5,
-                  fontWeight: "bold",
-                  color: "white", // white color for the text
-                  textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // text shadow for contrast
-                  backgroundColor: "rgba(0, 0, 0, 0.5)", // optional: semi-transparent background for the text
-                }}
-                >
-                  {peer.peerName} - left the game...
-                </label>
-            </GridItem>
-
-
-            :
-            <GridItem key={peer.peerID} size={size}>
-              <Video
-                style={{ display: "flex", flex: 1 }}
-                key={peer.peerID}
-                peer={peer}
-                onVideoReady={handleVideoReady}
-                videoStream={stream}
-              />
-              <label
-                style={{
-                  position: "absolute",
-                  alignSelf: "flex-end",
-                  padding: 5,
-                  fontWeight: "bold",
-                  color: "white", // white color for the text
-                  textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // text shadow for contrast
-                  backgroundColor: "rgba(0, 0, 0, 0.5)", // optional: semi-transparent background for the text
-                }}
-              >
-                {peer.peerName} - {peer.connectionState}
-              </label>
-            </GridItem>
-           
-          
-
-            }
-            </div>);
+          return (
+            <div>
+              {peer.connectionState === "closed" ? (
+                <GridItem key={peer.peerID} size={size}>
+                  <label
+                    style={{
+                      position: "absolute",
+                      alignSelf: "flex-end",
+                      padding: 5,
+                      fontWeight: "bold",
+                      color: "white", // white color for the text
+                      textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // text shadow for contrast
+                      backgroundColor: "rgba(0, 0, 0, 0.5)", // optional: semi-transparent background for the text
+                    }}
+                  >
+                    {peer.peerName} - left the game...
+                  </label>
+                </GridItem>
+              ) : (
+                <GridItem key={peer.peerID} size={size}>
+                  <Video
+                    style={{ display: "flex", flex: 1 }}
+                    key={peer.peerID}
+                    peer={peer}
+                    onVideoReady={handleVideoReady}
+                    videoStream={stream}
+                  />
+                  <label
+                    style={{
+                      position: "absolute",
+                      alignSelf: "flex-end",
+                      padding: 5,
+                      fontWeight: "bold",
+                      color: "white", // white color for the text
+                      textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // text shadow for contrast
+                      backgroundColor: "rgba(0, 0, 0, 0.5)", // optional: semi-transparent background for the text
+                    }}
+                  >
+                    {peer.peerName} - {peer.connectionState}
+                  </label>
+                </GridItem>
+              )}
+            </div>
+          );
         }
       })}
       <GridItem size={size}>
@@ -266,6 +281,16 @@ const VideoGrid = ({
             </div>
           ) : (
             <>
+              {gameRuined && (
+                <p
+                  style={{
+                    fontSize: "calc(2px + 1.0vh)",
+                    marginBottom: "5px",
+                  }}
+                >
+                  {"GAME RUINED"}
+                </p>
+              )}
               <p
                 style={{
                   fontSize: "calc(2px + 1.0vh)",
