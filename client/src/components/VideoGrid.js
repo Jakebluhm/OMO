@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Video } from "../routes/Room"; // adjust the path to match your project structure
+import { useHistory } from "react-router-dom";
 // Base size of the squares, this can be adjusted as needed
 const BASE_SIZE = 50;
 const GridContainer = styled.div`
@@ -85,6 +86,7 @@ const VideoGrid = ({
   videoStreams,
   gameReady,
 }) => {
+  const history = useHistory();  // Here's where we call useHistory
   const [size, setSize] = useState(BASE_SIZE);
 
   const [gameRuined, setGameRuined] = useState(false);
@@ -320,9 +322,7 @@ const VideoGrid = ({
                   </p>
                   <RedirectButton>
                       size={size}
-                      onClick={() => {
-                        props.history.push('/');;
-                      } }
+                      onClick={() => history.push('/')}
                       Home
                   </RedirectButton>
                 </>
