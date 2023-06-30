@@ -30,6 +30,26 @@ const VoteButton = styled.button`
   margin: ${(props) => props.size / 120}px ${(props) => props.size / 120}px; // adjust these fractions as necessary
   cursor: pointer;
 `;
+
+
+const RedirectButton = styled.button`
+  width: ${(props) => props.size / 6}px; // adjust these fractions as necessary
+  height: ${(props) =>
+    props.size / 12}px; // half of the width to keep 2:1 ratio
+  font-size: ${(props) =>
+    props.size / 24}px; // adjust this fraction as necessary
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: ${(props) => props.size / 120}px ${(props) => props.size / 60}px; // adjust these fractions as necessary
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: ${(props) => props.size / 120}px ${(props) => props.size / 120}px; // adjust these fractions as necessary
+  cursor: pointer;
+`;
+
+
 const GridItem = styled.div`
   height: ${(props) => props.size}px;
   width: ${(props) => props.size}px;
@@ -294,14 +314,18 @@ const VideoGrid = ({
           ) : (
             <>
               {gameRuined && (
-                <p
-                  style={{
-                    fontSize: "calc(2px + 1.0vh)",
-                    marginBottom: "5px",
-                  }}
-                >
-                  {"GAME RUINED"}
-                </p>
+                <>
+                  <p style={{fontSize: "calc(2px + 1.0vh)", marginBottom: "5px", }}>
+                      {"GAME RUINED"}
+                  </p>
+                  <RedirectButton>
+                      size={size}
+                      onClick={() => {
+                        props.history.push('/');;
+                      } }
+                      Home
+                  </RedirectButton>
+                </>
               )}
               <p
                 style={{
