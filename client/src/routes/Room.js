@@ -331,12 +331,12 @@ const Room = (props) => {
   }, [redirectCount, countdown]);
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
-    if (videosReady >= 2) {
+    if (videosReady >= 2 && !gameReady) {
       console.log("-------------Setting Game Ready----------------");
       setGameReady(true);
       startTimer();
     }
-  }, [videosReady, peers, startTimer]);
+  }, [videosReady, peers, startTimer, gameReady]);
 
   useEffect(() => {
     if (
