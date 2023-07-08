@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 Modal.setAppElement("#root"); // replace '#root' with the id of your app's root element
 
-const TimedRedirectModal = ({ isOpen, message, duration }) => {
+const TimedRedirectModal = ({ isOpen, message, duration, networkStatus }) => {
   const [isModalOpen, setIsModalOpen] = useState(isOpen);
   const [countdown, setCountdown] = useState(duration);
   const history = useHistory();
@@ -40,8 +40,20 @@ const TimedRedirectModal = ({ isOpen, message, duration }) => {
         },
       }}
     >
-      <h2>{message}</h2>
-      <p>Redirecting in {countdown} seconds...</p>
+      {networkStatus ? (
+        <>
+          <h2>{message}</h2>
+          <p>Redirecting in {countdown} seconds...</p>
+        </>
+      ) : (
+        <>
+          <h2>Network Issue Detected</h2>
+          <p>
+            Your internet connection appears to be unstable. Please check your
+            connection.
+          </p>
+        </>
+      )}
     </Modal>
   );
 };

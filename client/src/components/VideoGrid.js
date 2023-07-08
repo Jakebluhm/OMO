@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Video } from "../routes/Room"; // adjust the path to match your project structure
 import { useHistory } from "react-router-dom";
 import TimedRedirectModal from "../modal/redirectModal/RedirectModal.js"; // adjust path as necessary
+import useNetworkStatus from "../helpers/network/NetworkStatus.js";
 
 // Base size of the squares, this can be adjusted as needed
 const BASE_SIZE = 50;
@@ -90,8 +91,9 @@ const VideoGrid = ({
   const history = useHistory(); // Here's where we call useHistory
   const [size, setSize] = useState(BASE_SIZE);
   const [allUsersLeft, setAllUsersLeft] = useState(false);
-
   const [gameRuined, setGameRuined] = useState(false);
+
+  const networkStatus = useNetworkStatus();
 
   // Use an effect to resize the grid when the window resizes
   useEffect(() => {
@@ -382,9 +384,10 @@ const VideoGrid = ({
         </div>
       </GridItem>
       <TimedRedirectModal
-        isOpen={allUsersLeft}
+        isOpen={allUsersLeft || !networkStatus}
         message="All users left, returning home"
         duration={3}
+        networkStatus={networkStatus}
       />
     </GridContainer>
   );
