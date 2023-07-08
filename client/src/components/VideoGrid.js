@@ -122,20 +122,23 @@ const VideoGrid = ({
         connectionStates
     );
     if (gameReady) {
+      var closedCount = 0;
       connectionStates.forEach((state) => {
         if (state === "closed") {
           console.log("GAME RUINED - someone left game");
+          closedCount++;
           setGameRuined(true);
         }
       });
 
-      if (connectionStates.length < 2) {
+      if (closedCount > 0) {
         console.log(
           "GAME RUINED - Not enough users: " + connectionStates.length
         );
         setGameRuined(true);
-        if (connectionStates.length === 1) {
-        } else if (connectionStates.length === 0) {
+        if (closedCount === 1) {
+          console.log("One User left");
+        } else if (closedCount === 2) {
           console.log("All users left triggering modal redirect sequence");
           setAllUsersLeft(true);
         }
