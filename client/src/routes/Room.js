@@ -343,8 +343,49 @@ const Room = (props) => {
       console.log("-------------Setting Game Ready----------------");
       setGameReady(true);
       startTimer();
+
+      // Find the real odd man out here and update the state
+      const uniquePeerIds = new Set([currentPlayer.uid]);
+      const identityCounts = {
+        [currentPlayer.omo]: 1, // Initialize with the current player's identity
+      };
+
+      peers.forEach((peer) => {
+        if (!uniquePeerIds.has(peer.uid)) {
+          uniquePeerIds.add(peer.uid);
+          identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
+        }
+      });
+
+      const minorityIdentity = Object.entries(identityCounts).find(
+        ([, count]) => count === 1
+      )[0];
+
+      let realOddManOutPeer;
+
+      if (currentPlayer.omo === parseInt(minorityIdentity)) {
+        realOddManOutPeer = {
+          peerName: currentPlayer.peerName,
+        };
+      } else {
+        realOddManOutPeer = peers.find(
+          (peer) => peer.omo === parseInt(minorityIdentity)
+        );
+      }
+      if (realOddManOut === null) {
+        setRealOddManOut(realOddManOutPeer.peerName);
+      }
     }
-  }, [videosReady, peers, startTimer, gameReady]);
+  }, [
+    videosReady,
+    peers,
+    startTimer,
+    gameReady,
+    currentPlayer.uid,
+    currentPlayer.omo,
+    currentPlayer.peerName,
+    realOddManOut,
+  ]);
 
   useEffect(() => {
     if (
@@ -483,38 +524,6 @@ const Room = (props) => {
           restartCountdown = true;
         } else {
           setCountdown(0);
-
-          // Find the real odd man out here and update the state
-          const uniquePeerIds = new Set([currentPlayer.uid]);
-          const identityCounts = {
-            [currentPlayer.omo]: 1, // Initialize with the current player's identity
-          };
-
-          peers.forEach((peer) => {
-            if (!uniquePeerIds.has(peer.uid)) {
-              uniquePeerIds.add(peer.uid);
-              identityCounts[peer.omo] = (identityCounts[peer.omo] || 0) + 1;
-            }
-          });
-
-          const minorityIdentity = Object.entries(identityCounts).find(
-            ([, count]) => count === 1
-          )[0];
-
-          let realOddManOutPeer;
-
-          if (currentPlayer.omo === parseInt(minorityIdentity)) {
-            realOddManOutPeer = {
-              peerName: currentPlayer.peerName,
-            };
-          } else {
-            realOddManOutPeer = peers.find(
-              (peer) => peer.omo === parseInt(minorityIdentity)
-            );
-          }
-          if (realOddManOut === null) {
-            setRealOddManOut(realOddManOutPeer.peerName);
-          }
         }
       }, 10000);
     };
