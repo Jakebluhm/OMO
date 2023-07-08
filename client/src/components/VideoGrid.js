@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Video } from "../routes/Room"; // adjust the path to match your project structure
 import { useHistory } from "react-router-dom";
-import TimedRedirectModal from "../modal/redirectModal/RedirectModal.js"; // adjust path as necessary
-import useNetworkStatus from "../helpers/network/NetworkStatus.js";
+import TimedRedirectModal from "../modal/redirectModal/RedirectModal.js";
+import { useNetworkStatus } from "../helpers/network/NetworkStatus.js";
 
 // Base size of the squares, this can be adjusted as needed
 const BASE_SIZE = 50;
