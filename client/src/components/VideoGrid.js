@@ -226,84 +226,23 @@ const VideoGrid = ({
                 alignItems: "center",
               }}
             >
-              <p style={{ fontSize: "calc(2px + 1.0vh)", marginBottom: "5px" }}>
-                Select the odd man out:
-              </p>
-              <div
-                key={currentPlayer.uid}
-                style={{ fontSize: "calc(2px + 1.0vh)", marginBottom: "5px" }}
-              >
-                {currentPlayer.peerName} - Votes:{" "}
-                {voteCounts[currentPlayer.uid] || 0}
-              </div>
-              {filteredPeers.map((peer) => (
-                <div key={peer.id}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      fontSize: "calc(2px + 1.0vh)",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
-                    {selectedUser === null && (
-                      <VoteButton
-                        size={size}
-                        onClick={() => {
-                          handleUserVote(peer);
-                        }}
-                      >
-                        Vote
-                      </VoteButton>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {isRevote && (
-                <p
-                  style={{
-                    fontSize: "calc(2px + 1.0vh)",
-                    marginBottom: "5px",
-                  }}
-                >
-                  Revote is happening due to a tie. Please vote again.
-                </p>
-              )}
-              {voteComplete && (
-                <div>
-                  <p
-                    style={{
-                      fontSize: "calc(2px + 1.0vh)",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    Voting Complete
-                  </p>
-                  <p
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      fontSize: "calc(2px + 1.0vh)",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    {voteResult === "tie"
-                      ? "It's a tie!"
-                      : `Person with the most votes: ${voteResult}`}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "calc(2px + 1.0vh)",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    Countdown: {countdown}
-                  </p>
-                  {countdown === 0 && (
+              <>
+                {gameRuined ? (
+                  <>
+                    <p
+                      style={{
+                        fontSize: "calc(2px + 1.0vh)",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {"GAME RUINED"}
+                    </p>
+                    <RedirectButton
+                      size={size}
+                      onClick={() => history.push("/")}
+                    >
+                      Home
+                    </RedirectButton>
                     <p
                       style={{
                         fontSize: "calc(2px + 1.0vh)",
@@ -312,19 +251,119 @@ const VideoGrid = ({
                     >
                       Real odd man out: {realOddManOut}
                     </p>
-                  )}
-                </div>
-              )}
-              {gameComplete && (
-                <p
-                  style={{
-                    fontSize: "calc(2px + 1.0vh)",
-                    marginBottom: "5px",
-                  }}
-                >
-                  Redirecting in {redirectCount} seconds...
-                </p>
-              )}
+                  </>
+                ) : (
+                  <>
+                    <p
+                      style={{
+                        fontSize: "calc(2px + 1.0vh)",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      Select the odd man out:
+                    </p>
+                    <div
+                      key={currentPlayer.uid}
+                      style={{
+                        fontSize: "calc(2px + 1.0vh)",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {currentPlayer.peerName} - Votes:{" "}
+                      {voteCounts[currentPlayer.uid] || 0}
+                    </div>
+                    {filteredPeers.map((peer) => (
+                      <div key={peer.id}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            fontSize: "calc(2px + 1.0vh)",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {peer.peerName} - Votes: {voteCounts[peer.uid] || 0}
+                          {selectedUser === null && (
+                            <VoteButton
+                              size={size}
+                              onClick={() => {
+                                handleUserVote(peer);
+                              }}
+                            >
+                              Vote
+                            </VoteButton>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {isRevote && (
+                      <p
+                        style={{
+                          fontSize: "calc(2px + 1.0vh)",
+                          marginBottom: "5px",
+                        }}
+                      >
+                        Revote is happening due to a tie. Please vote again.
+                      </p>
+                    )}
+                    {voteComplete && (
+                      <div>
+                        <p
+                          style={{
+                            fontSize: "calc(2px + 1.0vh)",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          Voting Complete
+                        </p>
+                        <p
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            fontSize: "calc(2px + 1.0vh)",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          {voteResult === "tie"
+                            ? "It's a tie!"
+                            : `Person with the most votes: ${voteResult}`}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "calc(2px + 1.0vh)",
+                            marginBottom: "5px",
+                          }}
+                        >
+                          Countdown: {countdown}
+                        </p>
+                        {countdown === 0 && (
+                          <p
+                            style={{
+                              fontSize: "calc(2px + 1.0vh)",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            Real odd man out: {realOddManOut}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    {gameComplete && (
+                      <p
+                        style={{
+                          fontSize: "calc(2px + 1.0vh)",
+                          marginBottom: "5px",
+                        }}
+                      >
+                        Redirecting in {redirectCount} seconds...
+                      </p>
+                    )}
+                  </>
+                )}
+              </>
             </div>
           ) : (
             <>
