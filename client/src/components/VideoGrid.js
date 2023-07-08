@@ -326,7 +326,7 @@ const VideoGrid = ({
             </div>
           ) : (
             <>
-              {gameRuined && (
+              {gameRuined ? (
                 <>
                   <p
                     style={{
@@ -339,28 +339,44 @@ const VideoGrid = ({
                   <RedirectButton size={size} onClick={() => history.push("/")}>
                     Home
                   </RedirectButton>
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    Real odd man out: {realOddManOut}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {"Find the odd man out:"}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {gameInfo.omoIdentity}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {gameInfo.time}
+                  </p>
+                  <p style={{ fontSize: "calc(2px + 1.0vh)" }}>{"Remaining"}</p>
                 </>
               )}
-              <p
-                style={{
-                  fontSize: "calc(2px + 1.0vh)",
-                  marginBottom: "5px",
-                }}
-              >
-                {"Find the odd man out:"}
-              </p>
-              <p style={{ fontSize: "calc(2px + 1.0vh)", marginBottom: "5px" }}>
-                {gameInfo.omoIdentity}
-              </p>
-              <p
-                style={{
-                  fontSize: "calc(2px + 1.0vh)",
-                  marginBottom: "5px",
-                }}
-              >
-                {gameInfo.time}
-              </p>
-              <p style={{ fontSize: "calc(2px + 1.0vh)" }}>{"Remaining"}</p>
             </>
           )}
         </div>
