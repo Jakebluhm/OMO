@@ -29,7 +29,17 @@ const TimedRedirectModal = ({ isOpen, message, duration }) => {
   }, [isOpen, duration, history]);
 
   return (
-    <Modal isOpen={isModalOpen}>
+    <Modal
+      isOpen={isModalOpen}
+      style={{
+        content: {
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        },
+      }}
+    >
       <h2>{message}</h2>
       <p>Redirecting in {countdown} seconds...</p>
     </Modal>
