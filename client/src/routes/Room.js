@@ -247,6 +247,7 @@ const Room = (props) => {
   const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
   const [turnCredentials, setTurnCredentials] = useState(null);
+  const [intervalId, setIntervalId] = useState(null);
 
   const socketRef = useRef();
   const userVideo = useRef();
@@ -313,7 +314,14 @@ const Room = (props) => {
         return prevTime - 1;
       });
     }, 1000);
-  }, [setTimeLeft, toggleModal]); // add dependencies here
+    setIntervalId(interval); // Save the interval ID
+  }, [setTimeLeft, toggleModal]);
+
+  const stopTimer = useCallback(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  }, [intervalId]);
 
   const roomID = props.match.params.roomID;
 
@@ -1114,6 +1122,7 @@ const Room = (props) => {
           time: formatTime(timeLeft),
           omoIdentity: oddManOutIdentity,
         }}
+        stopTimer={stopTimer}
         handleVideoReady={handleVideoReady}
         // Add new props
         isModalOpen={isModalOpen}

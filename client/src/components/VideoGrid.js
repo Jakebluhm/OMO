@@ -146,7 +146,7 @@ const VideoGrid = ({
         }
       }
     }
-  }, [connectionStates, gameReady]);
+  }, [connectionStates, gameReady, stopTimer]);
 
   console.log("isModalOpen");
   console.log(isModalOpen);
