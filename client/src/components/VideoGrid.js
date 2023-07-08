@@ -145,10 +145,13 @@ const VideoGrid = ({
         } else if (closedCount === 2) {
           console.log("All users left triggering modal redirect sequence");
           setAllUsersLeft(true);
-        } else if (connectionStates.length === 0) {
-          console.log("All users exited triggering modal redirect sequence");
-          setAllUsersLeft(true);
         }
+      }
+
+      console.log("connectionStates.length: " + connectionStates.length);
+      if (connectionStates.length === 0) {
+        console.log("All users exited triggering modal redirect sequence");
+        setAllUsersLeft(true);
       }
     }
   }, [connectionStates, gameReady, stopTimer]);
