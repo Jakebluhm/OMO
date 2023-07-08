@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Video } from "../routes/Room"; // adjust the path to match your project structure
 import { useHistory } from "react-router-dom";
+import TimedRedirectModal from "../modal/redirectModal/RedirectModal.js"; // adjust path as necessary
+
 // Base size of the squares, this can be adjusted as needed
 const BASE_SIZE = 50;
 const GridContainer = styled.div`
@@ -86,6 +88,7 @@ const VideoGrid = ({
 }) => {
   const history = useHistory(); // Here's where we call useHistory
   const [size, setSize] = useState(BASE_SIZE);
+  const [allUsersLeft, setAllUsersLeft] = useState(false);
 
   const [gameRuined, setGameRuined] = useState(false);
 
@@ -131,6 +134,11 @@ const VideoGrid = ({
           "GAME RUINED - Not enough users: " + connectionStates.length
         );
         setGameRuined(true);
+        if (connectionStates.length === 1) {
+        } else if (connectionStates.length === 0) {
+          console.log("All users left triggering modal redirect sequence");
+          setAllUsersLeft(true);
+        }
       }
     }
   }, [connectionStates, gameReady]);
@@ -352,6 +360,11 @@ const VideoGrid = ({
           )}
         </div>
       </GridItem>
+      <TimedRedirectModal
+        isOpen={allUsersLeft}
+        message="All users left, returning home"
+        duration={3}
+      />
     </GridContainer>
   );
 };
