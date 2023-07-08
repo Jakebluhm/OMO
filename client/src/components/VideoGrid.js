@@ -32,7 +32,6 @@ const VoteButton = styled.button`
   cursor: pointer;
 `;
 
-
 const RedirectButton = styled.button`
   width: ${(props) => props.size / 6}px; // adjust these fractions as necessary
   height: ${(props) =>
@@ -49,7 +48,6 @@ const RedirectButton = styled.button`
   margin: ${(props) => props.size / 120}px ${(props) => props.size / 120}px; // adjust these fractions as necessary
   cursor: pointer;
 `;
-
 
 const GridItem = styled.div`
   height: ${(props) => props.size}px;
@@ -86,7 +84,7 @@ const VideoGrid = ({
   videoStreams,
   gameReady,
 }) => {
-  const history = useHistory();  // Here's where we call useHistory
+  const history = useHistory(); // Here's where we call useHistory
   const [size, setSize] = useState(BASE_SIZE);
 
   const [gameRuined, setGameRuined] = useState(false);
@@ -317,13 +315,16 @@ const VideoGrid = ({
             <>
               {gameRuined && (
                 <>
-                  <p style={{fontSize: "calc(2px + 1.0vh)", marginBottom: "5px", }}>
-                      {"GAME RUINED"}
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {"GAME RUINED"}
                   </p>
-                  <RedirectButton>
-                      size={size}
-                      onClick={() => history.push('/')}
-                      Home
+                  <RedirectButton size={size} onClick={() => history.push("/")}>
+                    Home
                   </RedirectButton>
                 </>
               )}

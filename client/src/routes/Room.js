@@ -292,15 +292,15 @@ const Room = (props) => {
     setIdentityBTally(newIdentityBTally);
   }, [peers]);
 
-  const toggleModal = () => {
+  const toggleModal = useCallback(() => {
     setIsModalOpen(!isModalOpen);
     setSelectedUser(null);
-  };
+  }, [isModalOpen, setIsModalOpen, setSelectedUser]); // add dependencies here
 
   const formatTime = (time) =>
     `${Math.floor(time / 60)}:${time % 60 < 10 ? "0" : ""}${time % 60}`;
 
-  const startTimer = () => {
+  const startTimer = useCallback(() => {
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -313,7 +313,7 @@ const Room = (props) => {
         return prevTime - 1;
       });
     }, 1000);
-  };
+  }, [setTimeLeft, toggleModal]); // add dependencies here
 
   const roomID = props.match.params.roomID;
 
