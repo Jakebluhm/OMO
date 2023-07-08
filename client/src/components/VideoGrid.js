@@ -70,6 +70,7 @@ const VideoGrid = ({
   userVideo,
   filteredPeers,
   gameInfo,
+  stopTimer,
   handleVideoReady,
   isModalOpen,
   currentPlayer,
@@ -136,6 +137,7 @@ const VideoGrid = ({
           "GAME RUINED - Not enough users: " + connectionStates.length
         );
         setGameRuined(true);
+        stopTimer();
         if (closedCount === 1) {
           console.log("One User left");
         } else if (closedCount === 2) {
