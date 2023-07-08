@@ -512,8 +512,9 @@ const Room = (props) => {
               (peer) => peer.omo === parseInt(minorityIdentity)
             );
           }
-
-          setRealOddManOut(realOddManOutPeer.peerName);
+          if (realOddManOut === null) {
+            setRealOddManOut(realOddManOutPeer.peerName);
+          }
         }
       }, 10000);
     };
