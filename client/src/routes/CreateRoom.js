@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { v1 as uuid } from "uuid";
 import Modal from "react-modal";
 import "../ModalStyles/ModalStyle.css";
-import PromptComponent from "../components/PromptComponent";
+import PromptComponent from "../components/PromptComponent"; 
+import SpeedTestComponent from "../helpers/network/SpeedTest";
 
 const CreateRoom = (props) => {
   const [name, setname] = useState("");
@@ -195,6 +196,19 @@ const CreateRoom = (props) => {
 
   return (
     <div style={style}>
+
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 1000, // ensures it's on top
+        padding: '10px',
+        backgroundColor: '#f9f9f9', // optional, add a background for clarity
+        border: '1px solid #ddd',   // optional
+      }}>
+        <SpeedTestComponent />
+      </div>
+
       <div>
         <h2>OMO</h2>
       </div>
@@ -239,37 +253,8 @@ const CreateRoom = (props) => {
           <PromptComponent prompt={prompt} onButtonClick={handlePromptClick} />
         ))}
       </div>
-      {/* <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <h3>Debug Room.js UI</h3>
-        <button
-          className="debug-room-btn"
-          onClick={() => {
-            console.log("I suck");
-            props.history.push(`/room/${uuid}`, {
-              playerName: "Dummy",
-              oddOneOut: ['{"0":0}', '{"1":0}', '{"2":0}'],
-              uid: "31eb15f0-f44e-11ed-aa47-d7f63467c0b0",
-              prompt: {
-                id: 0,
-                uuid: "abc123",
-                identityA: "Vegan",
-                identityB: "Meat Eater",
-                count: 0,
-              },
-              debug: true, // Add this line
-            });
-          }}
-        >
-          Debug
-        </button>
-      </div> */}
+
+
       <Modal
         isOpen={isSearchingModalOpen}
         onRequestClose={toggleModal}

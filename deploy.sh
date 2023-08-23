@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Fetching changes from remote..."
 git fetch --all
-git checkout turnServer
+git checkout speedRequirment
 git pull
 npm ci
 cd client
@@ -11,4 +11,3 @@ echo "Killing the existing Node.js server process..."
 pkill -f "node server.js"
 echo "Deploying and serving OMO..."
 nohup node server.js > server.log 2>&1 &
-
