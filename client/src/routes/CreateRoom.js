@@ -187,8 +187,8 @@ const CreateRoom = (props) => {
     {
       id: 2,
       uuid: "jkl456",
-      identityA: "Rapper",
-      identityB: "Fake Rapper",
+      identityA: "Democrat",
+      identityB: "Republican",
       count: 0,
     },
   ];
