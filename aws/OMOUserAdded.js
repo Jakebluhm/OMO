@@ -111,13 +111,13 @@ function findMatch(users) {
 
   let promptsMap = {};
 
-  if (Array.isArray(users)) {
-    users.forEach((u) => {
-      console.log(u.prompts);
-    });
-  } else {
-    console.log("No users found");
-  }
+if (Array.isArray(users)) {
+  users.forEach((u) => {
+    console.log(u.prompts);
+  });
+} else {
+  console.log('No users found');
+}
   for (const otherUser of users) {
     for (const promptStr of otherUser.prompts) {
       const prompt = JSON.parse(promptStr);
@@ -140,6 +140,24 @@ function findMatch(users) {
         usersMap[0].length === 1
           ? usersMap[1].slice(0, 2)
           : usersMap[0].slice(0, 2);
+          
+      
+      // Check if uniqueUser has played with the two matchingUsers before
+      // eslint-disable-next-line no-unused-vars
+      let alreadyPlayed = false;
+      if (uniqueUser.gameHistory) {
+        for (const history of uniqueUser.gameHistory) {
+          console.log('Ignore prev game logic');
+          console.log('Checking: ' + history.promptId + ' === ' + promptId + '   and matchedUsers UUIDs against: ' + JSON.stringify(history.uuids));
+          if (history.promptId === promptId && matchingUsers.every(user => history.uuids.includes(user.user))) {
+            console.log('GAME IGNORED, ALREADY PLAYED')
+            alreadyPlayed = true;
+            break;
+          }
+        }
+      }
+          
+          
       return {
         matches: [uniqueUser].concat(matchingUsers),
         promptId: promptId,

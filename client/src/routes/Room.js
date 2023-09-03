@@ -398,12 +398,24 @@ const Room = (props) => {
   // Callback for confirm under Name entry
   async function startSearch() {
     console.log("startSearch() Establishing WebSocket Connection");
+ 
 
+    const newGame = {
+      promptId: prompt.prompt.id,
+      uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
+    };
+    
+    userData.Item.gameHistory.push(newGame);
+
+    console.log('---------Game History--------')
+    console.log(userData.Item.gameHistory);
+
+    const gameHistoryString = encodeURIComponent(JSON.stringify(userData.Item.gameHistory));
     // Establish WebSocket connection when the user clicks confirm
     const ws = new WebSocket(
       `wss://1myegfct68.execute-api.us-east-1.amazonaws.com/production/?userId=${
         userData.Item.user
-      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}`
+      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}&gameHistory=${gameHistoryString}`
     );
 
     ws.onmessage = (event) => {
