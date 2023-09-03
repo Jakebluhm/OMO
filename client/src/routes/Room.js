@@ -455,12 +455,24 @@ const Room = (props) => {
         console.log("matchingPrompt");
         console.log(matchingPrompt);
 
-        props.history.push(`/room/${uuid}`, {
-          playerName: name,
-          oddOneOut: oddOneOutValue,
-          uid: userData.Item.user,
-          prompt: matchingPrompt,
-        });
+ 
+
+
+
+        props.history.push("/intermediate");
+        setTimeout(() => {
+          props.history.push(`/room/${uuid}`, {
+            playerName: name,
+            oddOneOut: oddOneOutValue,
+            uid: userData.Item.user,
+            prompt: matchingPrompt,
+            userData: userData,
+            dummyPrompts: dummyPrompts
+          });
+        }, 10);
+        
+
+
       }
     };
   }
@@ -473,12 +485,17 @@ const Room = (props) => {
       (voteComplete && isRevote && countdown === 0)
     ) {
       setGameComplete(true);
-      const timer = setTimeout(() => {
+      const timer = setTimeout(async () => {
         stopMediaStream(userVideo.current.srcObject);
         socketRef.current.disconnect();
         console.log("Attemting to return to home");
 
-        startSearch();
+        try {
+          console.log('Calling startSearch')
+          await startSearch();
+        } catch (error) {
+          console.error("Error starting search:", error);
+        }
 
         //history.push("/");
       }, 30000);
@@ -492,7 +509,7 @@ const Room = (props) => {
         clearInterval(countdownTimer);
       };
     }
-  }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name]);
+  }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name, prompt.prompt.id, filteredPeers, userData]);
 
   const handleUserVote = (user) => {
     //console.log("----- Inside handleUserVote");
