@@ -71,6 +71,8 @@ const CreateRoom = (props) => {
           oddOneOut: oddOneOutValue,
           uid: userData.Item.user,
           prompt: matchingPrompt,
+          userData: userData,
+          dummyPrompts: dummyPrompts
         });
       }
     };

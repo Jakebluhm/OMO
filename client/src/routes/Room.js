@@ -219,6 +219,8 @@ const Room = (props) => {
   const oddOneOut = { oddOneOut: playerInfo.oddOneOut };
   const uid = { uid: playerInfo.uid };
   const prompt = { prompt: playerInfo.prompt };
+  const dummyPrompts = playerInfo.dummyPrompts;
+  const  userData = playerInfo.userData;
   //const debug = props.location.state.debug;
 
   const currentPlayer = {
@@ -387,7 +389,73 @@ const Room = (props) => {
     realOddManOut,
   ]);
 
+
+  
   useEffect(() => {
+
+
+
+  // Callback for confirm under Name entry
+  async function startSearch() {
+    console.log("startSearch() Establishing WebSocket Connection");
+
+    // Establish WebSocket connection when the user clicks confirm
+    const ws = new WebSocket(
+      `wss://1myegfct68.execute-api.us-east-1.amazonaws.com/production/?userId=${
+        userData.Item.user
+      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}`
+    );
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("---INSIDE ws.onmessage !!!!!!!!");
+      console.log("message");
+      console.log(message);
+
+      if (message.action === "sendURL") {
+        const uuid = message.uuid;
+        const promptId = message.promptId;
+
+        // Find the corresponding prompt object and parse its value
+        const prompt = userData.Item.prompts.find(
+          (p) => Object.keys(JSON.parse(p))[0] === promptId
+        );
+        const oddOneOutValue = JSON.parse(prompt)[promptId];
+
+        console.log("oddOneOutValue");
+        console.log(oddOneOutValue);
+
+        console.log("Type of promptId");
+        console.log(typeof promptId);
+
+        console.log("promptId");
+        console.log(promptId);
+
+        console.log("Type of dummyPrompts[0].id");
+        console.log(typeof dummyPrompts[0].id);
+
+        console.log("dummyPrompts");
+        console.log(dummyPrompts);
+
+        const matchingPrompt = dummyPrompts.find(
+          (promptObj) => promptObj.id === Number(promptId)
+        );
+        console.log("matchingPrompt");
+        console.log(matchingPrompt);
+
+        props.history.push(`/room/${uuid}`, {
+          playerName: name,
+          oddOneOut: oddOneOutValue,
+          uid: userData.Item.user,
+          prompt: matchingPrompt,
+        });
+      }
+    };
+  }
+
+
+
+
     if (
       (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
       (voteComplete && isRevote && countdown === 0)
@@ -397,7 +465,10 @@ const Room = (props) => {
         stopMediaStream(userVideo.current.srcObject);
         socketRef.current.disconnect();
         console.log("Attemting to return to home");
-        history.push("/");
+
+        startSearch();
+
+        //history.push("/");
       }, 30000);
 
       const countdownTimer = setInterval(() => {
@@ -409,7 +480,7 @@ const Room = (props) => {
         clearInterval(countdownTimer);
       };
     }
-  }, [voteComplete, voteResult, isRevote, history, countdown]);
+  }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name]);
 
   const handleUserVote = (user) => {
     //console.log("----- Inside handleUserVote");
