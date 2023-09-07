@@ -507,11 +507,18 @@ const Room = (props) => {
       }, 30000);
 
       const countdownTimer = setInterval(() => {
-        setRedirectCount((prev) => prev - 1);
-      }, 1000);
+        setRedirectCount((prev) => {
+            if (prev <= 0) {
+                clearInterval(countdownTimer);
+                return 0;
+            }
+            return prev - 1;
+        });
+    }, 1000);
+    
 
       return () => {
-        clearTimeout(timer);
+        //clearTimeout(timer);
         clearInterval(countdownTimer);
       };
     }
