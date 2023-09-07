@@ -477,12 +477,16 @@ const Room = (props) => {
     };
   }
 
-
+    console.log("voteComplete:", voteComplete);
+    console.log("voteResult !== 'tie':", voteResult !== "tie");
+    console.log("!isRevote:", !isRevote);
+    console.log("countdown === 0:", countdown === 0);
+    console.log("isRevote:", isRevote);
 
 
     if (
       (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
-      (voteComplete && isRevote && countdown === 0)
+      (voteComplete && isRevote && countdown <= 0)
     ) {
       setGameComplete(true);
       const timer = setTimeout(async () => {
