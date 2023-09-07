@@ -395,87 +395,7 @@ const Room = (props) => {
 
 
 
-  // Callback for confirm under Name entry
-  async function startSearch() {
-    console.log("startSearch() Establishing WebSocket Connection");
- 
 
-    const newGame = {
-      promptId: prompt.prompt.id,
-      uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
-    };
-    
-    userData.Item.gameHistory.push(newGame);
-
-    console.log('---------Game History--------')
-    console.log(userData.Item.gameHistory);
-
-    const gameHistoryString = encodeURIComponent(JSON.stringify(userData.Item.gameHistory));
-    // Establish WebSocket connection when the user clicks confirm
-    const ws = new WebSocket(
-      `wss://1myegfct68.execute-api.us-east-1.amazonaws.com/production/?userId=${
-        userData.Item.user
-      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}&gameHistory=${gameHistoryString}`
-    );
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("---INSIDE ws.onmessage !!!!!!!!");
-      console.log("message");
-      console.log(message);
-
-      if (message.action === "sendURL") {
-        const uuid = message.uuid;
-        const promptId = message.promptId;
-
-        // Find the corresponding prompt object and parse its value
-        const prompt = userData.Item.prompts.find(
-          (p) => Object.keys(JSON.parse(p))[0] === promptId
-        );
-        const oddOneOutValue = JSON.parse(prompt)[promptId];
-
-        console.log("oddOneOutValue");
-        console.log(oddOneOutValue);
-
-        console.log("Type of promptId");
-        console.log(typeof promptId);
-
-        console.log("promptId");
-        console.log(promptId);
-
-        console.log("Type of dummyPrompts[0].id");
-        console.log(typeof dummyPrompts[0].id);
-
-        console.log("dummyPrompts");
-        console.log(dummyPrompts);
-
-        const matchingPrompt = dummyPrompts.find(
-          (promptObj) => promptObj.id === Number(promptId)
-        );
-        console.log("matchingPrompt");
-        console.log(matchingPrompt);
-
- 
-
-
-
-        props.history.push("/intermediate");
-        setTimeout(() => {
-          props.history.push(`/room/${uuid}`, {
-            playerName: name,
-            oddOneOut: oddOneOutValue,
-            uid: userData.Item.user,
-            prompt: matchingPrompt,
-            userData: userData,
-            dummyPrompts: dummyPrompts
-          });
-        }, 10);
-        
-
-
-      }
-    };
-  }
 
     console.log("voteComplete:", voteComplete);
     console.log("voteResult !== 'tie':", voteResult !== "tie");
@@ -494,16 +414,21 @@ const Room = (props) => {
         socketRef.current.disconnect();
         console.log("Attemting to return to home");
 
-        // try {
-        //   console.log("About to call startSearch");
-        //   await startSearch();
-        //   console.log("startSearch has been called");
-        // } catch (error) {
-        //   console.error("Error starting search:", error);
-        // }
 
-        
-        props.history.push("/intermediate");
+        const newGame = {
+          promptId: prompt.prompt.id,
+          uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
+        };
+          
+  
+        props.history.push(`/intermediate`, {
+          playerName: name, 
+          uid: userData.Item.user, 
+          userData: userData,
+          dummyPrompts: dummyPrompts,
+          newGame: newGame,
+
+        });
       }, 30000);
 
       const countdownTimer = setInterval(() => {
