@@ -3,15 +3,27 @@
 import React, { useEffect, useRef } from 'react';
  
 const IntermediateComponent = (props) => {
-  const playerName = props.playerName;
-  const uid = props.uid;
-  var userData  = props.userData;
-  const newGame = props.newGame;
-  const dummyPrompts = props.dummyPrompts;
+  const params = props.history.location.state;
+  const playerName = params.playerName;
+  const uid = params.uid;
+  var userData  = params.userData;
+  const newGame = params.newGame;
+  const dummyPrompts = params.dummyPrompts;
+  
+  console.log('playerName');
+  console.log(playerName);
+  console.log('uid');
+  console.log(uid);
+  console.log('userData');
+  console.log(userData);
+  console.log('newGame');
+  console.log(newGame);
+  console.log('dummyPrompts');
+  console.log(dummyPrompts);
 
   const hasStartSearchBeenCalled = useRef(false);
   useEffect(()=>{
-
+ 
     // Callback for confirm under Name entry
     async function startSearch() {
       console.log("startSearch() Establishing WebSocket Connection");
