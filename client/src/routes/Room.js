@@ -494,14 +494,16 @@ const Room = (props) => {
         socketRef.current.disconnect();
         console.log("Attemting to return to home");
 
-        try {
-          console.log('Calling startSearch')
-          await startSearch();
-        } catch (error) {
-          console.error("Error starting search:", error);
-        }
+        // try {
+        //   console.log("About to call startSearch");
+        //   await startSearch();
+        //   console.log("startSearch has been called");
+        // } catch (error) {
+        //   console.error("Error starting search:", error);
+        // }
 
-        //history.push("/");
+        
+        props.history.push("/intermediate");
       }, 30000);
 
       const countdownTimer = setInterval(() => {
