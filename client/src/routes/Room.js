@@ -410,8 +410,15 @@ const Room = (props) => {
     ) {
       setGameComplete(true);
       const timer = setTimeout(async () => {
-        stopMediaStream(userVideo.current.srcObject);
-        socketRef.current.disconnect();
+        try{
+          stopMediaStream(userVideo.current.srcObject);
+          socketRef.current && socketRef.current.disconnect();
+          socketRef.current = null;
+          peersRef.current = [];
+        }
+        catch(e){
+          console.log('Error calling stopMediaStream: ' + e.toString())
+        }
         console.log("Attemting to return to home");
 
 
@@ -794,7 +801,9 @@ const Room = (props) => {
     const unlisten = history.listen(() => {
       console.log("Inside history callback!! revoking acess to camera");
       stopMediaStream(userVideo.current.srcObject);
-      socketRef.current.disconnect();
+      socketRef.current && socketRef.current.disconnect();
+      socketRef.current = null;
+      peersRef.current = [];
     });
 
     return () => {

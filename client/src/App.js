@@ -9,7 +9,10 @@ function App() {
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={CreateRoom} />
-        <Route path="/room/:roomID" component={Room} />
+        <Route 
+          path="/room/:roomID" 
+          render={(props) => <Room key={props.match.params.roomID} {...props} />} 
+        />
         <Route path="/intermediate" component={IntermediateComponent} />
       </Switch>
     </BrowserRouter>
