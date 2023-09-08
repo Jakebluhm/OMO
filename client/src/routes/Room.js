@@ -379,6 +379,7 @@ const Room = (props) => {
       (voteComplete && isRevote && countdown <= 0)
     ) {
       setGameComplete(true);
+      console.log('Before creating RedirectTimeout ');
       const RedirectTimeout = setTimeout(async () => {
         try{
           stopMediaStream(userVideo.current.srcObject);
@@ -388,9 +389,8 @@ const Room = (props) => {
           peersRef.current = [];
         }
         catch(e){
-          //console.log('Error calling stopMediaStream: ' + e.toString())
-        }
-        //console.log("Attemting to return to home");
+          console.log('Error calling stopMediaStream: ' + e.toString())
+        } 
 
 
         const newGame = {
@@ -408,6 +408,7 @@ const Room = (props) => {
 
         });
       }, 30000);
+      console.log('After creating RedirectTimeout ');
 
       const countdownTimer = setInterval(() => {
         setRedirectCount((prev) => {
@@ -421,7 +422,7 @@ const Room = (props) => {
     
 
       return () => {
-        //console.log("Clearing timers: RedirectTimeout countdownTimer")
+        console.log("Clearing timers: RedirectTimeout countdownTimer")
         clearTimeout(RedirectTimeout);
         clearInterval(countdownTimer);
       };

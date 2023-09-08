@@ -143,13 +143,17 @@ if (Array.isArray(users)) {
           
       
       // Check if uniqueUser has played with the two matchingUsers before
-      // eslint-disable-next-line no-unused-vars
       let alreadyPlayed = false;
       if (uniqueUser.gameHistory) {
         for (const history of uniqueUser.gameHistory) {
           console.log('Ignore prev game logic');
-          console.log('Checking: ' + history.promptId + ' === ' + promptId + '   and matchedUsers UUIDs against: ' + JSON.stringify(history.uuids));
-          if (history.promptId === promptId && matchingUsers.every(user => history.uuids.includes(user.user))) {
+          console.log('Checking: ' + history.promptId + ' (' + typeof history.promptId + ') === ' + promptId + ' (' + typeof promptId + ') and matchedUsers UUIDs ' + matchingUsers[0].user + ' ' + matchingUsers[1].user + ' against: ' + JSON.stringify(history.uuids));
+  
+          const firstCondition = (history.uuids[0] === matchingUsers[0].user && history.uuids[1] === matchingUsers[1].user);
+          const secondCondition = (history.uuids[0] === matchingUsers[1].user && history.uuids[1] === matchingUsers[0].user);
+ 
+
+          if (String(history.promptId) === String(promptId) && (firstCondition || secondCondition)) {
             console.log('GAME IGNORED, ALREADY PLAYED')
             alreadyPlayed = true;
             break;
@@ -157,6 +161,9 @@ if (Array.isArray(users)) {
         }
       }
           
+      if(alreadyPlayed){
+        continue;
+      }
           
       return {
         matches: [uniqueUser].concat(matchingUsers),
@@ -168,5 +175,4 @@ if (Array.isArray(users)) {
   console.log("----------returning from findMatch-------------");
   return null;
 }
-
 exports.findMatch = findMatch;
