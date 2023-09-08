@@ -245,7 +245,7 @@ const Room = (props) => {
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(20);
   const [redirectCount, setRedirectCount] = useState(30);
   const [videosReady, setVideosReady] = useState(0);
   const [turnCredentials, setTurnCredentials] = useState(null);
