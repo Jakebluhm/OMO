@@ -53,7 +53,7 @@ const CreateRoom = (props) => {
         console.log("Type of promptId");
         console.log(typeof promptId);
 
-        console.log("promptId");
+        console.log("promptId"); 
         console.log(promptId);
 
         console.log("Type of dummyPrompts[0].id");

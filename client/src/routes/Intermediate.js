@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
  
 const IntermediateComponent = (props) => {
   const params = props.history.location.state;
-  const playerName = params.playerName;
+  const playerName = params.playerName.playerName;
   const uid = params.uid;
   var userData  = params.userData;
   const newGame = params.newGame;
