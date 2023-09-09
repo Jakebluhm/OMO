@@ -410,6 +410,7 @@ const Room = (props) => {
       setGameComplete(true);
   
       const countdownTimer = setInterval(() => {
+        console.log("Inside redirect countdown interval");
         setRedirectCount((prev) => {
             if (prev <= 0) {        
               startNextGameSearch();
@@ -421,9 +422,7 @@ const Room = (props) => {
     }, 1000);
     
 
-      return () => {
-        console.log("Clearing timers: RedirectTimeout countdownTimer") 
-        clearInterval(countdownTimer);
+      return () => { 
       };
     }
   }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name, prompt.prompt.id, filteredPeers, userData, hasRun]);
