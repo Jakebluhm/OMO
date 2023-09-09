@@ -224,7 +224,7 @@ const Room = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeLeft, setTimeLeft] = useState(20);
-  const [redirectCount, setRedirectCount] = useState(30);
+  const [redirectCount, setRedirectCount] = useState(15);
   const [videosReady, setVideosReady] = useState(0);
   const [turnCredentials, setTurnCredentials] = useState(null);
   const [intervalId, setIntervalId] = useState(null);
@@ -386,14 +386,12 @@ const Room = (props) => {
       catch(e){
         console.log('Error calling stopMediaStream: ' + e.toString())
       } 
-  
-  
+   
       const newGame = {
         promptId: prompt.prompt.id,
         uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
       };
-        
-  
+         
       props.history.push(`/intermediate`, {
         playerName: name, 
         uid: userData.Item.user, 
@@ -402,19 +400,17 @@ const Room = (props) => {
         newGame: newGame,
   
       });
-    };
-     
+    }; 
 
     if (!hasRun && ((voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) || (voteComplete && isRevote && countdown <= 0))) {
       setHasRun(true);  
-      setGameComplete(true);
-  
+      setGameComplete(true); 
       const countdownTimer = setInterval(() => {
         console.log("Inside redirect countdown interval");
         setRedirectCount((prev) => {
-            if (prev <= 0) {        
+            if (prev <= 0) {       
+              clearInterval(countdownTimer); 
               startNextGameSearch();
-              clearInterval(countdownTimer);
               return 0;
             }
             return prev - 1;
