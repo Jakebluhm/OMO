@@ -7,6 +7,9 @@ exports.handler = async (event) => {
   const connectionId = event.requestContext.connectionId;
   const userId = event.queryStringParameters.userId;
   const prompts = JSON.parse(event.queryStringParameters.prompts);
+  const gameHistory = JSON.parse(event.queryStringParameters.gameHistory);
+
+  console.log(gameHistory);
 
   const params = {
     TableName: "OMOUserQueue",
@@ -14,6 +17,7 @@ exports.handler = async (event) => {
       user: userId,
       connectionId: connectionId,
       prompts: prompts,
+      gameHistory: gameHistory,
     },
   };
 

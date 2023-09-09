@@ -76,8 +76,6 @@ export const Video = (props) => {
   useEffect(() => {
     const checkStates = () => {
       if (props.videoStream) {
-        console.log("Video readyState:", ref.current.readyState);
-
         if (ref.current.readyState < 3) {
           // If this is the first time readyState is < 3, remember the timestamp
           if (!lastTimeStateLessThanThreeRef.current) {
@@ -97,7 +95,7 @@ export const Video = (props) => {
 
         // Check the RTCPeerConnection state
         const peerConnectionState = props.peer.connectionState;
-        console.log("Peer connection state:", peerConnectionState);
+        //console.log("Peer connection state:", peerConnectionState);
 
         if (
           peerConnectionState === "end" ||
@@ -117,62 +115,37 @@ export const Video = (props) => {
     return () => clearInterval(interval);
   }, [props.peer.connectionState]);
 
-  // useEffect(() => {
-  //   const setStream = (stream, retryCount = 0) => {
-  //     if (ref.current) {
-  //       ref.current.srcObject = stream;
-  //     } else if (retryCount < 10) {
-  //       // Stop retrying after 10 attempts
-  //       // Retry after 100ms if ref.current is not available
-  //       setTimeout(() => setStream(stream, retryCount + 1), 100);
-  //     } else {
-  //       throw Error("Unable to set ref.cuurent.srcObject in Video");
-  //     }
-  //   };
-
-  //   props.peer.peer.on("stream", (stream) => {
-  //     console.log("Inside peer received stream in Video");
-  //     console.log("Stream ID:", stream.id);
-  //     console.log("Stream active:", stream.active);
-  //     console.log("Stream tracks:", stream.getTracks());
-  //     console.log("navigator.userAgent");
-  //     console.log(navigator.userAgent);
-
-  //     setStream(stream);
-  //   });
-  // }, []);
-
   // Debug stream
-  useEffect(() => {
-    if (props.videoStream) {
-      if (props.videoStream && props.videoStream.srcObject) {
-        props.videoStream.srcObject.onaddtrack = (event) => {
-          console.log("Track added to stream:", event.track);
-        };
+  // useEffect(() => {
+  //   if (props.videoStream) {
+  //     if (props.videoStream && props.videoStream.srcObject) {
+  //       props.videoStream.srcObject.onaddtrack = (event) => {
+  //         //console.log("Track added to stream:", event.track);
+  //       };
 
-        props.videoStream.srcObject.onremovetrack = (event) => {
-          console.log("Track removed from stream:", event.track);
-        };
+  //       props.videoStream.srcObject.onremovetrack = (event) => {
+  //         //console.log("Track removed from stream:", event.track);
+  //       };
 
-        props.videoStream.srcObject.getTracks().forEach((track) => {
-          track.onended = (event) => {
-            console.log("Track ended:", event.target);
-          };
-        });
-      }
-    }
-  }, [props.videoStream]);
+  //       props.videoStream.srcObject.getTracks().forEach((track) => {
+  //         track.onended = (event) => {
+  //           //console.log("Track ended:", event.target);
+  //         };
+  //       });
+  //     }
+  //   }
+  // }, [props.videoStream]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (props.videoStream) {
-        console.log("Video readyState:", ref.current.readyState);
-        console.log(
-          "peer.connectionstate ",
-          props.peer.peerName,
-          " ",
-          props.peer.connectionState
-        );
+        //console.log("Video readyState:", ref.current.readyState);
+        // console.log(
+        //   "peer.connectionstate ",
+        //   props.peer.peerName,
+        //   " ",
+        //   props.peer.connectionState
+        // );
       }
     }, 5000); // Log the readyState every 5 seconds
 
@@ -214,11 +187,15 @@ const videoConstraints = {
 
 localStorage.debug = "";
 const Room = (props) => {
+  console.log("Currently using Room instance with key:", props.diagnosticKey);
+
   const playerInfo = props.history.location.state;
   const name = { playerName: playerInfo.playerName };
   const oddOneOut = { oddOneOut: playerInfo.oddOneOut };
   const uid = { uid: playerInfo.uid };
   const prompt = { prompt: playerInfo.prompt };
+  const dummyPrompts = playerInfo.dummyPrompts;
+  const userData = playerInfo.userData;
   //const debug = props.location.state.debug;
 
   const currentPlayer = {
@@ -243,8 +220,8 @@ const Room = (props) => {
   const [realOddManOut, setRealOddManOut] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(120);
-  const [redirectCount, setRedirectCount] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [redirectCount, setRedirectCount] = useState(15);
   const [videosReady, setVideosReady] = useState(0);
   const [turnCredentials, setTurnCredentials] = useState(null);
   const [intervalId, setIntervalId] = useState(null);
@@ -277,14 +254,14 @@ const Room = (props) => {
       oddManOutIdentity == null
     ) {
       if (newIdentityATally === 1) {
-        console.log(
-          "Setting odd man out identity to: " + prompt.prompt.identityA
-        );
+        // console.log(
+        //   "Setting odd man out identity to: " + prompt.prompt.identityA
+        // );
         setOddManOutIdentity(prompt.prompt.identityA);
       } else {
-        console.log(
-          "Setting odd man out identity to: " + prompt.prompt.identityB
-        );
+        // console.log(
+        //   "Setting odd man out identity to: " + prompt.prompt.identityB
+        // );
         setOddManOutIdentity(prompt.prompt.identityB);
       }
     }
@@ -329,18 +306,18 @@ const Room = (props) => {
 
   // Create a callback function to handle video readiness
   const handleVideoReady = () => {
-    console.log("-------handleVideoReady-----");
+    //console.log("-------handleVideoReady-----");
     setVideosReady((prevVideosReady) => prevVideosReady + 1);
   };
 
   useEffect(() => {
-    console.log("redirectCount: ", redirectCount);
-    console.log("countdown: ", countdown);
+    //console.log("redirectCount: ", redirectCount);
+    //console.log("countdown: ", countdown);
   }, [redirectCount, countdown]);
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
     if (videosReady >= 2 && !gameReady) {
-      console.log("-------------Setting Game Ready----------------");
+      //console.log("-------------Setting Game Ready----------------");
       setGameReady(true);
       startTimer();
 
@@ -387,38 +364,74 @@ const Room = (props) => {
     realOddManOut,
   ]);
 
+  const [hasRun, setHasRun] = useState(false);
   useEffect(() => {
-    if (
-      (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
-      (voteComplete && isRevote && countdown === 0)
-    ) {
-      setGameComplete(true);
-      const timer = setTimeout(() => {
+    // Redirect to intermediate where matchmaking will run, clean up socketRef, peersRef.
+    const startNextGameSearch = function () {
+      try {
         stopMediaStream(userVideo.current.srcObject);
-        socketRef.current.disconnect();
-        console.log("Attemting to return to home");
-        history.push("/");
-      }, 30000);
+        socketRef.current.emit("disconnect");
+        socketRef.current && socketRef.current.disconnect();
+        socketRef.current = null;
+        peersRef.current = [];
+      } catch (e) {
+        console.log("Error calling stopMediaStream: " + e.toString());
+      }
 
+      const newGame = {
+        promptId: prompt.prompt.id,
+        uuids: [filteredPeers[0].uid, filteredPeers[1].uid],
+      };
+
+      props.history.push(`/intermediate`, {
+        playerName: name,
+        uid: userData.Item.user,
+        userData: userData,
+        dummyPrompts: dummyPrompts,
+        newGame: newGame,
+      });
+    };
+
+    if (
+      !hasRun &&
+      ((voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
+        (voteComplete && isRevote && countdown <= 0))
+    ) {
+      setHasRun(true);
+      setGameComplete(true);
       const countdownTimer = setInterval(() => {
-        setRedirectCount((prev) => prev - 1);
+        console.log("Inside redirect countdown interval");
+        setRedirectCount((prev) => {
+          if (prev <= 0) {
+            clearInterval(countdownTimer);
+            startNextGameSearch();
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
 
-      return () => {
-        clearTimeout(timer);
-        clearInterval(countdownTimer);
-      };
+      return () => {};
     }
-  }, [voteComplete, voteResult, isRevote, history, countdown]);
+  }, [
+    voteComplete,
+    voteResult,
+    isRevote,
+    history,
+    countdown,
+    userData.Item.user,
+    userData.Item.prompts,
+    dummyPrompts,
+    props.history,
+    name,
+    prompt.prompt.id,
+    filteredPeers,
+    userData,
+    hasRun,
+  ]);
 
   const handleUserVote = (user) => {
-    //console.log("----- Inside handleUserVote");
     setSelectedUser(user);
-    //console.log("handleUserVote user");
-    //console.log(user);
-    //console.log("handleUserVote roomId");
-    //console.log(roomID);
-    // Add code to communicate the vote to other users
 
     socketRef.current.emit("vote cast", {
       voterId: uid.uid,
@@ -431,17 +444,7 @@ const Room = (props) => {
     updateTally();
   }, [peers, updateTally]);
 
-  // useEffect(() => {
-  //   if (identityATally + identityBTally >= 3) {
-  //     console.log("-----------Game Ready!!------------");
-  //     setGameReady(true);
-  //   }
-  // }, [identityBTally, identityATally]);
-
   useEffect(() => {
-    //console.log("voteCounts:");
-    //console.log(voteCounts);
-
     let totalVotes = 0;
 
     // Loop through the voteCounts object and sum the counts
@@ -449,10 +452,7 @@ const Room = (props) => {
       totalVotes += count;
     }
 
-    //console.log("Total votes cast:", totalVotes);
-
     if (totalVotes === 3) {
-      //console.log("Voting complete!!!!!");
       setVoteComplete(true);
 
       // Calculate the person with the most votes
@@ -469,10 +469,6 @@ const Room = (props) => {
           tie = true;
         }
       }
-
-      //console.log("Max votes:", maxVotes);
-      //console.log("Max voted user ID:", maxVotedUserId);
-      //console.log("Tie:", tie);
 
       // Set the voteResult or "tie"
       if (tie) {
@@ -511,7 +507,7 @@ const Room = (props) => {
         setTimerStarted(false);
 
         if (voteResult === "tie") {
-          console.log("Vote ended in a tie, resetting the vote...");
+          //console.log("Vote ended in a tie, resetting the vote...");
 
           setIsRevote(true);
 
@@ -574,7 +570,6 @@ const Room = (props) => {
         navigator.mediaDevices
           .getUserMedia({ video: videoConstraints, audio: true })
           .then((stream) => {
-            //console.log("inside then----getUserMedia");
             userVideo.current.srcObject = stream; //JAKEB this is video data
             socketRef.current.emit("join room", {
               roomID: roomID,
@@ -604,7 +599,6 @@ const Room = (props) => {
                   stream,
                   credentials
                 );
-                console.log("Setting connectionState to initializing??");
                 peersRef.current.push({
                   // Pushing a new player into array of players -
                   peerID: userID.socketID,
@@ -641,14 +635,7 @@ const Room = (props) => {
               console.log("--------------user joined---------------");
 
               // Prevent self from joining
-
-              console.log(
-                `Comparing uid: ${payload.uid} with current player uid: ${currentPlayer.uid}`
-              );
               if (payload.uid === currentPlayer.uid) {
-                console.log(
-                  "Received user joined from current client, ignore this"
-                );
                 return;
               }
 
@@ -660,7 +647,7 @@ const Room = (props) => {
                 payload.userName.playerName,
                 credentials
               );
-              console.log("Setting connectionState to initializing??");
+              //console.log("Setting connectionState to initializing??");
               peersRef.current.push({
                 peerID: payload.callerID,
                 peerName: payload.userName.playerName,
@@ -679,8 +666,8 @@ const Room = (props) => {
                 peer: peer,
               };
 
-              console.log("user joined - setPeers:");
-              console.log(tempPeer);
+              //console.log("user joined - setPeers:");
+              //console.log(tempPeer);
               setPeers((peers) => [...peers, tempPeer]); // JAKEB update state variable, append to peersRef
             });
 
@@ -705,10 +692,10 @@ const Room = (props) => {
                 (p) => p.peerID === payload.id
               );
               if (item) {
-                console.log(`Processing received signal from ${payload.id}`);
+                //console.log(`Processing received signal from ${payload.id}`);
                 item.peer.signal(payload.signal);
               } else {
-                console.log(`Could not find a matching peer for ${payload.id}`);
+                //console.log(`Could not find a matching peer for ${payload.id}`);
               }
             });
 
@@ -731,11 +718,11 @@ const Room = (props) => {
           });
       })
       .catch((error) => {
-        console.log("Error fetching TURN credentials:", error);
+        //console.log("Error fetching TURN credentials:", error);
       });
     return () => {
       // Cleanup function
-      console.log("Cleaning up Peers");
+      //console.log("Cleaning up Peers");
       peersRef.current.forEach((peerObj) => {
         if (peerObj.peer) {
           peerObj.peer.destroy();
@@ -754,9 +741,15 @@ const Room = (props) => {
 
   useEffect(() => {
     const unlisten = history.listen(() => {
-      console.log("Inside history callback!! revoking acess to camera");
-      stopMediaStream(userVideo.current.srcObject);
-      socketRef.current.disconnect();
+      try {
+        stopMediaStream(userVideo.current.srcObject);
+        socketRef.current.emit("disconnect");
+        socketRef.current && socketRef.current.disconnect();
+        socketRef.current = null;
+        peersRef.current = [];
+      } catch (e) {
+        console.log("Error calling stopMediaStream: " + e.toString());
+      }
     });
 
     return () => {
@@ -800,7 +793,7 @@ const Room = (props) => {
   //  called when joining a room with players already in room. Called in useEffect to make list of players
   function createPeer(incomingUID, userToSignal, callerID, stream, turnCreds) {
     if (turnCreds != null) {
-      console.log("In createPeer using turn configuration");
+      //console.log("In createPeer using turn configuration");
       const configuration = {
         iceServers: [
           {
@@ -821,7 +814,7 @@ const Room = (props) => {
         config: configuration,
       });
       peer.on("stream", (stream) => {
-        console.log("Received stream from", incomingUID);
+        //console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
         peersStreamRef.current[incomingUID] = stream;
@@ -857,7 +850,7 @@ const Room = (props) => {
 
       return peer;
     } else {
-      console.log("In createPeer using NON turn configuration");
+      //console.log("In createPeer using NON turn configuration");
       // fallback: create a peer without TURN server credentials
 
       const peer = new Peer({
@@ -866,7 +859,7 @@ const Room = (props) => {
         stream,
       });
       peer.on("stream", (stream) => {
-        console.log("Received stream from", incomingUID);
+        //console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
         peersStreamRef.current[incomingUID] = stream;
@@ -913,10 +906,10 @@ const Room = (props) => {
     userName,
     turnCreds
   ) {
-    console.log("------Inside addPeer()-----");
+    //console.log("------Inside addPeer()-----");
 
     if (turnCreds != null) {
-      console.log("In addPeer using turn configuration");
+      //console.log("In addPeer using turn configuration");
       const configuration = {
         iceServers: [
           {
@@ -939,7 +932,7 @@ const Room = (props) => {
 
       //Add stream callback:
       peer.on("stream", (stream) => {
-        console.log("Received stream from", incomingUID);
+        //console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
         peersStreamRef.current[incomingUID] = stream;
@@ -966,19 +959,19 @@ const Room = (props) => {
       peer._pc.addEventListener("icecandidate", (event) => {
         const candidate = event.candidate;
         if (candidate) {
-          console.log(
-            userName + "ICE candidate:",
-            candidate.type,
-            candidate.candidate
-          );
+          // console.log(
+          //   userName + "ICE candidate:",
+          //   candidate.type,
+          //   candidate.candidate
+          // );
         }
       });
 
       peer._pc.addEventListener("iceconnectionstatechange", () => {
-        console.log(
-          userName + "ICE connection state:",
-          peer._pc.iceConnectionState
-        );
+        // console.log(
+        //   userName + "ICE connection state:",
+        //   peer._pc.iceConnectionState
+        // );
       });
 
       peer.on("error", (err) => {
@@ -1000,7 +993,7 @@ const Room = (props) => {
 
       return peer;
     } else {
-      console.log("In addPeer using NON turn configuration");
+      //console.log("In addPeer using NON turn configuration");
       const peer = new Peer({
         initiator: false,
         trickle: false,
@@ -1008,7 +1001,7 @@ const Room = (props) => {
       });
 
       peer.on("stream", (stream) => {
-        console.log("Received stream from", incomingUID);
+        //console.log("Received stream from", incomingUID);
 
         // Store the stream under the incomingUID
         peersStreamRef.current[incomingUID] = stream;
@@ -1035,19 +1028,19 @@ const Room = (props) => {
       peer._pc.addEventListener("icecandidate", (event) => {
         const candidate = event.candidate;
         if (candidate) {
-          console.log(
-            userName + "ICE candidate:",
-            candidate.type,
-            candidate.candidate
-          );
+          // console.log(
+          //   userName + "ICE candidate:",
+          //   candidate.type,
+          //   candidate.candidate
+          // );
         }
       });
 
       peer._pc.addEventListener("iceconnectionstatechange", () => {
-        console.log(
-          userName + "ICE connection state:",
-          peer._pc.iceConnectionState
-        );
+        // console.log(
+        //   userName + "ICE connection state:",
+        //   peer._pc.iceConnectionState
+        // );
       });
 
       peer.on("error", (err) => {
@@ -1077,7 +1070,6 @@ const Room = (props) => {
 
     if (!isDuplicate) {
       uniqueIds.push(element.uid);
-      //console.log("not a duplicate");
 
       return true;
     }

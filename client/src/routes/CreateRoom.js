@@ -15,6 +15,7 @@ const CreateRoom = (props) => {
     Item: {
       user: uuid(),
       prompts: [],
+      gameHistory: [],
     },
   });
 
@@ -22,11 +23,16 @@ const CreateRoom = (props) => {
   async function startSearch() {
     console.log("startSearch() Establishing WebSocket Connection");
 
+    const gameHistoryString = encodeURIComponent(
+      JSON.stringify(userData.Item.gameHistory || {})
+    );
     // Establish WebSocket connection when the user clicks confirm
     const ws = new WebSocket(
       `wss://1myegfct68.execute-api.us-east-1.amazonaws.com/production/?userId=${
         userData.Item.user
-      }&prompts=${encodeURIComponent(JSON.stringify(userData.Item.prompts))}`
+      }&prompts=${encodeURIComponent(
+        JSON.stringify(userData.Item.prompts)
+      )}&gameHistory=${gameHistoryString}`
     );
 
     ws.onmessage = (event) => {
@@ -71,6 +77,8 @@ const CreateRoom = (props) => {
           oddOneOut: oddOneOutValue,
           uid: userData.Item.user,
           prompt: matchingPrompt,
+          userData: userData,
+          dummyPrompts: dummyPrompts,
         });
       }
     };
