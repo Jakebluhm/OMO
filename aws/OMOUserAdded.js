@@ -111,13 +111,13 @@ function findMatch(users) {
 
   let promptsMap = {};
 
-if (Array.isArray(users)) {
-  users.forEach((u) => {
-    console.log(u.prompts);
-  });
-} else {
-  console.log('No users found');
-}
+  if (Array.isArray(users)) {
+    users.forEach((u) => {
+      console.log(u.prompts);
+    });
+  } else {
+    console.log("No users found");
+  }
   for (const otherUser of users) {
     for (const promptStr of otherUser.prompts) {
       const prompt = JSON.parse(promptStr);
@@ -140,31 +140,51 @@ if (Array.isArray(users)) {
         usersMap[0].length === 1
           ? usersMap[1].slice(0, 2)
           : usersMap[0].slice(0, 2);
-          
-      
+
       // Check if uniqueUser has played with the two matchingUsers before
       let alreadyPlayed = false;
       if (uniqueUser.gameHistory) {
         for (const history of uniqueUser.gameHistory) {
-          console.log('Ignore prev game logic');
-          console.log('Checking: ' + history.promptId + ' (' + typeof history.promptId + ') === ' + promptId + ' (' + typeof promptId + ') and matchedUsers UUIDs ' + matchingUsers[0].user + ' ' + matchingUsers[1].user + ' against: ' + JSON.stringify(history.uuids));
-  
-          const firstCondition = (history.uuids[0] === matchingUsers[0].user && history.uuids[1] === matchingUsers[1].user);
-          const secondCondition = (history.uuids[0] === matchingUsers[1].user && history.uuids[1] === matchingUsers[0].user);
- 
+          console.log("Ignore prev game logic");
+          console.log(
+            "Checking: " +
+              history.promptId +
+              " (" +
+              typeof history.promptId +
+              ") === " +
+              promptId +
+              " (" +
+              typeof promptId +
+              ") and matchedUsers UUIDs " +
+              matchingUsers[0].user +
+              " " +
+              matchingUsers[1].user +
+              " against: " +
+              JSON.stringify(history.uuids)
+          );
 
-          if (String(history.promptId) === String(promptId) && (firstCondition || secondCondition)) {
-            console.log('GAME IGNORED, ALREADY PLAYED')
+          const firstCondition =
+            history.uuids[0] === matchingUsers[0].user &&
+            history.uuids[1] === matchingUsers[1].user;
+          const secondCondition =
+            history.uuids[0] === matchingUsers[1].user &&
+            history.uuids[1] === matchingUsers[0].user;
+
+          if (
+            String(history.promptId) === String(promptId) &&
+            (firstCondition || secondCondition)
+          ) {
+            console.log("GAME IGNORED, ALREADY PLAYED");
             alreadyPlayed = true;
             break;
           }
         }
       }
-          
-      if(alreadyPlayed){
+
+      if (alreadyPlayed) {
         continue;
       }
-          
+
       return {
         matches: [uniqueUser].concat(matchingUsers),
         promptId: promptId,

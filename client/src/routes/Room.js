@@ -75,8 +75,7 @@ export const Video = (props) => {
   //Sentry error reporting
   useEffect(() => {
     const checkStates = () => {
-      if (props.videoStream) { 
-
+      if (props.videoStream) {
         if (ref.current.readyState < 3) {
           // If this is the first time readyState is < 3, remember the timestamp
           if (!lastTimeStateLessThanThreeRef.current) {
@@ -115,8 +114,6 @@ export const Video = (props) => {
 
     return () => clearInterval(interval);
   }, [props.peer.connectionState]);
-
- 
 
   // Debug stream
   // useEffect(() => {
@@ -191,14 +188,14 @@ const videoConstraints = {
 localStorage.debug = "";
 const Room = (props) => {
   console.log("Currently using Room instance with key:", props.diagnosticKey);
-  
+
   const playerInfo = props.history.location.state;
   const name = { playerName: playerInfo.playerName };
   const oddOneOut = { oddOneOut: playerInfo.oddOneOut };
   const uid = { uid: playerInfo.uid };
   const prompt = { prompt: playerInfo.prompt };
   const dummyPrompts = playerInfo.dummyPrompts;
-  const  userData = playerInfo.userData;
+  const userData = playerInfo.userData;
   //const debug = props.location.state.debug;
 
   const currentPlayer = {
@@ -367,64 +364,74 @@ const Room = (props) => {
     realOddManOut,
   ]);
 
-
-
-
-  
   const [hasRun, setHasRun] = useState(false);
   useEffect(() => {
-
     // Redirect to intermediate where matchmaking will run, clean up socketRef, peersRef.
-    const startNextGameSearch = function() {
-      try{
+    const startNextGameSearch = function () {
+      try {
         stopMediaStream(userVideo.current.srcObject);
-        socketRef.current.emit("disconnect")
+        socketRef.current.emit("disconnect");
         socketRef.current && socketRef.current.disconnect();
         socketRef.current = null;
         peersRef.current = [];
+      } catch (e) {
+        console.log("Error calling stopMediaStream: " + e.toString());
       }
-      catch(e){
-        console.log('Error calling stopMediaStream: ' + e.toString())
-      } 
-   
+
       const newGame = {
         promptId: prompt.prompt.id,
-        uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
+        uuids: [filteredPeers[0].uid, filteredPeers[1].uid],
       };
-         
+
       props.history.push(`/intermediate`, {
-        playerName: name, 
-        uid: userData.Item.user, 
+        playerName: name,
+        uid: userData.Item.user,
         userData: userData,
         dummyPrompts: dummyPrompts,
         newGame: newGame,
-  
       });
-    }; 
+    };
 
-    if (!hasRun && ((voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) || (voteComplete && isRevote && countdown <= 0))) {
-      setHasRun(true);  
-      setGameComplete(true); 
+    if (
+      !hasRun &&
+      ((voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
+        (voteComplete && isRevote && countdown <= 0))
+    ) {
+      setHasRun(true);
+      setGameComplete(true);
       const countdownTimer = setInterval(() => {
         console.log("Inside redirect countdown interval");
         setRedirectCount((prev) => {
-            if (prev <= 0) {       
-              clearInterval(countdownTimer); 
-              startNextGameSearch();
-              return 0;
-            }
-            return prev - 1;
+          if (prev <= 0) {
+            clearInterval(countdownTimer);
+            startNextGameSearch();
+            return 0;
+          }
+          return prev - 1;
         });
-    }, 1000);
-    
+      }, 1000);
 
-      return () => { 
-      };
+      return () => {};
     }
-  }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name, prompt.prompt.id, filteredPeers, userData, hasRun]);
+  }, [
+    voteComplete,
+    voteResult,
+    isRevote,
+    history,
+    countdown,
+    userData.Item.user,
+    userData.Item.prompts,
+    dummyPrompts,
+    props.history,
+    name,
+    prompt.prompt.id,
+    filteredPeers,
+    userData,
+    hasRun,
+  ]);
 
-  const handleUserVote = (user) => { 
-    setSelectedUser(user); 
+  const handleUserVote = (user) => {
+    setSelectedUser(user);
 
     socketRef.current.emit("vote cast", {
       voterId: uid.uid,
@@ -437,19 +444,15 @@ const Room = (props) => {
     updateTally();
   }, [peers, updateTally]);
 
- 
-
-  useEffect(() => { 
-
+  useEffect(() => {
     let totalVotes = 0;
 
     // Loop through the voteCounts object and sum the counts
     for (const count of Object.values(voteCounts)) {
       totalVotes += count;
     }
- 
 
-    if (totalVotes === 3) { 
+    if (totalVotes === 3) {
       setVoteComplete(true);
 
       // Calculate the person with the most votes
@@ -466,7 +469,6 @@ const Room = (props) => {
           tie = true;
         }
       }
- 
 
       // Set the voteResult or "tie"
       if (tie) {
@@ -567,7 +569,7 @@ const Room = (props) => {
         socketRef.current = io.connect("/");
         navigator.mediaDevices
           .getUserMedia({ video: videoConstraints, audio: true })
-          .then((stream) => { 
+          .then((stream) => {
             userVideo.current.srcObject = stream; //JAKEB this is video data
             socketRef.current.emit("join room", {
               roomID: roomID,
@@ -596,7 +598,7 @@ const Room = (props) => {
                   socketRef.current.id,
                   stream,
                   credentials
-                ); 
+                );
                 peersRef.current.push({
                   // Pushing a new player into array of players -
                   peerID: userID.socketID,
@@ -632,9 +634,8 @@ const Room = (props) => {
             socketRef.current.on("user joined", (payload) => {
               console.log("--------------user joined---------------");
 
-              // Prevent self from joining 
+              // Prevent self from joining
               if (payload.uid === currentPlayer.uid) {
- 
                 return;
               }
 
@@ -739,19 +740,16 @@ const Room = (props) => {
   }
 
   useEffect(() => {
-    const unlisten = history.listen(() => { 
- 
-      try{
+    const unlisten = history.listen(() => {
+      try {
         stopMediaStream(userVideo.current.srcObject);
-        socketRef.current.emit("disconnect")
+        socketRef.current.emit("disconnect");
         socketRef.current && socketRef.current.disconnect();
         socketRef.current = null;
         peersRef.current = [];
+      } catch (e) {
+        console.log("Error calling stopMediaStream: " + e.toString());
       }
-      catch(e){
-        console.log('Error calling stopMediaStream: ' + e.toString())
-      } 
-  
     });
 
     return () => {
@@ -1071,7 +1069,7 @@ const Room = (props) => {
     const isDuplicate = uniqueIds.includes(element.uid);
 
     if (!isDuplicate) {
-      uniqueIds.push(element.uid); 
+      uniqueIds.push(element.uid);
 
       return true;
     }
