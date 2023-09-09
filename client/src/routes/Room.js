@@ -55,10 +55,19 @@ const ModalContent = styled.div`
 `;
 
 const MuteUnmuteButton = styled.button`
-  /* Add your styles for the mute/unmute button */
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   right: 10px;
+
+  background-color: #FF4757;
+  border: none;
+  border-radius: 50%;
+  padding: 10px 15px; 
+  font-size: 18px; 
+  color: #ffffff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+
+  opacity: ${props => props.muted ? 1 : 0.5}; /* Adjust opacity based on muted prop */
 `;
 
 export const Video = (props) => {
@@ -172,7 +181,7 @@ export const Video = (props) => {
         ref={ref}
         onLoadedMetadata={props.onVideoReady}
       />
-      <MuteUnmuteButton onClick={toggleMute}>
+      <MuteUnmuteButton onClick={toggleMute} muted={muted}>
         {muted ? "Unmute" : "Mute"}
       </MuteUnmuteButton>
     </div>
