@@ -739,13 +739,19 @@ const Room = (props) => {
   }
 
   useEffect(() => {
-    const unlisten = history.listen(() => {
-      //console.log("Inside history callback!! revoking acess to camera");
-      stopMediaStream(userVideo.current.srcObject);
-      socketRef.current.emit("disconnect")
-      socketRef.current && socketRef.current.disconnect();
-      socketRef.current = null;
-      peersRef.current = [];
+    const unlisten = history.listen(() => { 
+ 
+      try{
+        stopMediaStream(userVideo.current.srcObject);
+        socketRef.current.emit("disconnect")
+        socketRef.current && socketRef.current.disconnect();
+        socketRef.current = null;
+        peersRef.current = [];
+      }
+      catch(e){
+        console.log('Error calling stopMediaStream: ' + e.toString())
+      } 
+  
     });
 
     return () => {
