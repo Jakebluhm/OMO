@@ -368,53 +368,53 @@ const Room = (props) => {
   ]);
 
 
+
+
   
+  const [hasRun, setHasRun] = useState(false);
   useEffect(() => {
 
-
- 
-
-    if (
-      (voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) ||
-      (voteComplete && isRevote && countdown <= 0)
-    ) {
-      setGameComplete(true);
-      console.log('Before creating RedirectTimeout ');
-      const RedirectTimeout = setTimeout(async () => {
-        try{
-          stopMediaStream(userVideo.current.srcObject);
-          socketRef.current.emit("disconnect")
-          socketRef.current && socketRef.current.disconnect();
-          socketRef.current = null;
-          peersRef.current = [];
-        }
-        catch(e){
-          console.log('Error calling stopMediaStream: ' + e.toString())
-        } 
-
-
-        const newGame = {
-          promptId: prompt.prompt.id,
-          uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
-        };
-          
+    // Redirect to intermediate where matchmaking will run, clean up socketRef, peersRef.
+    const startNextGameSearch = function() {
+      try{
+        stopMediaStream(userVideo.current.srcObject);
+        socketRef.current.emit("disconnect")
+        socketRef.current && socketRef.current.disconnect();
+        socketRef.current = null;
+        peersRef.current = [];
+      }
+      catch(e){
+        console.log('Error calling stopMediaStream: ' + e.toString())
+      } 
   
-        props.history.push(`/intermediate`, {
-          playerName: name, 
-          uid: userData.Item.user, 
-          userData: userData,
-          dummyPrompts: dummyPrompts,
-          newGame: newGame,
+  
+      const newGame = {
+        promptId: prompt.prompt.id,
+        uuids: [filteredPeers[0].uid, filteredPeers[1].uid]
+      };
+        
+  
+      props.history.push(`/intermediate`, {
+        playerName: name, 
+        uid: userData.Item.user, 
+        userData: userData,
+        dummyPrompts: dummyPrompts,
+        newGame: newGame,
+  
+      });
+    };
+     
 
-        });
-      }, 30000);
-      console.log('After creating RedirectTimeout ');
-
+    if (!hasRun && ((voteComplete && voteResult !== "tie" && !isRevote && countdown === 0) || (voteComplete && isRevote && countdown <= 0))) {
+      setHasRun(true);  
+      setGameComplete(true);
+  
       const countdownTimer = setInterval(() => {
         setRedirectCount((prev) => {
-            if (prev <= 0) {
-                clearInterval(countdownTimer);
-                return 0;
+            if (prev <= 0) {        
+              startNextGameSearch();
+              clearInterval(countdownTimer);
+              return 0;
             }
             return prev - 1;
         });
@@ -422,12 +422,11 @@ const Room = (props) => {
     
 
       return () => {
-        console.log("Clearing timers: RedirectTimeout countdownTimer")
-        clearTimeout(RedirectTimeout);
+        console.log("Clearing timers: RedirectTimeout countdownTimer") 
         clearInterval(countdownTimer);
       };
     }
-  }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name, prompt.prompt.id, filteredPeers, userData]);
+  }, [voteComplete, voteResult, isRevote, history, countdown, userData.Item.user, userData.Item.prompts, dummyPrompts, props.history, name, prompt.prompt.id, filteredPeers, userData, hasRun]);
 
   const handleUserVote = (user) => { 
     setSelectedUser(user); 
