@@ -61,7 +61,7 @@ const MuteUnmuteButton = styled.button`
 
   background-color: #FF4757;
   border: none;
-  border-radius: 50%;
+  border-radius: 90%;
   padding: 10px 15px; 
   font-size: 18px; 
   color: #ffffff;

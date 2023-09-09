@@ -24,7 +24,7 @@ const VoteButton = styled.button`
     props.size / 12}px; // half of the width to keep 2:1 ratio
   font-size: ${(props) =>
     props.size / 24}px; // adjust this fraction as necessary
-  background-color: #4caf50;
+  background-color: #FF4757;
   border: none;
   color: white;
   padding: ${(props) => props.size / 120}px ${(props) => props.size / 60}px; // adjust these fractions as necessary
