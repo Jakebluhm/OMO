@@ -187,12 +187,12 @@ const VideoGrid = ({
     // Listen for changes in the icebreakerIndex
     useEffect(() => {
         // Set the background color to yellow
-        setBgColor('yellow');
+        setBgColor('red');
 
         // Set a timeout to revert the background color after 1 second
         const timer = setTimeout(() => {
             setBgColor('transparent');
-        }, 1000);
+        }, 5000);
 
         // Clear the timeout when component is unmounted or if it reruns
         return () => clearTimeout(timer);
