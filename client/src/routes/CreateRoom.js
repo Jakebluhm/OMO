@@ -229,8 +229,8 @@ const CreateRoom = (props) => {
     {
       id: 4,
       uuid: "ghi789",
-      identityA: "iPhone",
-      identityB: "Android",
+      identityA: "iPhone User",
+      identityB: "Android User",
       count: 0,
       iceBreakers: [
         "Which app store do you prefer?",
@@ -253,8 +253,8 @@ const CreateRoom = (props) => {
     {
       id: 6,
       uuid: "pqr123",
-      identityA: "Mac",
-      identityB: "PC",
+      identityA: "Mac User",
+      identityB: "PC User",
       count: 0,
       iceBreakers: [
         "Which operating system do you find more user-friendly?",
@@ -313,8 +313,8 @@ const CreateRoom = (props) => {
     {
       id: 11,
       uuid: "efg678",
-      identityA: "Cats",
-      identityB: "Dogs",
+      identityA: "Cat Person",
+      identityB: "Dog Person",
       count: 0,
       iceBreakers: [
         "Which pet do you think requires more attention and why?",
@@ -325,8 +325,8 @@ const CreateRoom = (props) => {
   {
       id: 12,
       uuid: "hij901",
-      identityA: "Morning People",
-      identityB: "Night Owls",
+      identityA: "Morning Person",
+      identityB: "Night Owl",
       count: 0,
       iceBreakers: [
         "What's the first thing you do after waking up?",
