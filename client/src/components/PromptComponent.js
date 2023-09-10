@@ -41,8 +41,7 @@ function PromptComponent({ prompt, onButtonClick }) {
   const divStyle = {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: isAnswered ? "lightgrey" : "white",
+    alignItems: "center", 
     paddingTop: '5px',     
     paddingBottom: '5px',   
   };

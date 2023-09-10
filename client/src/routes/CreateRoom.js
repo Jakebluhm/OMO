@@ -363,6 +363,7 @@ const CreateRoom = (props) => {
           value={name}
         ></input>
         <button
+          style={{ padding: 5 }}
           name="confirmButton"
           disabled={
             userData.Item.prompts.length === 0 ||
