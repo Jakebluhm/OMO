@@ -301,8 +301,8 @@ const CreateRoom = (props) => {
     {
         id: 10,
         uuid: "bcd345",
-        identityA: "Traditional education advocate",
-        identityB: "Homeschooling/unschooling proponent",
+        identityA: "Public School",
+        identityB: "Homeschooling",
         count: 0,
         iceBreakers: [
           "How do you feel about standardized testing?",

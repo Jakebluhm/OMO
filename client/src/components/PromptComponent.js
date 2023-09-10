@@ -26,12 +26,16 @@ function PromptComponent({ prompt, onButtonClick }) {
     marginRight: 10,
     width: 150,
     border: aSelected ? "3px solid red" : "none",
+    paddingTop: '5px',     
+    paddingBottom: '5px',   
   };
 
   const buttonStyleB = {
     marginLeft: 10,
     width: 150,
     border: bSelected ? "3px solid red" : "none",
+    paddingTop: '5px',     
+    paddingBottom: '5px',   
   };
 
   const divStyle = {
