@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Fetching changes from remote..."
 git fetch --all
-git checkout automaticResearch
+git checkout master
 git pull
 npm ci
 cd client

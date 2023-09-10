@@ -66,3 +66,30 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+
+
+Prompts:
+Political Affiliation: Left-wing vs. Right-wing, Democrat vs. Republican (in the US), or similar divisions in other countries. 
+iPhone vs. Android in the smartphone world.
+Climate Change: Believers in human-caused climate change vs. skeptics or deniers.
+Mac vs. PC for personal computing.
+Gun Control (particularly in the US): Pro-gun control vs. anti-gun control.
+Abortion Rights: Pro-choice vs. Pro-life.
+Vaccination: Pro-vaccination vs. anti-vaccination (vaccine hesitancy or refusal).
+Education: Traditional education advocates vs. homeschooling/unschooling proponents. 
+Toilet Paper Orientation: Over vs. Under.
+Pineapple on Pizza: Yes vs. No.
+Best Pet: Cats vs. Dogs.
+Best Season: Summer vs. Winter.
+Morning People vs. Night Owls.        
+Circumcision: For vs. Against. 
+Console Wars: PlayStation vs. Xbox.
+Coffee: Black vs. With Cream & Sugar.  
+Reading: E-books vs. Physical books.  
+Food: Which is better, New York-style or Chicago-style pizza? 
+Star Wars vs. Star Trek.
+Marvel vs. DC in the superhero universe.             
+Books: Fiction vs. Non-fiction.
+Cars: Manual transmission vs. Automatic transmission.   

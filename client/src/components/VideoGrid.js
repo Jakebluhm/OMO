@@ -24,7 +24,7 @@ const VoteButton = styled.button`
     props.size / 12}px; // half of the width to keep 2:1 ratio
   font-size: ${(props) =>
     props.size / 24}px; // adjust this fraction as necessary
-  background-color: #4caf50;
+  background-color: #ff4757;
   border: none;
   color: white;
   padding: ${(props) => props.size / 120}px ${(props) => props.size / 60}px; // adjust these fractions as necessary
@@ -87,11 +87,15 @@ const VideoGrid = ({
   selectedUser,
   videoStreams,
   gameReady,
+  prompt,
 }) => {
   const history = useHistory(); // Here's where we call useHistory
   const [size, setSize] = useState(BASE_SIZE);
   const [allUsersLeft, setAllUsersLeft] = useState(false);
   const [gameRuined, setGameRuined] = useState(false);
+  const [icebreakerIndex, setIcebreakerIndex] = useState(0);
+  const totalGameTime = 120; // I'm assuming 90 seconds as an example
+  const [bgColor, setBgColor] = useState("transparent"); // Default background color
 
   const networkStatus = useNetworkStatus();
 
@@ -155,6 +159,42 @@ const VideoGrid = ({
       }
     }
   }, [connectionStates, gameReady, stopTimer]);
+
+  const parseTime = (timeString) => {
+    const [minutes, seconds] = timeString.split(":").map(Number);
+    return minutes * 60 + seconds;
+  };
+  // Calculate the icebreaker that should show based on game time
+  useEffect(() => {
+    // Convert gameInfo.time to seconds
+    const currentTimeInSeconds = parseTime(gameInfo.time);
+
+    // Calculate 1/3 and 2/3 of totalGameTime
+    const oneThirdTime = Math.floor(totalGameTime / 3);
+    const twoThirdTime = Math.floor((2 * totalGameTime) / 3);
+
+    console.log(currentTimeInSeconds, oneThirdTime, twoThirdTime);
+
+    if (currentTimeInSeconds <= oneThirdTime) {
+      setIcebreakerIndex(2);
+    } else if (currentTimeInSeconds <= twoThirdTime) {
+      setIcebreakerIndex(1);
+    }
+  }, [gameInfo.time]);
+
+  // Listen for changes in the icebreakerIndex
+  useEffect(() => {
+    // Set the background color to yellow
+    setBgColor("red");
+
+    // Set a timeout to revert the background color after 1 second
+    const timer = setTimeout(() => {
+      setBgColor("transparent");
+    }, 5000);
+
+    // Clear the timeout when component is unmounted or if it reruns
+    return () => clearTimeout(timer);
+  }, [icebreakerIndex]);
 
   console.log("isModalOpen");
   console.log(isModalOpen);
@@ -397,6 +437,15 @@ const VideoGrid = ({
                 </>
               ) : (
                 <>
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                      backgroundColor: bgColor,
+                    }}
+                  >
+                    {prompt.iceBreakers[icebreakerIndex]}
+                  </p>
                   <p
                     style={{
                       fontSize: "calc(2px + 1.0vh)",
