@@ -95,6 +95,7 @@ const VideoGrid = ({
   const [gameRuined, setGameRuined] = useState(false);
   const [icebreakerIndex, setIcebreakerIndex] = useState(0);
   const totalGameTime = 120; // I'm assuming 90 seconds as an example
+  const [bgColor, setBgColor] = useState('transparent'); // Default background color
   
   const networkStatus = useNetworkStatus();
 
@@ -181,6 +182,21 @@ const VideoGrid = ({
         setIcebreakerIndex(1);
       }
     }, [gameInfo.time]);
+
+
+    // Listen for changes in the icebreakerIndex
+    useEffect(() => {
+        // Set the background color to yellow
+        setBgColor('yellow');
+
+        // Set a timeout to revert the background color after 1 second
+        const timer = setTimeout(() => {
+            setBgColor('transparent');
+        }, 1000);
+
+        // Clear the timeout when component is unmounted or if it reruns
+        return () => clearTimeout(timer);
+    }, [icebreakerIndex]);
 
 
   console.log("isModalOpen");
@@ -428,6 +444,7 @@ const VideoGrid = ({
                     style={{
                       fontSize: "calc(2px + 1.0vh)",
                       marginBottom: "5px",
+                      backgroundColor: bgColor,  
                     }}
                   >
                     {prompt.iceBreakers[icebreakerIndex]}
