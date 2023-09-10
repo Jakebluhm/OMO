@@ -187,7 +187,7 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "What's your favorite meal?",
         "How do you feel about tofu?",
-        "Describe the last burger you ate."
+        "Describe the last burger you ate.",
       ],
     },
     {
@@ -199,7 +199,7 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "How do you celebrate Christmas?",
         "What's your view on the afterlife?",
-        "How often do you visit places of worship?"
+        "How often do you visit places of worship?",
       ],
     },
     {
@@ -211,7 +211,7 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "Who's your favorite hip-hop artist?",
         "Have you ever performed on stage?",
-        "What's your go-to rap song to sing along to?"
+        "What's your go-to rap song to sing along to?",
       ],
     },
     {
@@ -223,9 +223,9 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "Who's your favorite political leader?",
         "What's your stance on healthcare?",
-        "How do you feel about tax breaks?"
+        "How do you feel about tax breaks?",
       ],
-    }, 
+    },
     {
       id: 4,
       uuid: "ghi789",
@@ -235,7 +235,7 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "Which app store do you prefer?",
         "Have you ever switched from one to the other?",
-        "What feature of your phone do you value the most?"
+        "What feature of your phone do you value the most?",
       ],
     },
     {
@@ -247,7 +247,7 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "What's your primary news source?",
         "Have you ever been impacted by extreme weather?",
-        "How do you feel about renewable energy?"
+        "How do you feel about renewable energy?",
       ],
     },
     {
@@ -259,56 +259,56 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "Which operating system do you find more user-friendly?",
         "How often do you upgrade your computer?",
-        "What's your go-to software or application on your platform?"
+        "What's your go-to software or application on your platform?",
       ],
     },
     {
-        id: 7,
-        uuid: "stu456",
-        identityA: "Pro-gun control",
-        identityB: "Anti-gun control",
-        count: 0,
-        iceBreakers: [
-          "How do you feel about stricter background checks for gun purchases?",
-          "Have you ever taken a firearm safety course?",
-          "What's your perspective on concealed carry permits?"
-        ],
+      id: 7,
+      uuid: "stu456",
+      identityA: "Pro-gun control",
+      identityB: "Anti-gun control",
+      count: 0,
+      iceBreakers: [
+        "How do you feel about stricter background checks for gun purchases?",
+        "Have you ever taken a firearm safety course?",
+        "What's your perspective on concealed carry permits?",
+      ],
     },
     {
-        id: 8,
-        uuid: "vwx789",
-        identityA: "Pro-choice",
-        identityB: "Pro-life",
-        count: 0,
-        iceBreakers: [
-          "How do you feel about reproductive health education in schools?",
-          "Do you think the government should have a say in personal health decisions?",
-          "What are your thoughts on pregnancy prevention methods?"
-        ],
+      id: 8,
+      uuid: "vwx789",
+      identityA: "Pro-choice",
+      identityB: "Pro-life",
+      count: 0,
+      iceBreakers: [
+        "How do you feel about reproductive health education in schools?",
+        "Do you think the government should have a say in personal health decisions?",
+        "What are your thoughts on pregnancy prevention methods?",
+      ],
     },
     {
-        id: 9,
-        uuid: "yza012",
-        identityA: "Pro-vaccination",
-        identityB: "Anti-vaccination",
-        count: 0,
-        iceBreakers: [
-          "How do you stay informed about new vaccines or medical updates?",
-          "What's your stance on mandatory vaccinations for school admissions?",
-          "Have you or your family experienced any side effects from vaccines?"
-        ],
+      id: 9,
+      uuid: "yza012",
+      identityA: "Pro-vaccination",
+      identityB: "Anti-vaccination",
+      count: 0,
+      iceBreakers: [
+        "How do you stay informed about new vaccines or medical updates?",
+        "What's your stance on mandatory vaccinations for school admissions?",
+        "Have you or your family experienced any side effects from vaccines?",
+      ],
     },
     {
-        id: 10,
-        uuid: "bcd345",
-        identityA: "Public School",
-        identityB: "Homeschooling",
-        count: 0,
-        iceBreakers: [
-          "How do you feel about standardized testing?",
-          "What do you think are the most important aspects of education?",
-          "How do you envision the future of learning?"
-        ],
+      id: 10,
+      uuid: "bcd345",
+      identityA: "Public School",
+      identityB: "Homeschooling",
+      count: 0,
+      iceBreakers: [
+        "How do you feel about standardized testing?",
+        "What do you think are the most important aspects of education?",
+        "How do you envision the future of learning?",
+      ],
     },
     {
       id: 11,
@@ -319,10 +319,10 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "Which pet do you think requires more attention and why?",
         "Have you had any memorable experiences with a cat or dog?",
-        "How do you feel about training or disciplining pets?"
+        "How do you feel about training or disciplining pets?",
       ],
-  },
-  {
+    },
+    {
       id: 12,
       uuid: "hij901",
       identityA: "Morning Person",
@@ -331,11 +331,10 @@ const CreateRoom = (props) => {
       iceBreakers: [
         "What's the first thing you do after waking up?",
         "Do you rely on an alarm to wake up or naturally rise?",
-        "What time of day do you feel most productive or creative?"
+        "What time of day do you feel most productive or creative?",
       ],
-  } 
+    },
   ];
-  
 
   return (
     <div style={style}>

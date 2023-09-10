@@ -59,15 +59,16 @@ const MuteUnmuteButton = styled.button`
   top: 10px;
   right: 10px;
 
-  background-color: #FF4757;
+  background-color: #ff4757;
   border: none;
   border-radius: 90%;
-  padding: 10px 15px; 
-  font-size: 18px; 
+  padding: 10px 15px;
+  font-size: 18px;
   color: #ffffff;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
 
-  opacity: ${props => props.muted ? 1 : 0.5}; /* Adjust opacity based on muted prop */
+  opacity: ${(props) =>
+    props.muted ? 1 : 0.5}; /* Adjust opacity based on muted prop */
 `;
 
 export const Video = (props) => {
