@@ -87,12 +87,15 @@ const VideoGrid = ({
   selectedUser,
   videoStreams,
   gameReady,
+  prompt,
 }) => {
   const history = useHistory(); // Here's where we call useHistory
   const [size, setSize] = useState(BASE_SIZE);
   const [allUsersLeft, setAllUsersLeft] = useState(false);
   const [gameRuined, setGameRuined] = useState(false);
-
+  const [icebreakerIndex, setIcebreakerIndex] = useState(0);
+  const totalGameTime = 20; // I'm assuming 90 seconds as an example
+  
   const networkStatus = useNetworkStatus();
 
   // Use an effect to resize the grid when the window resizes
@@ -155,6 +158,21 @@ const VideoGrid = ({
       }
     }
   }, [connectionStates, gameReady, stopTimer]);
+
+
+  const parseTime = (timeString) => {
+    const [minutes, seconds] = timeString.split(":").map(Number);
+    return minutes * 60 + seconds;
+  };
+    // Calculate the icebreaker that should show based on game time
+    useEffect(() => {
+      if (parseTime(gameInfo.time) <= (totalGameTime / 3)) {
+          setIcebreakerIndex(2);
+      } else if (parseTime(gameInfo.time) <= (2 * totalGameTime / 3)) {
+          setIcebreakerIndex(1);
+      }
+  }, [gameInfo.time]);
+
 
   console.log("isModalOpen");
   console.log(isModalOpen);
@@ -397,6 +415,14 @@ const VideoGrid = ({
                 </>
               ) : (
                 <>
+                  <p
+                    style={{
+                      fontSize: "calc(2px + 1.0vh)",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {prompt.iceBreakers[0]}
+                  </p>
                   <p
                     style={{
                       fontSize: "calc(2px + 1.0vh)",

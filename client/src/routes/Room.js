@@ -1150,6 +1150,7 @@ const Room = (props) => {
         selectedUser={selectedUser}
         videoStreams={peersStreamRef}
         gameReady={gameReady}
+        prompt={prompt.prompt}
       />
 
       {!gameReady && (

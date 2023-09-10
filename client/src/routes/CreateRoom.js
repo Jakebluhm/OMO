@@ -184,6 +184,11 @@ const CreateRoom = (props) => {
       identityA: "Vegan",
       identityB: "Meat Eater",
       count: 0,
+      iceBreakers: [
+        "What's your favorite meal?",
+        "How do you feel about tofu?",
+        "Describe the last burger you ate."
+      ],
     },
     {
       id: 1,
@@ -191,6 +196,11 @@ const CreateRoom = (props) => {
       identityA: "Christian",
       identityB: "Atheist",
       count: 0,
+      iceBreakers: [
+        "How do you celebrate Christmas?",
+        "What's your view on the afterlife?",
+        "How often do you visit places of worship?"
+      ],
     },
     {
       id: 2,
@@ -198,8 +208,14 @@ const CreateRoom = (props) => {
       identityA: "Rapper",
       identityB: "Fake Rapper",
       count: 0,
+      iceBreakers: [
+        "Who's your favorite hip-hop artist?",
+        "Have you ever performed on stage?",
+        "What's your go-to rap song to sing along to?"
+      ],
     },
   ];
+  
 
   return (
     <div style={style}>
