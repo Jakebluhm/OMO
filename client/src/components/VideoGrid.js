@@ -94,7 +94,7 @@ const VideoGrid = ({
   const [allUsersLeft, setAllUsersLeft] = useState(false);
   const [gameRuined, setGameRuined] = useState(false);
   const [icebreakerIndex, setIcebreakerIndex] = useState(0);
-  const totalGameTime = 20; // I'm assuming 90 seconds as an example
+  const totalGameTime = 120; // I'm assuming 90 seconds as an example
   
   const networkStatus = useNetworkStatus();
 
@@ -430,7 +430,7 @@ const VideoGrid = ({
                       marginBottom: "5px",
                     }}
                   >
-                    {prompt.iceBreakers[0]}
+                    {prompt.iceBreakers[icebreakerIndex]}
                   </p>
                   <p
                     style={{
