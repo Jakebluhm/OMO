@@ -166,7 +166,14 @@ const VideoGrid = ({
   };
     // Calculate the icebreaker that should show based on game time
     useEffect(() => {
-      console.log(parseTime(gameInfo.time) + ' ' + typeof(parseTime(gameInfo.time)) + ' ' +  (totalGameTime / 3) + ' ' + typeof(parseTime(totalGameTime / 3)))
+      console.log(
+        gameInfo.time + ' ' + 
+        typeof gameInfo.time + ' ' + 
+        (totalGameTime / 3) + ' ' + 
+        typeof (totalGameTime / 3)
+      );
+      
+      
       if (parseTime(gameInfo.time) <= (totalGameTime / 3)) {
           setIcebreakerIndex(2);
       } else if (parseTime(gameInfo.time) <= (2 * totalGameTime / 3)) {
