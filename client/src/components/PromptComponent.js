@@ -43,6 +43,8 @@ function PromptComponent({ prompt, onButtonClick }) {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: isAnswered ? "lightgrey" : "white",
+    paddingTop: '5px',     
+    paddingBottom: '5px',   
   };
 
   return (
