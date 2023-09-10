@@ -166,20 +166,21 @@ const VideoGrid = ({
   };
     // Calculate the icebreaker that should show based on game time
     useEffect(() => {
-      console.log(
-        gameInfo.time + ' ' + 
-        typeof gameInfo.time + ' ' + 
-        (totalGameTime / 3) + ' ' + 
-        typeof (totalGameTime / 3)
-      );
-      
-      
-      if (parseTime(gameInfo.time) <= (totalGameTime / 3)) {
-          setIcebreakerIndex(2);
-      } else if (parseTime(gameInfo.time) <= (2 * totalGameTime / 3)) {
-          setIcebreakerIndex(1);
+      // Convert gameInfo.time to seconds
+      const currentTimeInSeconds = parseTime(gameInfo.time);
+    
+      // Calculate 1/3 and 2/3 of totalGameTime
+      const oneThirdTime = Math.floor(totalGameTime / 3);
+      const twoThirdTime = Math.floor(2 * totalGameTime / 3);
+    
+      console.log(currentTimeInSeconds, oneThirdTime, twoThirdTime);
+    
+      if (currentTimeInSeconds <= oneThirdTime) {
+        setIcebreakerIndex(2);
+      } else if (currentTimeInSeconds <= twoThirdTime) {
+        setIcebreakerIndex(1);
       }
-  }, [gameInfo.time]);
+    }, [gameInfo.time]);
 
 
   console.log("isModalOpen");
