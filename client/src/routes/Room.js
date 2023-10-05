@@ -341,17 +341,14 @@ const Room = (props) => {
         console.log("Error calling stopMediaStream: " + e.toString());
       }
 
-      const newGame = {
-        promptId: prompt.prompt.id,
-        uuids: [filteredPeers[0].uid, filteredPeers[1].uid],
-      };
+
 
       props.history.push(`/intermediate`, {
         playerName: name,
         uid: userData.Item.user,
         userData: userData,
         dummyPrompts: dummyPrompts,
-        newGame: newGame,
+        newGame: null,
       });
     };
 

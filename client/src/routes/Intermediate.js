@@ -26,8 +26,9 @@ const IntermediateComponent = (props) => {
     // Callback for confirm under Name entry
     async function startSearch() {
       console.log("startSearch() Establishing WebSocket Connection");
-
-      userData.Item.gameHistory.push(newGame);
+      if(newGame != null){
+        userData.Item.gameHistory.push(newGame);
+      }
       console.log("userData.Item.gameHistory");
       console.log(userData.Item.gameHistory);
 
