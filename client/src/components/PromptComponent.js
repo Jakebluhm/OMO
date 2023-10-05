@@ -1,12 +1,19 @@
 import React from "react";
 import { useState } from "react";
 
-function PromptComponent({ prompt, onButtonClick }) {
+function PromptComponent({ prompt, onButtonClick, handlePromptRemoval }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [aSelected, setASelected] = useState(false);
   const [bSelected, setBSelected] = useState(false);
 
   const handleIdentityASelected = () => {
+    if(aSelected){
+      setIsAnswered(false);
+      setASelected(false);
+      setBSelected(false);
+      handlePromptRemoval({ [prompt.id]: 0 })
+      return
+    }
     console.log("Identity A selected");
     setIsAnswered(true);
     setASelected(true);
@@ -15,6 +22,13 @@ function PromptComponent({ prompt, onButtonClick }) {
   };
 
   const handleIdentityBSelected = () => {
+    if(bSelected){
+      setIsAnswered(false);
+      setASelected(false);
+      setBSelected(false);
+      handlePromptRemoval({ [prompt.id]: 1 })
+      return
+    }
     console.log("Identity B selected");
     setIsAnswered(true);
     setBSelected(true);

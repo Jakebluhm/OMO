@@ -142,6 +142,36 @@ const CreateRoom = (props) => {
     });
   };
 
+  const handlePromptRemoval = (buttonLabel) => {
+    console.log("-----------handlePromptRemoval-----");
+    console.log(buttonLabel);
+  
+    setUserData((prevState) => {
+      const promptId = buttonLabel.promptId;
+      const existingIndex = prevState.Item.prompts.findIndex((prompt) => {
+        return (
+          Object.keys(JSON.parse(prompt))[0] === Object.keys(buttonLabel)[0]
+        );
+      });
+  
+      if (existingIndex !== -1) {
+        // If the promptId exists in the array, remove it
+        const promptsCopy = [...prevState.Item.prompts];
+        promptsCopy.splice(existingIndex, 1);
+        return {
+          ...prevState,
+          Item: {
+            ...prevState.Item,
+            prompts: promptsCopy,
+          },
+        };
+      }
+      // If the promptId doesn't exist, return the current state
+      return prevState;
+    });
+  };
+  
+
   // Toggle modal
   function toggleModal() {
     console.log("toggleModal()");
@@ -380,7 +410,7 @@ const CreateRoom = (props) => {
       </label>
       <div style={{ display: "flex", flexDirection: "column" }}>
         {dummyPrompts.map((prompt) => (
-          <PromptComponent prompt={prompt} onButtonClick={handlePromptClick} />
+          <PromptComponent prompt={prompt} onButtonClick={handlePromptClick} handlePromptRemoval={handlePromptRemoval}/>
         ))}
       </div>
       {/* <div
