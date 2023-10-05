@@ -324,10 +324,40 @@ const Room = (props) => {
     //console.log("redirectCount: ", redirectCount);
     //console.log("countdown: ", countdown);
   }, [redirectCount, countdown]);
+
+
+  const TIMEOUT_DURATION = 15000; // e.g., 10 seconds
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
+
+    const startNextGameSearch = function () {
+      try {
+        stopMediaStream(userVideo.current.srcObject);
+        socketRef.current.emit("disconnect");
+        socketRef.current && socketRef.current.disconnect();
+        socketRef.current = null;
+        peersRef.current = [];
+      } catch (e) {
+        console.log("Error calling stopMediaStream: " + e.toString());
+      }
+
+      const newGame = {
+        promptId: prompt.prompt.id,
+        uuids: [filteredPeers[0].uid, filteredPeers[1].uid],
+      };
+
+      props.history.push(`/intermediate`, {
+        playerName: name,
+        uid: userData.Item.user,
+        userData: userData,
+        dummyPrompts: dummyPrompts,
+        newGame: newGame,
+      });
+    };
+
+
     if (videosReady >= 2 && !gameReady) {
-      //console.log("-------------Setting Game Ready----------------");
+      console.log("-------------Setting Game Ready----------------");
       setGameReady(true);
       startTimer();
 
@@ -363,16 +393,26 @@ const Room = (props) => {
         setRealOddManOut(realOddManOutPeer.peerName);
       }
     }
-  }, [
-    videosReady,
-    peers,
-    startTimer,
-    gameReady,
-    currentPlayer.uid,
-    currentPlayer.omo,
-    currentPlayer.peerName,
-    realOddManOut,
-  ]);
+    else{
+       // Start a timer
+      console.log("-------------Setting Game Ready timeout 15s----------------");
+    const timeoutId = setTimeout(() => {
+      if (videosReady < 2 && !gameReady) {
+        
+      console.log("------------- Game Ready timeout 15s elapsed, going to next game----------------");
+
+        
+        startNextGameSearch();
+
+
+
+      }
+    }, TIMEOUT_DURATION);
+
+    // Cleanup timeout on effect cleanup to avoid memory leaks
+    return () => clearTimeout(timeoutId);
+    }
+  }, [videosReady, peers, startTimer, gameReady, currentPlayer.uid, currentPlayer.omo, currentPlayer.peerName, realOddManOut, prompt.prompt.id, filteredPeers, props.history, name, userData, dummyPrompts]);
 
   const [hasRun, setHasRun] = useState(false);
   useEffect(() => {
