@@ -376,7 +376,7 @@ const CreateRoom = (props) => {
         </button>
       </div>
       <label style={{ padding: 5 }}>
-        Answer one or more questions below to be able to play OMO
+        Select as many identities from the list that apply to you, enter your name, then click confirm.
       </label>
       <div style={{ display: "flex", flexDirection: "column" }}>
         {dummyPrompts.map((prompt) => (
