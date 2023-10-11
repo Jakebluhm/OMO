@@ -199,6 +199,9 @@ const VideoGrid = ({
   console.log("isModalOpen");
   console.log(isModalOpen);
 
+  console.log("realOddManOut");
+  console.log(realOddManOut);
+
   return (
     <GridContainer size={size}>
       <GridItem size={size}>
