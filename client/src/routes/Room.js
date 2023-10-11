@@ -325,11 +325,9 @@ const Room = (props) => {
     //console.log("countdown: ", countdown);
   }, [redirectCount, countdown]);
 
-
   const TIMEOUT_DURATION = 15000; // e.g., 10 seconds
   // Update the gameReady state based on the number of ready videos
   useEffect(() => {
-
     const startNextGameSearch = function () {
       try {
         stopMediaStream(userVideo.current.srcObject);
@@ -341,8 +339,6 @@ const Room = (props) => {
         console.log("Error calling stopMediaStream: " + e.toString());
       }
 
-
-
       props.history.push(`/intermediate`, {
         playerName: name,
         uid: userData.Item.user,
@@ -351,7 +347,6 @@ const Room = (props) => {
         newGame: null,
       });
     };
-
 
     if (videosReady >= 2 && !gameReady) {
       console.log("-------------Setting Game Ready----------------");
@@ -380,6 +375,7 @@ const Room = (props) => {
       if (currentPlayer.omo === parseInt(minorityIdentity)) {
         realOddManOutPeer = {
           peerName: currentPlayer.peerName,
+          uid: currentPlayer.uid,
         };
       } else {
         realOddManOutPeer = peers.find(
@@ -389,27 +385,40 @@ const Room = (props) => {
       if (realOddManOut === null) {
         setRealOddManOut(realOddManOutPeer.peerName);
       }
+    } else {
+      // Start a timer
+      console.log(
+        "-------------Setting Game Ready timeout 15s----------------"
+      );
+      const timeoutId = setTimeout(() => {
+        if (videosReady < 2 && !gameReady) {
+          console.log(
+            "------------- Game Ready timeout 15s elapsed, going to next game----------------"
+          );
+
+          startNextGameSearch();
+        }
+      }, TIMEOUT_DURATION);
+
+      // Cleanup timeout on effect cleanup to avoid memory leaks
+      return () => clearTimeout(timeoutId);
     }
-    else{
-       // Start a timer
-      console.log("-------------Setting Game Ready timeout 15s----------------");
-    const timeoutId = setTimeout(() => {
-      if (videosReady < 2 && !gameReady) {
-        
-      console.log("------------- Game Ready timeout 15s elapsed, going to next game----------------");
-
-        
-        startNextGameSearch();
-
-
-
-      }
-    }, TIMEOUT_DURATION);
-
-    // Cleanup timeout on effect cleanup to avoid memory leaks
-    return () => clearTimeout(timeoutId);
-    }
-  }, [videosReady, peers, startTimer, gameReady, currentPlayer.uid, currentPlayer.omo, currentPlayer.peerName, realOddManOut, prompt.prompt.id, filteredPeers, props.history, name, userData, dummyPrompts]);
+  }, [
+    videosReady,
+    peers,
+    startTimer,
+    gameReady,
+    currentPlayer.uid,
+    currentPlayer.omo,
+    currentPlayer.peerName,
+    realOddManOut,
+    prompt.prompt.id,
+    filteredPeers,
+    props.history,
+    name,
+    userData,
+    dummyPrompts,
+  ]);
 
   const [hasRun, setHasRun] = useState(false);
   useEffect(() => {

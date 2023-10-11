@@ -208,10 +208,18 @@ const VideoGrid = ({
         if (index < 2) {
           const stream = videoStreams.current[peer.uid];
           // Only take the first two peers
+          // Determine if a border should be applied
+          const shouldApplyBorder = realOddManOut.uid === peer.uid;
+          const borderStyle = shouldApplyBorder ? "2px solid red" : ""; // Example: 2px solid red border. You can customize this
+
           return (
             <div>
               {peer.connectionState === "closed" ? (
-                <GridItem key={peer.peerID} size={size}>
+                <GridItem
+                  key={peer.peerID}
+                  size={size}
+                  style={{ border: borderStyle }}
+                >
                   <label
                     style={{
                       position: "absolute",
@@ -227,7 +235,11 @@ const VideoGrid = ({
                   </label>
                 </GridItem>
               ) : (
-                <GridItem key={peer.peerID} size={size}>
+                <GridItem
+                  key={peer.peerID}
+                  size={size}
+                  style={{ border: borderStyle }}
+                >
                   <Video
                     style={{ display: "flex", flex: 1 }}
                     key={peer.peerID}
