@@ -383,7 +383,7 @@ const Room = (props) => {
         );
       }
       if (realOddManOut === null) {
-        setRealOddManOut(realOddManOutPeer.peerName);
+        setRealOddManOut(realOddManOutPeer);
       }
     } else {
       // Start a timer
