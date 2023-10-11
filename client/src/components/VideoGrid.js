@@ -199,9 +199,6 @@ const VideoGrid = ({
   console.log("isModalOpen");
   console.log(isModalOpen);
 
-  console.log("realOddManOut");
-  console.log(realOddManOut);
-
   return (
     <GridContainer size={size}>
       <GridItem size={size}>
@@ -210,9 +207,14 @@ const VideoGrid = ({
       {filteredPeers.map((peer, index) => {
         if (index < 2) {
           const stream = videoStreams.current[peer.uid];
+          var shouldApplyBorder = false;
           // Only take the first two peers
           // Determine if a border should be applied
-          const shouldApplyBorder = realOddManOut.uid === peer.uid;
+
+          if (realOddManOut != null) {
+            shouldApplyBorder = realOddManOut.uid === peer.uid;
+          }
+
           const borderStyle = shouldApplyBorder ? "2px solid red" : ""; // Example: 2px solid red border. You can customize this
 
           return (
