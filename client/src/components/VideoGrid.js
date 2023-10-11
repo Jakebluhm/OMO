@@ -96,6 +96,7 @@ const VideoGrid = ({
   const [icebreakerIndex, setIcebreakerIndex] = useState(0);
   const totalGameTime = 120; // I'm assuming 90 seconds as an example
   const [bgColor, setBgColor] = useState("transparent"); // Default background color
+  const [isCurrentUserOOO, setIsCurrentUserOOO] = useState(false);
 
   const networkStatus = useNetworkStatus();
 
@@ -199,9 +200,26 @@ const VideoGrid = ({
   console.log("isModalOpen");
   console.log(isModalOpen);
 
+  useEffect(() => {
+    var shouldApplyBorder = false;
+    // Only take the first two peers
+    // Determine if a border should be applied
+
+    if (realOddManOut != null && !isCurrentUserOOO) {
+      if (realOddManOut.uid === currentPlayer.uid) {
+        if (countdown === 0) setIsCurrentUserOOO(true);
+      }
+    }
+
+    const borderStyle = shouldApplyBorder ? "2px solid red" : ""; // Example: 2px solid red border. You can customize this
+  }, [realOddManOut, countdown]);
+
   return (
     <GridContainer size={size}>
-      <GridItem size={size}>
+      <GridItem
+        size={size}
+        style={isCurrentUserOOO ? { border: "2px solid red" } : {}}
+      >
         <StyledVideo muted ref={userVideo} autoPlay playsInline />
       </GridItem>
       {filteredPeers.map((peer, index) => {
@@ -211,7 +229,7 @@ const VideoGrid = ({
           // Only take the first two peers
           // Determine if a border should be applied
 
-          if (realOddManOut != null) {
+          if (realOddManOut != null && countdown === 0) {
             shouldApplyBorder = realOddManOut.uid === peer.uid;
           }
 
