@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:omo_client/widgets/prompts/prompt_pair_widget.dart';
 import 'package:web_socket_channel/html.dart';
 import 'package:web_socket_channel/io.dart';
@@ -17,7 +18,7 @@ import 'package:flutter/foundation.dart';
 // This will manage the name as a state
 final nameProvider = StateProvider<String>((ref) => "");
 
-class HomePage extends ConsumerWidget {
+class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     double width = MediaQuery.of(context).size.width;
@@ -102,7 +103,7 @@ class HomePage extends ConsumerWidget {
           final matchingPrompt = prompts
               .firstWhere((promptObj) => promptObj.id.toString() == promptId);
           print("matchingPrompt");
-          print(matchingPrompt);
+          print(matchingPrompt.toString());
 
           // Navigate to the room page using Flutter's Navigator.
           // You might need to adapt this part to your Flutter app's navigation structure.

@@ -8,6 +8,11 @@ class Prompt {
   final int count;
   final List<String> iceBreakers;
 
+  @override
+  String toString() {
+    return 'id: $id\nuuid: $uuid\nidentityA: $identityA\nidentityB: $identityB\n';
+  }
+
   Prompt({
     required this.id,
     required this.uuid,

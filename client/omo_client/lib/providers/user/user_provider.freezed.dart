@@ -109,7 +109,7 @@ class __$$UserImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UserImpl implements _User {
+class _$UserImpl with DiagnosticableTreeMixin implements _User {
   _$UserImpl(
       {required this.uuid,
       required final List<String> prompts,
@@ -136,8 +136,18 @@ class _$UserImpl implements _User {
   }
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'User(uuid: $uuid, prompts: $prompts, gameHistory: $gameHistory)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'User'))
+      ..add(DiagnosticsProperty('uuid', uuid))
+      ..add(DiagnosticsProperty('prompts', prompts))
+      ..add(DiagnosticsProperty('gameHistory', gameHistory));
   }
 
   @override
