@@ -137,7 +137,8 @@ const path = require("path");
 
 // This is for the server to grab the build folder after running npm run build in client
 // Add this line to serve the static files from the React build folder
-app.use(express.static(path.join(__dirname, "client/build")));
+app.use(express.static(path.join(__dirname, "client/omo_client/build/web")));
+
 
 // This route was created to give a UI to the server.js file
 // It's better to put it after the static files middleware, but before the catch-all route
@@ -170,7 +171,8 @@ app.get("/turn-credentials", (req, res) => {
 
 // Add this line to handle any other routes and serve the React app's index.html
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "client/omo_client/build/web", "index.html"));
+
 });
 
 server.listen(process.env.PORT || 3000, () =>
