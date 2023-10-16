@@ -9,12 +9,16 @@ part 'user_provider.freezed.dart';
 class User with _$User {
   factory User({
     required String uuid,
+    required String name,
+    required int oddOneOutIndex,
     required List<String> prompts,
     required List<String> gameHistory,
   }) = _User;
 
   factory User.initial() => User(
         uuid: Uuid().v4(),
+        name: '',
+        oddOneOutIndex: -1,
         prompts: [],
         gameHistory: [],
       );
@@ -30,11 +34,16 @@ class UserNotifier extends StateNotifier<User> {
     state = state.copyWith(uuid: newUuid);
   }
 
+  void updateName(String newName) {
+    state = state.copyWith(name: newName);
+  }
+
+  void updateOddOneOutIndex(int oddOneOutIndex) {
+    state = state.copyWith(oddOneOutIndex: oddOneOutIndex);
+  }
+
   void appendToPrompts(String newPrompt) {
     state = state.copyWith(prompts: [...state.prompts, newPrompt]);
-    // for (var prompt in state.prompts) {
-    //   debugPrint(prompt);
-    // }
   }
 
   void removeFromPrompts(int index) {

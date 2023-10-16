@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:omo_client/providers/game/game_provider.dart';
+import 'package:omo_client/services/navigation_service/navigation_service.dart';
 import 'package:omo_client/widgets/prompts/prompt_pair_widget.dart';
 import 'package:web_socket_channel/html.dart';
 import 'package:web_socket_channel/io.dart';
@@ -27,6 +29,7 @@ class HomePage extends HookConsumerWidget {
     final nameController = ref.watch(nameProvider.notifier);
     final userNotifier = ref.watch(userProvider.notifier);
     final user = ref.watch(userProvider);
+    final gameNotifer = ref.watch(gameProvider.notifier);
 
     void handlePromptAdd(Map<String, dynamic> buttonLabel) {
       print("-----------handlePromptClick-----");
@@ -105,13 +108,15 @@ class HomePage extends HookConsumerWidget {
           print("matchingPrompt");
           print(matchingPrompt.toString());
 
+          gameNotifer.updatePrompt(matchingPrompt);
+          ref.navigationService.goToRoomPage();
           // Navigate to the room page using Flutter's Navigator.
           // You might need to adapt this part to your Flutter app's navigation structure.
           // Navigator.of(context).pushNamed('/room/$uuid', arguments: {
-          //   'playerName': name,
-          //   'oddOneOut': oddOneOutValue,
-          //   'uid': userData['Item']['user'],
-          //   'prompt': matchingPrompt,
+          //  xxx 'playerName': name,
+          //  xxx 'oddOneOut': oddOneOutValue,
+          //  xxx 'uid': userData['Item']['user'],
+          //  xxx 'prompt': matchingPrompt,
           //   'userData': userData,
           //   'dummyPrompts': dummyPrompts,
           // });
@@ -134,6 +139,7 @@ class HomePage extends HookConsumerWidget {
               decoration: const InputDecoration(labelText: "Enter your name"),
               onChanged: (value) {
                 // Update the state when the text field changes
+                userNotifier.updateName(nameController.state);
                 nameController.state = value;
                 print(nameController.state);
               },

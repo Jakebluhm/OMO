@@ -17,6 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$User {
   String get uuid => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  int get oddOneOutIndex => throw _privateConstructorUsedError;
   List<String> get prompts => throw _privateConstructorUsedError;
   List<String> get gameHistory => throw _privateConstructorUsedError;
 
@@ -29,7 +31,12 @@ abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res, User>;
   @useResult
-  $Res call({String uuid, List<String> prompts, List<String> gameHistory});
+  $Res call(
+      {String uuid,
+      String name,
+      int oddOneOutIndex,
+      List<String> prompts,
+      List<String> gameHistory});
 }
 
 /// @nodoc
@@ -46,6 +53,8 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? uuid = null,
+    Object? name = null,
+    Object? oddOneOutIndex = null,
     Object? prompts = null,
     Object? gameHistory = null,
   }) {
@@ -54,6 +63,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
               as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      oddOneOutIndex: null == oddOneOutIndex
+          ? _value.oddOneOutIndex
+          : oddOneOutIndex // ignore: cast_nullable_to_non_nullable
+              as int,
       prompts: null == prompts
           ? _value.prompts
           : prompts // ignore: cast_nullable_to_non_nullable
@@ -73,7 +90,12 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       __$$UserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String uuid, List<String> prompts, List<String> gameHistory});
+  $Res call(
+      {String uuid,
+      String name,
+      int oddOneOutIndex,
+      List<String> prompts,
+      List<String> gameHistory});
 }
 
 /// @nodoc
@@ -87,6 +109,8 @@ class __$$UserImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uuid = null,
+    Object? name = null,
+    Object? oddOneOutIndex = null,
     Object? prompts = null,
     Object? gameHistory = null,
   }) {
@@ -95,6 +119,14 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
               as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      oddOneOutIndex: null == oddOneOutIndex
+          ? _value.oddOneOutIndex
+          : oddOneOutIndex // ignore: cast_nullable_to_non_nullable
+              as int,
       prompts: null == prompts
           ? _value._prompts
           : prompts // ignore: cast_nullable_to_non_nullable
@@ -112,6 +144,8 @@ class __$$UserImplCopyWithImpl<$Res>
 class _$UserImpl with DiagnosticableTreeMixin implements _User {
   _$UserImpl(
       {required this.uuid,
+      required this.name,
+      required this.oddOneOutIndex,
       required final List<String> prompts,
       required final List<String> gameHistory})
       : _prompts = prompts,
@@ -119,6 +153,10 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
   @override
   final String uuid;
+  @override
+  final String name;
+  @override
+  final int oddOneOutIndex;
   final List<String> _prompts;
   @override
   List<String> get prompts {
@@ -137,7 +175,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(uuid: $uuid, prompts: $prompts, gameHistory: $gameHistory)';
+    return 'User(uuid: $uuid, name: $name, oddOneOutIndex: $oddOneOutIndex, prompts: $prompts, gameHistory: $gameHistory)';
   }
 
   @override
@@ -146,6 +184,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
     properties
       ..add(DiagnosticsProperty('type', 'User'))
       ..add(DiagnosticsProperty('uuid', uuid))
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('oddOneOutIndex', oddOneOutIndex))
       ..add(DiagnosticsProperty('prompts', prompts))
       ..add(DiagnosticsProperty('gameHistory', gameHistory));
   }
@@ -156,6 +196,9 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
         (other.runtimeType == runtimeType &&
             other is _$UserImpl &&
             (identical(other.uuid, uuid) || other.uuid == uuid) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.oddOneOutIndex, oddOneOutIndex) ||
+                other.oddOneOutIndex == oddOneOutIndex) &&
             const DeepCollectionEquality().equals(other._prompts, _prompts) &&
             const DeepCollectionEquality()
                 .equals(other._gameHistory, _gameHistory));
@@ -165,6 +208,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   int get hashCode => Object.hash(
       runtimeType,
       uuid,
+      name,
+      oddOneOutIndex,
       const DeepCollectionEquality().hash(_prompts),
       const DeepCollectionEquality().hash(_gameHistory));
 
@@ -178,11 +223,17 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 abstract class _User implements User {
   factory _User(
       {required final String uuid,
+      required final String name,
+      required final int oddOneOutIndex,
       required final List<String> prompts,
       required final List<String> gameHistory}) = _$UserImpl;
 
   @override
   String get uuid;
+  @override
+  String get name;
+  @override
+  int get oddOneOutIndex;
   @override
   List<String> get prompts;
   @override
