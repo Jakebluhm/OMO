@@ -17,6 +17,7 @@ class RoomPage extends HookConsumerWidget {
         Text(user.uuid),
         Text(game.prompt!.identityA),
         Text(game.prompt!.identityB),
+        Text(game.uuid!),
       ]),
     );
   }

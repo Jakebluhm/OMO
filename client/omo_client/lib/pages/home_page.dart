@@ -109,6 +109,8 @@ class HomePage extends HookConsumerWidget {
           print(matchingPrompt.toString());
 
           gameNotifer.updatePrompt(matchingPrompt);
+          gameNotifer.updateGameUuid(uuid);
+
           ref.navigationService.goToRoomPage();
           // Navigate to the room page using Flutter's Navigator.
           // You might need to adapt this part to your Flutter app's navigation structure.
@@ -139,7 +141,7 @@ class HomePage extends HookConsumerWidget {
               decoration: const InputDecoration(labelText: "Enter your name"),
               onChanged: (value) {
                 // Update the state when the text field changes
-                userNotifier.updateName(nameController.state);
+                userNotifier.updateName(value);
                 nameController.state = value;
                 print(nameController.state);
               },

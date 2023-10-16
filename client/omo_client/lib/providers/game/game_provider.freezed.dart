@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Game {
+  String? get uuid => throw _privateConstructorUsedError;
   Prompt? get prompt => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -27,7 +28,7 @@ abstract class $GameCopyWith<$Res> {
   factory $GameCopyWith(Game value, $Res Function(Game) then) =
       _$GameCopyWithImpl<$Res, Game>;
   @useResult
-  $Res call({Prompt? prompt});
+  $Res call({String? uuid, Prompt? prompt});
 }
 
 /// @nodoc
@@ -43,9 +44,14 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uuid = freezed,
     Object? prompt = freezed,
   }) {
     return _then(_value.copyWith(
+      uuid: freezed == uuid
+          ? _value.uuid
+          : uuid // ignore: cast_nullable_to_non_nullable
+              as String?,
       prompt: freezed == prompt
           ? _value.prompt
           : prompt // ignore: cast_nullable_to_non_nullable
@@ -61,7 +67,7 @@ abstract class _$$GameImplCopyWith<$Res> implements $GameCopyWith<$Res> {
       __$$GameImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Prompt? prompt});
+  $Res call({String? uuid, Prompt? prompt});
 }
 
 /// @nodoc
@@ -74,9 +80,14 @@ class __$$GameImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uuid = freezed,
     Object? prompt = freezed,
   }) {
     return _then(_$GameImpl(
+      uuid: freezed == uuid
+          ? _value.uuid
+          : uuid // ignore: cast_nullable_to_non_nullable
+              as String?,
       prompt: freezed == prompt
           ? _value.prompt
           : prompt // ignore: cast_nullable_to_non_nullable
@@ -88,14 +99,16 @@ class __$$GameImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$GameImpl with DiagnosticableTreeMixin implements _Game {
-  _$GameImpl({this.prompt});
+  _$GameImpl({this.uuid, this.prompt});
 
+  @override
+  final String? uuid;
   @override
   final Prompt? prompt;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Game(prompt: $prompt)';
+    return 'Game(uuid: $uuid, prompt: $prompt)';
   }
 
   @override
@@ -103,6 +116,7 @@ class _$GameImpl with DiagnosticableTreeMixin implements _Game {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Game'))
+      ..add(DiagnosticsProperty('uuid', uuid))
       ..add(DiagnosticsProperty('prompt', prompt));
   }
 
@@ -111,11 +125,12 @@ class _$GameImpl with DiagnosticableTreeMixin implements _Game {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GameImpl &&
+            (identical(other.uuid, uuid) || other.uuid == uuid) &&
             (identical(other.prompt, prompt) || other.prompt == prompt));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, prompt);
+  int get hashCode => Object.hash(runtimeType, uuid, prompt);
 
   @JsonKey(ignore: true)
   @override
@@ -125,8 +140,10 @@ class _$GameImpl with DiagnosticableTreeMixin implements _Game {
 }
 
 abstract class _Game implements Game {
-  factory _Game({final Prompt? prompt}) = _$GameImpl;
+  factory _Game({final String? uuid, final Prompt? prompt}) = _$GameImpl;
 
+  @override
+  String? get uuid;
   @override
   Prompt? get prompt;
   @override

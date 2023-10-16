@@ -7,10 +7,12 @@ part 'game_provider.freezed.dart';
 @freezed
 class Game with _$Game {
   factory Game({
+    String? uuid,
     Prompt? prompt,
   }) = _Game;
 
   factory Game.initial() => Game(
+        uuid: null,
         prompt: null,
       );
 }
@@ -23,5 +25,9 @@ class GameNotifier extends StateNotifier<Game> {
 
   void updatePrompt(Prompt prompt) {
     state = state.copyWith(prompt: prompt);
+  }
+
+  void updateGameUuid(String uuid) {
+    state = state.copyWith(uuid: uuid);
   }
 }
