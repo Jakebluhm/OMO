@@ -131,7 +131,7 @@ class HomePage extends HookConsumerWidget {
         TextEditingController(text: nameController.state);
 
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text('OMO'))),
+      appBar: AppBar(title: const Center(child: Text('-OMO-'))),
       body: Column(
         children: [
           SizedBox(
