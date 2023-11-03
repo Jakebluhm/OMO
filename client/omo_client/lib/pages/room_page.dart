@@ -122,6 +122,7 @@ class RoomPage extends HookConsumerWidget {
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
+            Text("OMO"),
             Expanded(
               child: RTCVideoView(localRenderer, mirror: true),
             ),
