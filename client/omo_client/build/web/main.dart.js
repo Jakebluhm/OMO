@@ -78605,36 +78605,36 @@ return A.a9(new A.a5J().pz(0,A.X(["audio",!0,"video",A.X(["facingMode","user"],o
 case 3:n.sWq(0,b)
 return A.a1(null,r)}})
 return A.a2($async$tf,r)},
-a1H(a,b,a0){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d=null,c="query"
+a1H(a,a0,a1){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d="https://omo.social:3000",c=null,b="query"
 A.km().$1("inside _connect()")
 s=t.N
 r=t.z
 q=A.X(["transports",A.a(["websocket"],t.s),"log",!0],s,r)
-p=A.d0("/")
+p=A.d0(d)
 o=p.gcR()+"://"+p.ghb(p)+":"+p.gko(p)
 n=p.gbZ(p)
 m=$.ank.a8(0,o)&&$.ank.h(0,o).d.a8(0,n)
 l=q.h(0,"forceNew")===!0||q.h(0,"force new connection")===!0||!1===q.h(0,"multiplex")||m
 k=A.b4("io")
-if(l){$.aBK().aN(B.l,"ignoring socket cache for /",d,d)
-k.b=A.auM(q,"/")}else{j=$.ank.h(0,o)
-if(j==null){j=A.auM(q,"/")
-$.ank.l(0,o,j)}k.b=j}if(p.ghV(p).length!==0&&q.h(0,c)==null)q.l(0,c,p.ghV(p))
-else q.h(0,c)
+if(l){$.aBK().aN(B.l,"ignoring socket cache for https://omo.social:3000",c,c)
+k.b=A.auM(q,d)}else{j=$.ank.h(0,o)
+if(j==null){j=A.auM(q,d)
+$.ank.l(0,o,j)}k.b=j}if(p.ghV(p).length!==0&&q.h(0,b)==null)q.l(0,b,p.ghV(p))
+else q.h(0,b)
 j=k.aH()
 i=p.gbZ(p).length===0?"/":p.gbZ(p)
 h=j.d
 g=h.h(0,i)
 if(g==null){f=t.sB
-g=new A.Au(i,q,j,A.u(r,r),[],[],A.u(r,r),A.bE(d,d,d,s,f),A.bE(d,d,d,s,f),A.a([],t.hx))
-q.h(0,c)
+g=new A.Au(i,q,j,A.u(r,r),[],[],A.u(r,r),A.bE(c,c,c,s,f),A.bE(c,c,c,s,f),A.a([],t.hx))
+q.h(0,b)
 g.ax=q.h(0,"auth")
 s=j.cy
 s===$&&A.b()
 if(s)g.ae0()
 h.l(0,i,g)}e.f=g
 A.km().$1("after IO.io()")
-e.f.eb(0,"connect",new A.aa1(e,b))
+e.f.eb(0,"connect",new A.aa1(e,a0))
 e.f.eb(0,"connect_error",new A.aa2())
 e.f.eb(0,"connect_timeout",new A.aa3())
 e.f.f.eb(0,"error",new A.aa4())
