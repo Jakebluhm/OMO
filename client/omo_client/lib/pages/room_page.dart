@@ -35,6 +35,7 @@ class RoomPage extends HookConsumerWidget {
   final roomID = "some_room_id"; // Adjust the room ID as needed
 
   Future<void> initRenderers() async {
+    debugPrint('inside initRenderers()');
     await localRenderer.initialize();
     MediaStream localStream = await navigator.mediaDevices.getUserMedia({
       'audio': true,
@@ -47,18 +48,47 @@ class RoomPage extends HookConsumerWidget {
     // More setup, signaling, and handling peers
   }
 
-  void _connect() {
+  void _connect(User user, Game game) {
+    debugPrint('inside _connect()');
     socket = IO.io('/', <String, dynamic>{
       'transports': ['websocket'],
+      'log': true, // Enable logging
     });
+    debugPrint('after IO.io()');
 
     socket.onConnect((_) {
       print('connect');
-      socket.emit('join room', roomID);
+      socket.emit('join room', {
+        'roomID': roomID,
+        'name': user.name,
+        'OMO': user.oddOneOutIndex,
+        'uid': user.uuid,
+      });
+    });
+
+    socket.onConnectError((data) {
+      debugPrint('onConnectError: $data');
+    });
+
+    socket.onConnectTimeout((data) {
+      debugPrint('onConnectTimeout: $data');
+    });
+
+    socket.onError((data) {
+      debugPrint('onError: $data');
+    });
+
+    socket.onDisconnect((_) {
+      debugPrint('disconnect');
     });
 
     // Handle socket events, create and add peers
     socket.on('all users', (users) {
+      print('all users');
+      print(users);
+      for (var user in users) {
+        print(user);
+      }
       // Iterate over users and create peers
     });
 
@@ -76,7 +106,7 @@ class RoomPage extends HookConsumerWidget {
     useEffect(
       () {
         initRenderers();
-        _connect();
+        _connect(user, game);
         return () {
           // cleanup logic, such as dispose
           localRenderer.dispose();
