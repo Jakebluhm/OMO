@@ -78605,7 +78605,7 @@ return A.a9(new A.a5J().pz(0,A.X(["audio",!0,"video",A.X(["facingMode","user"],o
 case 3:n.sWq(0,b)
 return A.a1(null,r)}})
 return A.a2($async$tf,r)},
-a1H(a,a0,a1){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d="http://omo.social:3000",c=null,b="query"
+a1H(a,a0,a1){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d="https://omo.social:3000",c=null,b="query"
 A.km().$1("inside _connect()")
 s=t.N
 r=t.z
@@ -78616,7 +78616,7 @@ n=p.gbZ(p)
 m=$.ank.a8(0,o)&&$.ank.h(0,o).d.a8(0,n)
 l=q.h(0,"forceNew")===!0||q.h(0,"force new connection")===!0||!1===q.h(0,"multiplex")||m
 k=A.b4("io")
-if(l){$.aBK().aN(B.l,"ignoring socket cache for http://omo.social:3000",c,c)
+if(l){$.aBK().aN(B.l,"ignoring socket cache for https://omo.social:3000",c,c)
 k.b=A.auM(q,d)}else{j=$.ank.h(0,o)
 if(j==null){j=A.auM(q,d)
 $.ank.l(0,o,j)}k.b=j}if(p.ghV(p).length!==0&&q.h(0,b)==null)q.l(0,b,p.ghV(p))
