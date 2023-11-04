@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -7,6 +10,9 @@ import 'package:omo_client/providers/game/game_provider.dart';
 import 'package:omo_client/providers/peers/peers_state.dart';
 import 'package:omo_client/providers/user/user_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:web_socket_channel/html.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 // class RoomPage extends HookConsumerWidget {
 //   RoomPage();
@@ -49,6 +55,42 @@ class RoomPage extends HookConsumerWidget {
   }
 
   void _connect(User user, Game game) {
+    debugPrint('inside NEW _connect()');
+
+    const wsUrl =
+        'wss://omo.social:3000'; // Modify this to point to your server.js WebSocket
+
+    WebSocketChannel channel;
+
+    if (kIsWeb) {
+      // For web
+      channel = HtmlWebSocketChannel.connect(wsUrl);
+    } else {
+      // For mobile
+      channel = IOWebSocketChannel.connect(wsUrl);
+    }
+
+    channel.stream.listen((event) {
+      final message = jsonDecode(event);
+      print("--- Received message !!!!!!!!");
+      print("message");
+      print(message);
+      // Handle message...
+    }, onError: (error) {
+      print('WebSocket error: $error');
+    });
+
+    // Send the 'join room' message
+    final joinMessage = jsonEncode({
+      'roomID': roomID,
+      'name': user.name,
+      'OMO': user.oddOneOutIndex,
+      'uid': user.uuid,
+    });
+    channel.sink.add(joinMessage);
+  }
+
+  void _connect1(User user, Game game) {
     debugPrint('inside _connect()');
 
     // For Web????
