@@ -76,7 +76,7 @@ class RoomPage extends HookConsumerWidget {
     debugPrint('inside _connect()');
 
     // Configure socket connection
-    final socket = IO.io('wss://3.136.49.106:3000', <String, dynamic>{
+    final socket = IO.io('https://3.136.49.106:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
