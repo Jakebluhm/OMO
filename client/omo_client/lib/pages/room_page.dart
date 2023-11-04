@@ -56,6 +56,7 @@ class RoomPage extends HookConsumerWidget {
       'autoConnect': false,
       // Other options if needed
     });
+    debugPrint('b4 socket.connect();');
     socket.connect();
     debugPrint('after IO.io()');
 
