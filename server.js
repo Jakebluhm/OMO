@@ -1,10 +1,14 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require('cors');
 const http = require("http");
 const app = express();
 const server = http.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
+
+// Enable CORS for all routes
+app.use(cors());
 
 const twilio = require("twilio");
 const client = twilio(
