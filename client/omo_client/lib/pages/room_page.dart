@@ -50,7 +50,13 @@ class RoomPage extends HookConsumerWidget {
 
   void _connect(User user, Game game) {
     debugPrint('inside _connect()');
-    socket = IO.io('https://omo.social:3000', <String, dynamic>{});
+
+    // For Web????
+    IO.Socket socket = IO.io('https://omo.social:3000', <String, dynamic>{
+      'autoConnect': false,
+      // Other options if needed
+    });
+    socket.connect();
     debugPrint('after IO.io()');
 
     socket.onConnect((_) {
