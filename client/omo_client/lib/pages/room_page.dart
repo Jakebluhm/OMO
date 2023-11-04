@@ -74,7 +74,8 @@ class RoomPage extends HookConsumerWidget {
   void _connect(User user, Game game) {
     debugPrint('inside NEW _connect()');
 
-    const wsUrl = '/'; // Modify this to point to your server.js WebSocket
+    const wsUrl =
+        'wss://omo.social:3000'; // Modify this to point to your server.js WebSocket
 
     WebSocketChannel channel;
 
@@ -168,9 +169,17 @@ class RoomPage extends HookConsumerWidget {
 
     useEffect(
       () {
+        try {
+          _connect1(user, game);
+        } catch (err) {
+          print(err);
+        }
         initRenderers();
-        _connect(user, game);
-        _connect1(user, game);
+        try {
+          _connect(user, game);
+        } catch (err) {
+          print(err);
+        }
         return () {
           // cleanup logic, such as dispose
           localRenderer.dispose();
