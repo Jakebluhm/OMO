@@ -13,6 +13,10 @@ git fetch --all
 git checkout flutterRefactor
 
 git pull
+rm -rf client/build/
+mkdir client/build
+cp -r client/omo_client/build/web/* client/build
+
 npm ci
 echo "Killing the existing Node.js server process..."
 
