@@ -78611,7 +78611,7 @@ a1I(a,b,a0){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e="https://omo.social:3000",d=null,c
 A.jb().$1("inside _connect()")
 s=t.N
 r=t.z
-q=A.Y(["autoConnect",!1],s,r)
+q=A.Y(["transports",A.a(["websocket"],t.s),"autoConnect",!1],s,r)
 p=A.d0(e)
 o=p.gcR()+"://"+p.ghb(p)+":"+p.gko(p)
 n=p.gbZ(p)
@@ -78634,7 +78634,7 @@ g.ax=q.h(0,"auth")
 s=j.cy
 s===$&&A.b()
 if(s)g.Q9()
-h.l(0,i,g)}A.jb().$1("b4 socket.connect();")
+h.l(0,i,g)}A.jb().$1("b4444 socket.connect();")
 g.Q9()
 A.jb().$1("after IO.io()")
 g.eb(0,"connect",new A.aa1(this,g,b))
