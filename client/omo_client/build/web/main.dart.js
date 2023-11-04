@@ -79434,7 +79434,7 @@ break
 case 5:return A.a_(null,r)
 case 1:return A.Z(p,r)}})
 return A.a0($async$vF,r)},
-a2q(a,b,a0){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e="https://omo.social:3000",d=null,c="query"
+a2q(a,b,a0){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e="https://omo.social",d=null,c="query"
 A.fz().$1("inside _connect()")
 s=t.N
 r=t.z
@@ -79445,7 +79445,7 @@ n=p.gc2(p)
 m=$.aoO.a7(0,o)&&$.aoO.h(0,o).d.a7(0,n)
 l=q.h(0,"forceNew")===!0||q.h(0,"force new connection")===!0||!1===q.h(0,"multiplex")||m
 k=A.b6("io")
-if(l){$.aDw().aP(B.l,"ignoring socket cache for https://omo.social:3000",d,d)
+if(l){$.aDw().aP(B.l,"ignoring socket cache for https://omo.social",d,d)
 k.b=A.awn(q,e)}else{j=$.aoO.h(0,o)
 if(j==null){j=A.awn(q,e)
 $.aoO.l(0,o,j)}k.b=j}if(p.gi6(p).length!==0&&q.h(0,c)==null)q.l(0,c,p.gi6(p))
