@@ -10,6 +10,7 @@ import 'package:omo_client/providers/game/game_provider.dart';
 import 'package:omo_client/providers/peers/peers_state.dart';
 import 'package:omo_client/providers/user/user_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 import 'package:web_socket_channel/html.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -72,56 +73,20 @@ class RoomPage extends HookConsumerWidget {
   }
 
   void _connect(User user, Game game) {
-    debugPrint('inside NEW _connect()');
-
-    const wsUrl =
-        'wss://omo.social:3000'; // Modify this to point to your server.js WebSocket
-
-    WebSocketChannel channel;
-
-    if (kIsWeb) {
-      // For web
-      channel = HtmlWebSocketChannel.connect(wsUrl);
-    } else {
-      // For mobile
-      channel = IOWebSocketChannel.connect(wsUrl);
-    }
-
-    channel.stream.listen((event) {
-      final message = jsonDecode(event);
-      print("--- Received message !!!!!!!!");
-      print("message");
-      print(message);
-      // Handle message...
-    }, onError: (error) {
-      print('WebSocket error: $error');
-    });
-
-    // Send the 'join room' message
-    final joinMessage = jsonEncode({
-      'roomID': roomID,
-      'name': user.name,
-      'OMO': user.oddOneOutIndex,
-      'uid': user.uuid,
-    });
-    channel.sink.add(joinMessage);
-  }
-
-  void _connect1(User user, Game game) {
     debugPrint('inside _connect()');
 
-    // For Web????
-    IO.Socket socket = IO.io('/', <String, dynamic>{
+    // Configure socket connection
+    final socket = IO.io('wss://3.136.49.106:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
-      // ... any other options you might need
     });
-    debugPrint('b4444 socket.connect();');
+    debugPrint('before socket.connect();');
     socket.connect();
-    debugPrint('after IO.io()');
+    debugPrint('after socket.connect();');
 
+    // Socket event handlers
     socket.onConnect((_) {
-      print('connect');
+      debugPrint('connect');
       socket.emit('join room', {
         'roomID': roomID,
         'name': user.name,
@@ -146,18 +111,106 @@ class RoomPage extends HookConsumerWidget {
       debugPrint('disconnect');
     });
 
-    // Handle socket events, create and add peers
+    // Handle custom socket events
     socket.on('all users', (users) {
-      print('all users');
-      print(users);
+      debugPrint('all users');
+      debugPrint(users.toString());
       for (var user in users) {
-        print(user);
+        debugPrint(user.toString());
       }
       // Iterate over users and create peers
     });
 
     // Other event handlers...
   }
+
+  // void _connect(User user, Game game) {
+  //   debugPrint('inside NEW _connect()');
+
+  //   const wsUrl =
+  //       'wss://omo.social:3000'; // Modify this to point to your server.js WebSocket
+
+  //   WebSocketChannel channel;
+
+  //   if (kIsWeb) {
+  //     // For web
+  //     channel = HtmlWebSocketChannel.connect(wsUrl);
+  //   } else {
+  //     // For mobile
+  //     channel = IOWebSocketChannel.connect(wsUrl);
+  //   }
+
+  //   channel.stream.listen((event) {
+  //     final message = jsonDecode(event);
+  //     print("--- Received message !!!!!!!!");
+  //     print("message");
+  //     print(message);
+  //     // Handle message...
+  //   }, onError: (error) {
+  //     print('WebSocket error: $error');
+  //   });
+
+  //   // Send the 'join room' message
+  //   final joinMessage = jsonEncode({
+  //     'roomID': roomID,
+  //     'name': user.name,
+  //     'OMO': user.oddOneOutIndex,
+  //     'uid': user.uuid,
+  //   });
+  //   channel.sink.add(joinMessage);
+  // }
+
+  // void _connect1(User user, Game game) {
+  //   debugPrint('inside _connect()');
+
+  //   // For Web????
+  //   IO.Socket socket = IO.io('/', <String, dynamic>{
+  //     'transports': ['websocket'],
+  //     'autoConnect': false,
+  //     // ... any other options you might need
+  //   });
+  //   debugPrint('b4444 socket.connect();');
+  //   socket.connect();
+  //   debugPrint('after IO.io()');
+
+  //   socket.onConnect((_) {
+  //     print('connect');
+  //     socket.emit('join room', {
+  //       'roomID': roomID,
+  //       'name': user.name,
+  //       'OMO': user.oddOneOutIndex,
+  //       'uid': user.uuid,
+  //     });
+  //   });
+
+  //   socket.onConnectError((data) {
+  //     debugPrint('onConnectError: $data');
+  //   });
+
+  //   socket.onConnectTimeout((data) {
+  //     debugPrint('onConnectTimeout: $data');
+  //   });
+
+  //   socket.onError((data) {
+  //     debugPrint('onError: $data');
+  //   });
+
+  //   socket.onDisconnect((_) {
+  //     debugPrint('disconnect');
+  //   });
+
+  //   // Handle socket events, create and add peers
+  //   socket.on('all users', (users) {
+  //     print('all users');
+  //     print(users);
+  //     for (var user in users) {
+  //       print(user);
+  //     }
+  //     // Iterate over users and create peers
+  //   });
+
+  //   // Other event handlers...
+  // }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -170,16 +223,17 @@ class RoomPage extends HookConsumerWidget {
     useEffect(
       () {
         try {
-          _connect1(user, game);
+          _fetchTurnCredentials();
         } catch (err) {
           print(err);
         }
-        initRenderers();
+
         try {
           _connect(user, game);
         } catch (err) {
           print(err);
         }
+        initRenderers();
         return () {
           // cleanup logic, such as dispose
           localRenderer.dispose();
