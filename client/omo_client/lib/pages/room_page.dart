@@ -13,6 +13,8 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:web_socket_channel/html.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart'
+    as http; // Make sure this line is at the top of your file
 
 // class RoomPage extends HookConsumerWidget {
 //   RoomPage();
@@ -54,11 +56,25 @@ class RoomPage extends HookConsumerWidget {
     // More setup, signaling, and handling peers
   }
 
+  Future<void> _fetchTurnCredentials() async {
+    try {
+      final response = await http.get(Uri.parse('/turn-credentials'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // TODO: Use the TURN credentials
+        print('TURN credentials: $data');
+      } else {
+        throw Exception('Failed to load TURN credentials');
+      }
+    } catch (error) {
+      print('Error fetching TURN credentials: $error');
+    }
+  }
+
   void _connect(User user, Game game) {
     debugPrint('inside NEW _connect()');
 
-    const wsUrl =
-        'wss://omo.social:3000'; // Modify this to point to your server.js WebSocket
+    const wsUrl = '/'; // Modify this to point to your server.js WebSocket
 
     WebSocketChannel channel;
 
@@ -94,7 +110,7 @@ class RoomPage extends HookConsumerWidget {
     debugPrint('inside _connect()');
 
     // For Web????
-    IO.Socket socket = IO.io('https://omo.social:3000', <String, dynamic>{
+    IO.Socket socket = IO.io('/', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
       // ... any other options you might need
@@ -154,6 +170,7 @@ class RoomPage extends HookConsumerWidget {
       () {
         initRenderers();
         _connect(user, game);
+        _connect1(user, game);
         return () {
           // cleanup logic, such as dispose
           localRenderer.dispose();
