@@ -83,6 +83,13 @@ class RoomPage extends HookConsumerWidget {
     debugPrint('before socket.connect();');
     socket.connect();
     debugPrint('after socket.connect();');
+    debugPrint('sending it with join room');
+    socket.emit('join room', {
+      'roomID': roomID,
+      'name': user.name,
+      'OMO': user.oddOneOutIndex,
+      'uid': user.uuid,
+    });
 
     // Socket event handlers
     socket.onConnect((_) {
