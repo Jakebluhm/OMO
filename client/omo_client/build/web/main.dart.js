@@ -79492,7 +79492,7 @@ break
 case 5:return A.a0(null,r)
 case 1:return A.a_(p,r)}})
 return A.a1($async$vE,r)},
-a2s(a,b,c){var s,r,q,p,o,n,m,l,k,j,i="wss://omo.social",h="query"
+a2s(a,b,c){var s,r,q,p,o,n,m,l,k,j,i="https://omo.social",h="query"
 A.f2().$1("inside _connect()")
 s=t.N
 r=A.W(["autoConnect",!1],s,t.z)
@@ -79502,7 +79502,7 @@ o=q.gc1(q)
 n=$.aoZ.a6(0,p)&&$.aoZ.h(0,p).c.a6(0,o)
 m=r.h(0,"forceNew")===!0||r.h(0,"force new connection")===!0||!1===r.h(0,"multiplex")||n
 l=A.b6("io")
-if(m){$.aDI().aP(B.l,"ignoring socket cache for wss://omo.social",null,null)
+if(m){$.aDI().aP(B.l,"ignoring socket cache for https://omo.social",null,null)
 l.b=A.awB(r,i)}else{k=$.aoZ.h(0,p)
 if(k==null){k=A.awB(r,i)
 $.aoZ.l(0,p,k)}l.b=k}if(q.gi5(q).length!==0&&r.h(0,h)==null)r.l(0,h,q.gi5(q))
