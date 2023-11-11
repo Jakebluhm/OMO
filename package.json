@@ -12,7 +12,7 @@
     "opener": "^1.5.2",
     "react-modal": "^3.16.1",
     "selenium-webdriver": "^4.9.2",
-    "socket.io": "^2.3.0",
+    "socket.io": "^4.7.2",
     "twilio": "^4.11.0"
   },
   "scripts": {
