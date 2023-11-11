@@ -79495,7 +79495,7 @@ return A.a1($async$vE,r)},
 a2s(a,b,c){var s,r,q,p,o,n,m,l,k,j,i="https://omo.social",h="query"
 A.f2().$1("inside _connect()")
 s=t.N
-r=A.W(["transports",A.a(["websocket"],t.s),"autoConnect",!1],s,t.z)
+r=A.W(["autoConnect",!1],s,t.z)
 q=A.cV(i)
 p=q.gd0()+"://"+q.ghk(q)+":"+q.gkz(q)
 o=q.gc1(q)

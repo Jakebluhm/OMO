@@ -77,7 +77,6 @@ class RoomPage extends HookConsumerWidget {
 
     // Configure socket connection
     final socket = IO.io('https://omo.social', <String, dynamic>{
-      'transports': ['websocket'],
       'autoConnect': false,
     });
     debugPrint('before socket.connect();');
